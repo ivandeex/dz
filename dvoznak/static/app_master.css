@@ -1,0 +1,33 @@
+.col-short_title + .col-title {
+    min-width: 150px;
+}
+
+.col-content_cut {
+    min-width: 240px;
+}
+
+.col-tip {
+    min-width: 240px;
+}
+
+.dz_pre {
+    font-style: italic;
+    font-size: smaller;
+    margin-bottom: 4px;
+}
+
+.dz_title {
+    font-weight: bold;
+    font-size: 90%;
+    margin-bottom: 4px;
+}
+
+.dz_body a,
+.dz_body button.btn-link {
+    font-weight: bold;
+}
+
+td.col-url,
+td.col-details_url {
+    font-size: smaller;
+}
