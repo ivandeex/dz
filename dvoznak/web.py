@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import os
-import sys
 import hashlib
 import random
 
@@ -18,16 +16,13 @@ from flask_login import (LoginManager, UserMixin, current_user,
                          login_required, login_user, logout_user)
 from werkzeug.contrib.fixers import ProxyFix
 
+from vanko.flask.utils import setup_flask_logger, as_choices
+from vanko.utils import getenv
 
-if True and not getattr(sys, 'frozen', None):
-    _parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    sys.path.append(_parent_dir)
-
-if True:
-    from vanko.flask.utils import setup_flask_logger, result_as_choices
-    from vanko.flask.admin import LinkFormatter
-    from vanko.utils import getenv
-    # from vanko.utils.pdb import set_trace
+from pymongo import MongoClient
+from vanko.flask.admin_pymongo import PyMongoModelFilter as AppModelFilter
+from vanko.flask.admin_pymongo import PyMongoModelChoices as FieldChoices
+from vanko.flask.admin_pymongo import PyMongoModelView as AppModelView
 
 
 CAN_EXPORT = True
@@ -50,13 +45,6 @@ setup_flask_logger(app)
 logman = LoginManager(app)
 logman.login_view = 'admin.login_view'
 # logman.session_protection = 'strong'
-
-
-if True:
-    from vanko.flask.admin_pymongo import PyMongoFilter as AppModelFilter
-    from vanko.flask.admin_pymongo import PyMongoModelView as AppModelView
-    from vanko.flask.utils import data_caching, result_as_choices
-    from pymongo import MongoClient
 
 
 def cut_str(text, length):
@@ -103,40 +91,6 @@ class ArchivingCollection(object):
         return getattr(self._coll, attr)
 
 
-class FieldChoices(object):
-    def __init__(self, field, table_name, allow_blank=False):
-        self.field = field
-        self.table_name = table_name
-        self.allow_blank = allow_blank
-        self.choices = None
-
-    @property
-    def db(self):
-        return mongo_db
-
-    def generate(self):
-        db_table = self.db[self.table_name]
-        data = db_table.find({}, projection=[self.field])
-        data = data.distinct(self.field)
-        choices = data_caching(
-            '%s.%s' % (self.table_name, self.field),
-            lambda: result_as_choices(sorted(data))
-            )
-        if self.allow_blank:
-            choices = [('', '-')] + choices
-        self.choices = choices
-
-    def __len__(self):
-        if self.choices is None:
-            self.generate()
-        return len(self.choices)
-
-    def __getitem__(self, key):
-        if self.choices is None:
-            self.generate()
-        return self.choices[key]
-
-
 class NewsForm(form.Form):
     url = fields.StringField('Link to News')
     section = fields.SelectField(
@@ -155,7 +109,7 @@ class NewsForm(form.Form):
     crawled = fields.DateTimeField('Fetched At (GMT+0)')
     archived = fields.SelectField(
         'Archived', widget=Select2Widget(),
-        choices=result_as_choices(['archived', 'fresh']))
+        choices=as_choices(['archived', 'fresh']))
 
 
 class NewsView(AppModelView):
@@ -224,7 +178,7 @@ class NewsView(AppModelView):
             FieldChoices('subsection', 'dvoznak_news')),
         AppModelFilter(str, '==')(
             'archived', 'By Archived',
-            result_as_choices(['archived', 'fresh', 'all'])),
+            as_choices(['archived', 'fresh', 'all'])),
     ]
 
     def __init__(self, *args, **kwargs):
@@ -284,7 +238,7 @@ class TipsForm(form.Form):
     crawled = fields.DateTimeField('Fetched At (GMT+0)')
     archived = fields.SelectField(
         'Archived', widget=Select2Widget(),
-        choices=result_as_choices(['archived', 'fresh']))
+        choices=as_choices(['archived', 'fresh']))
 
 
 class TipsView(AppModelView):
@@ -355,7 +309,7 @@ class TipsView(AppModelView):
             'tipster', 'By Tipster', FieldChoices('tipster', 'dvoznak_tips')),
         AppModelFilter(str, '==')(
             'archived', 'By Archived',
-            result_as_choices(['archived', 'fresh', 'all'])),
+            as_choices(['archived', 'fresh', 'all'])),
     ]
 
     def __init__(self, *args, **kwargs):
