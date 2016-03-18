@@ -1,4 +1,4 @@
-from PyInstaller.utils.hooks import get_package_paths, collect_data_files
+from PyInstaller.utils.hooks import get_package_paths
 from os.path import join, dirname, exists, sep
 
 _, scrapy_pkg_dir = get_package_paths('scrapy')
