@@ -27,7 +27,8 @@ if True:
         setup_spider, run_spider, DEFAULT_PROJECT_DIR,
         TakeFirstItemLoader, Item, Field,
         StripField, JoinField, DateTimeField)
-    from vanko.utils import getenv, decode_userpass, randsleep, result_as_list
+    from vanko.utils import (
+        getenv, decode_userpass, randsleep, result_as_list, extract_datetime)
     from vanko.scrapy.webdriver import WebdriverRequest, WebdriverResponse
     # from vanko.utils.pdb import set_trace
 
@@ -224,7 +225,10 @@ class DvoznakSpider(CustomSpider):
         for row in tip.css('.tipoprog_table_small tr'):
             td = row.css('td ::text').extract()
             td.extend(['', ''])
-            d[td[0].rstrip(': ').lower()] = td[1].strip()
+            label = td[0].rstrip(': ').lower()
+            d[label] = td[1].strip()
+            if label == 'kladionica' and not d[label]:
+                d[label] = row.css('td a::attr(title)').extract_first() or ''
         datamap = dict(result='rezultat', tipster='tipster',
                        coeff='koeficijent', min_coeff='min. koef.',
                        stake='ulog', due='zarada', spread='is. margina',
@@ -232,8 +236,8 @@ class DvoznakSpider(CustomSpider):
                        published='objavljeno')
         for dst, src in datamap.items():
             item[dst] = d.get(src, '')
-        item['published'] = DateTimeField.extract_datetime(
-            item['published'], fix=True, dayfirst=True)
+        item['published'] = extract_datetime(item['published'],
+                                             fix=True, dayfirst=True)
         return item
 
     def process_tips_item(self, item):
