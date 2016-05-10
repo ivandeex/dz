@@ -20,10 +20,8 @@ from vanko.flask.utils import setup_flask_logger, as_choices
 from vanko.utils import getenv
 
 from pymongo import MongoClient
-from vanko.flask.admin_pymongo import PyMongoModelFilter as AppModelFilter
-from vanko.flask.admin_pymongo import PyMongoModelChoices as FieldChoices
-from vanko.flask.admin_pymongo import PyMongoModelView as AppModelView
-
+from vanko.flask.admin_pymongo import (PyMongoModelFilter,
+                                       PyMongoModelChoices, PyMongoModelView)
 
 CAN_EXPORT = True
 EXPORT_PRODUCER = 'csv'
@@ -93,12 +91,8 @@ class ArchivingCollection(object):
 
 class NewsForm(form.Form):
     url = fields.StringField('Link to News')
-    section = fields.SelectField(
-        'Sport', widget=Select2Widget(),
-        choices=FieldChoices('section', 'dvoznak_news'))
-    subsection = fields.SelectField(
-        'Liga', widget=Select2Widget(),
-        choices=FieldChoices('subsection', 'dvoznak_news'))
+    section = fields.SelectField('Sport', widget=Select2Widget())
+    subsection = fields.SelectField('Liga', widget=Select2Widget())
     updated = fields.DateTimeField('Updated')
     short_title = fields.StringField('Participants')
     title = fields.StringField('Title')
@@ -111,8 +105,15 @@ class NewsForm(form.Form):
         'Archived', widget=Select2Widget(),
         choices=as_choices(['archived', 'fresh']))
 
+    def __init__(self, *args, **kw):
+        super(NewsForm, self).__init__(*args, **kw)
+        self.section.choices = \
+            PyMongoModelChoices(g.mongo_db.dvoznak_news, 'section')
+        self.subsection.choices = \
+            PyMongoModelChoices(g.mongo_db.dvoznak_news, 'subsection')
 
-class NewsView(AppModelView):
+
+class NewsView(PyMongoModelView):
     list_template = 'news_list.html'
     form = NewsForm
     edit_modal = True
@@ -164,22 +165,27 @@ class NewsView(AppModelView):
     column_format_excel = dict(
         title=dict(width=12, type='string', label='Title'),
         )
-    column_filters = [
-        AppModelFilter(int, '==')('pk', 'By ID'),
-        AppModelFilter('Date', '==')('published', 'By Published Date'),
-        AppModelFilter('Date', 'between')('published', 'By Published Date'),
-        AppModelFilter('Date', '==')('updated', 'By Updated Date'),
-        AppModelFilter('Date', 'between')('updated', 'By Updated Date'),
-        AppModelFilter(str, '==')(
-            'section', 'By Sport',
-            FieldChoices('section', 'dvoznak_news')),
-        AppModelFilter(str, '==')(
-            'subsection', 'By Liga',
-            FieldChoices('subsection', 'dvoznak_news')),
-        AppModelFilter(str, '==')(
-            'archived', 'By Archived',
-            as_choices(['archived', 'fresh', 'all'])),
-    ]
+
+    @property
+    def column_filters(self):
+        return [
+            PyMongoModelFilter(int, '==')('pk', 'By ID'),
+            PyMongoModelFilter('Date', '==')('published', 'By Published Date'),
+            PyMongoModelFilter('Date', 'between')('published',
+                                                  'By Published Date'),
+            PyMongoModelFilter('Date', '==')('updated', 'By Updated Date'),
+            PyMongoModelFilter('Date', 'between')('updated',
+                                                  'By Updated Date'),
+            PyMongoModelFilter(str, '==')(
+                'section', 'By Sport',
+                PyMongoModelChoices(self.coll, 'section')),
+            PyMongoModelFilter(str, '==')(
+                'subsection', 'By Liga',
+                PyMongoModelChoices(self.coll, 'subsection')),
+            PyMongoModelFilter(str, '==')(
+                'archived', 'By Archived',
+                as_choices(['archived', 'fresh', 'all'])),
+        ]
 
     def __init__(self, *args, **kwargs):
         super(NewsView, self).__init__(*args, **kwargs)
@@ -241,7 +247,7 @@ class TipsForm(form.Form):
         choices=as_choices(['archived', 'fresh']))
 
 
-class TipsView(AppModelView):
+class TipsView(PyMongoModelView):
     list_template = 'tips_list.html'
     form = TipsForm
     edit_modal = True
@@ -297,20 +303,25 @@ class TipsView(AppModelView):
     column_format_excel = dict(
         title=dict(width=12, type='string', label='Title'),
         )
-    column_filters = [
-        AppModelFilter(int, '==')('pk', 'By ID'),
-        AppModelFilter('Date', '==')('pubished', 'By Published Date'),
-        AppModelFilter('Date', 'between')('published', 'By Published Date'),
-        AppModelFilter('Date', '==')('updated', 'By Updated Date'),
-        AppModelFilter('Date', 'between')('updated', 'By Updated Date'),
-        AppModelFilter(str, '==')(
-            'place', 'By Liga', FieldChoices('place', 'dvoznak_tips')),
-        AppModelFilter(str, '==')(
-            'tipster', 'By Tipster', FieldChoices('tipster', 'dvoznak_tips')),
-        AppModelFilter(str, '==')(
-            'archived', 'By Archived',
-            as_choices(['archived', 'fresh', 'all'])),
-    ]
+
+    @property
+    def column_filters(self):
+        return [
+            PyMongoModelFilter(int, '==')('pk', 'By ID'),
+            PyMongoModelFilter('Date', '==')('pubished', 'By Published Date'),
+            PyMongoModelFilter('Date', 'between')('published', 'By Published Date'),
+            PyMongoModelFilter('Date', '==')('updated', 'By Updated Date'),
+            PyMongoModelFilter('Date', 'between')('updated', 'By Updated Date'),
+            PyMongoModelFilter(str, '==')(
+                'place', 'By Liga',
+                PyMongoModelChoices(self.coll, 'place')),
+            PyMongoModelFilter(str, '==')(
+                'tipster', 'By Tipster',
+                PyMongoModelChoices(self.coll, 'tipster')),
+            PyMongoModelFilter(str, '==')(
+                'archived', 'By Archived',
+                as_choices(['archived', 'fresh', 'all'])),
+        ]
 
     def __init__(self, *args, **kwargs):
         super(TipsView, self).__init__(*args, **kwargs)
@@ -361,7 +372,7 @@ class CrawlsForm(form.Form):
     tips = fields.IntegerField('Tips Returned')
 
 
-class CrawlsView(AppModelView):
+class CrawlsView(PyMongoModelView):
     form = CrawlsForm
     can_export = can_edit = can_create = False
     can_edit = True
@@ -538,7 +549,7 @@ class UsersForm(form.Form):
     is_admin = fields.BooleanField('Is Administrator')
 
 
-class UsersView(AppModelView):
+class UsersView(PyMongoModelView):
     form = UsersForm
     can_create = can_edit = can_delete = True
     create_modal = edit_modal = True
