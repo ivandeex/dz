@@ -12,11 +12,13 @@ from vanko.utils import getenv
 
 DEBUG = getenv('DEBUG', 0)
 
+HEROKU = getenv('HEROKU', 0)
+
 SECRET_KEY = getenv('SECRET_KEY', 'ahqua4zie{S[i*o#choCa(Th?oh6oonu')
 
 ALLOWED_HOSTS = getenv('ALLOWED_HOSTS', 'localhost').split(',')
 
-DATABASES = {'default': dj_database_url.config(default='postgres://dz:dz@localhost/dz')}
+DATABASES = {'default': dj_database_url.config()}
 
 ROOT_URLCONF = 'dz.urls'
 
@@ -25,7 +27,9 @@ ROOT_URLCONF = 'dz.urls'
 # Static files: https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 STATIC_URL = '/static/'
 
 # I18n: https://docs.djangoproject.com/en/1.9/topics/i18n/
