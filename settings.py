@@ -3,26 +3,40 @@ The DZ project.
 """
 
 import os
+import dj_database_url
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from vanko.utils import getenv
+
+
+# Settings: https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
+
+DEBUG = getenv('DEBUG', 0)
+
+SECRET_KEY = getenv('SECRET_KEY', 'ahqua4zie{S[i*o#choCa(Th?oh6oonu')
+
+ALLOWED_HOSTS = getenv('ALLOWED_HOSTS', 'localhost').split(',')
+
+DATABASES = {'default': dj_database_url.config(default='postgres://dz:dz@localhost/dz')}
+
+ROOT_URLCONF = 'dz.urls'
+
+# WSGI_APPLICATION = 'dz.wsgi.application'
+
+# Static files: https://docs.djangoproject.com/en/1.9/howto/static-files/
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/'
 
+# I18n: https://docs.djangoproject.com/en/1.9/topics/i18n/
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
+USE_I18N = True
+USE_L10N = False
+LANGUAGE_CODE = 'en-us'
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'c&+)ymam)p6+!yw6_(mq(mezf!jzo3a4p@g9pzvtkm^o^+n^=i'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = [
-    'uxen1.int.vanko.me',
-]
-
-
-# Application definition
+USE_TZ = True
+TIME_ZONE = 'Europe/Ljubljana'
+DATETIME_FORMAT = 'Y-m-d H:i:s'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -45,8 +59,6 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'dz.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -63,56 +75,12 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'dz.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'HOST': 'localhost',
-        'PORT': 29432,
-        'NAME': 'dz',
-        'USER': 'dz',
-        'PASSWORD': 'dz',
-    }
-}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
-
-
-# Internationalization
-# https://docs.djangoproject.com/en/1.9/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'Europe/Ljubljana'
-USE_I18N = True
-USE_L10N = False
-USE_TZ = True
-DATETIME_FORMAT = 'Y-m-d H:i:s'
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.9/howto/static-files/
-
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
