@@ -1,0 +1,49 @@
+#container {
+    width: auto !important;
+}
+
+#content-main {
+    width: auto !important;
+}
+
+#changelist-form .results {
+    width: auto !important;
+    overflow-x: auto !important;
+}
+
+.object-tools {
+    float: left;
+    margin-left: 480px;
+}
+
+#changelist table tr > td,
+#changelist table tr > th {
+    border: 1px solid #ddd;
+}
+
+#changelist table thead th {
+    white-space: normal !important;
+}
+
+#changelist table tr:hover {
+    background-color: #f8f8f0;
+}
+
+thead th {
+    text-transform: none !important;
+}
+
+.dz_title {
+    font-weight: bold;
+    font-size: 90%;
+    margin-bottom: 4px;
+}
+
+.dz_body a,
+.dz_body button.btn-link {
+    font-weight: bold;
+}
+
+.field-tip_block {
+    min-width: 280px;
+}

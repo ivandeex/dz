@@ -272,8 +272,7 @@ class TipsView(PyMongoModelView):
     column_list = ['pk', 'published', 'place', 'title', 'tip',
                    'result', 'tipster', 'coeff', 'min_coeff',
                    'stake', 'due', 'spread', 'betting', 'success',
-                   'text_cut', 'updated', 'crawled',
-                   'details_url', 'archived']
+                   'updated', 'crawled', 'details_url', 'archived']
     column_sortable_list = column_list
     column_searchable_list = ['title', 'tip', 'text']
     column_default_sort = ('published', True)
