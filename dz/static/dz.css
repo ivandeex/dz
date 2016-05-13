@@ -50,11 +50,11 @@ thead th {
     font-weight: bold;
 }
 
-body.model-tip .field-tip_block {
+body.model-tip .field-col_tip {
     min-width: 240px;
 }
 
-body.model-news .field-content_cut {
+body.model-news .field-col_content {
     min-width: 240px;
 }
 

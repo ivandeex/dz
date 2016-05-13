@@ -2,27 +2,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils.html import format_html, strip_tags
 from django.utils.encoding import python_2_unicode_compatible
-
-
-def as_choices(seq):
-    return [(x, x) for x in seq]
-
-
-def cut_str(text, length):
-    text = text or ''
-    if len(text) > length:
-        text = text[:length] + '...'
-    return text
-
-
-@python_2_unicode_compatible
-class User(models.Model):
-    username = models.CharField(max_length=20, unique=True)
-    password = models.CharField(max_length=64)
-    is_admin = models.BooleanField()
-
-    def __str__(self):
-        return self.username
+from .utils import as_choices, cut_str
 
 
 class NewsManager(models.Manager):
@@ -30,7 +10,8 @@ class NewsManager(models.Manager):
 
     def get_queryset(self, *args, **kw):
         return super(NewsManager, self).get_queryset(*args, **kw)\
-            .defer('content', 'subtable', 'preamble')
+            .defer('subtable')\
+            #.filter(archived='fresh')
 
 
 @python_2_unicode_compatible
@@ -44,7 +25,8 @@ class News(models.Model):
     published = models.DateTimeField('Published')
     updated = models.DateTimeField('Updated')
     crawled = models.DateTimeField('Fetched')
-    archived = models.CharField('Archived', max_length=9, choices=as_choices(['archived', 'fresh']))
+    archived = models.CharField('Archived', max_length=9,
+                                choices=as_choices(['archived', 'fresh']))
     preamble = models.CharField(max_length=500, null=True)
     content = models.TextField('Full Content')
     subtable = models.TextField('Subtable')
@@ -57,6 +39,8 @@ class News(models.Model):
             text=cut_str(strip_tags(self.content), 100),
             url='/show_stub?id=%s' % self.id)
     col_content.short_description = 'Content'
+    col_content.admin_order_field = 'preamble'
+
 
     def __str__(self):
         return u'{} ({})'.format(self.title, self.id)
@@ -71,7 +55,9 @@ class TipsManager(models.Manager):
     use_for_related_fields = True
 
     def get_queryset(self, *args, **kw):
-        return super(TipsManager, self).get_queryset(*args, **kw).defer('text')
+        return super(TipsManager, self).get_queryset(*args, **kw)\
+            .defer('text')\
+            .filter(archived='fresh')
 
 
 @python_2_unicode_compatible
@@ -79,8 +65,8 @@ class Tip(models.Model):
     id = models.IntegerField('ID', db_column='pk', primary_key=True)
     title = models.CharField('Participants', max_length=150)
     place = models.CharField('Liga', max_length=40)
-    tip = models.CharField('Tip', max_length=60)
-    text = models.TextField('Tip Text', null=True)
+    tip = models.CharField('Title', max_length=60)
+    text = models.TextField('Text', null=True)
     betting = models.CharField('Betting (Kladionica)', max_length=32)
     coeff = models.CharField('Coeff. (Koeficijent)', max_length=6)
     min_coeff = models.CharField('Min Coeff.', max_length=6)
@@ -91,8 +77,8 @@ class Tip(models.Model):
     success = models.CharField(u'Success (Uspje\u0161nost)', max_length=12, null=True)
     tipster = models.CharField('Tipster', max_length=12)
     published = models.DateTimeField('Published (Objavleno)', null=True)
-    updated = models.DateTimeField('Updated At')
-    crawled = models.DateTimeField('Fetched At')
+    updated = models.DateTimeField('Updated')
+    crawled = models.DateTimeField('Fetched')
     details_url = models.URLField('Link')
     archived = models.CharField(max_length=9, choices=as_choices(['archived', 'fresh']))
 
@@ -111,6 +97,7 @@ class Tip(models.Model):
             url='show_tip?id=%s' % self.id,
             tip=self.tip)
     col_tip.short_description = 'Tip'
+    col_tip.admin_order_field = 'tip'
 
 
 @python_2_unicode_compatible
@@ -129,3 +116,13 @@ class Crawl(models.Model):
 
     def __str__(self):
         return u'Crawl {} at {}'.format(self.action, self.started)
+
+
+@python_2_unicode_compatible
+class User(models.Model):
+    username = models.CharField('User Name', max_length=20, unique=True)
+    password = models.CharField('Password', max_length=64)
+    is_admin = models.BooleanField('Is Administrator')
+
+    def __str__(self):
+        return self.username
