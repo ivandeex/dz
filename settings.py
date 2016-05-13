@@ -18,7 +18,7 @@ SECRET_KEY = getenv('SECRET_KEY', 'ahqua4zie{S[i*o#choCa(Th?oh6oonu')
 
 ALLOWED_HOSTS = getenv('ALLOWED_HOSTS', 'localhost').split(',')
 
-DATABASES = {'default': dj_database_url.config()}
+DATABASES = {'default': dj_database_url.config(conn_max_age=600)}
 
 ROOT_URLCONF = 'dz.urls'
 
@@ -43,13 +43,13 @@ TIME_ZONE = 'Europe/Ljubljana'
 DATETIME_FORMAT = 'Y-m-d H:i:s'
 
 INSTALLED_APPS = [
+    'dz',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'dz',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -66,8 +66,7 @@ MIDDLEWARE_CLASSES = [
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -75,9 +74,26 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'loaders': [
+                ('django.template.loaders.cached.Loader', [
+                    'django.template.loaders.filesystem.Loader',
+                    'django.template.loaders.app_directories.Loader',
+                ]),
+            ],
+        },
+    },
+    {
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'DIRS': [os.path.join(BASE_DIR, 'templates', 'jinja2')],
+        'APP_DIRS': True,
+        'OPTIONS': {
         },
     },
 ]
+
+if DEBUG:
+    TEMPLATES[0]['APP_DIRS'] = True
+    del TEMPLATES[0]['OPTIONS']['loaders']
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
