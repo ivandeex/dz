@@ -9,9 +9,7 @@ class NewsManager(models.Manager):
     use_for_related_fields = True
 
     def get_queryset(self, *args, **kw):
-        return super(NewsManager, self).get_queryset(*args, **kw)\
-            .defer('subtable')\
-            #.filter(archived='fresh')
+        return super(NewsManager, self).get_queryset(*args, **kw).defer('subtable')
 
 
 @python_2_unicode_compatible
@@ -41,7 +39,6 @@ class News(models.Model):
     col_content.short_description = 'Content'
     col_content.admin_order_field = 'preamble'
 
-
     def __str__(self):
         return u'{} ({})'.format(self.title, self.id)
 
@@ -49,6 +46,9 @@ class News(models.Model):
 
     class Meta:
         verbose_name_plural = 'news'
+        index_together = [
+            ['published', 'archived']
+        ]
 
 
 class TipsManager(models.Manager):
@@ -63,8 +63,8 @@ class TipsManager(models.Manager):
 @python_2_unicode_compatible
 class Tip(models.Model):
     id = models.IntegerField('ID', db_column='pk', primary_key=True)
-    title = models.CharField('Participants', max_length=150)
-    place = models.CharField('Liga', max_length=40)
+    title = models.CharField('Participants', max_length=150, db_index=True)
+    place = models.CharField('Liga', max_length=40, db_index=True)
     tip = models.CharField('Title', max_length=60)
     text = models.TextField('Text', null=True)
     betting = models.CharField('Betting (Kladionica)', max_length=32)
@@ -76,16 +76,11 @@ class Tip(models.Model):
     stake = models.CharField('Stake (Ulog)', max_length=8)
     success = models.CharField(u'Success (Uspje\u0161nost)', max_length=12, null=True)
     tipster = models.CharField('Tipster', max_length=12)
-    published = models.DateTimeField('Published (Objavleno)', null=True)
+    published = models.DateTimeField('Published (Objavleno)', null=True, db_index=True)
     updated = models.DateTimeField('Updated')
     crawled = models.DateTimeField('Fetched')
     details_url = models.URLField('Link')
     archived = models.CharField(max_length=9, choices=as_choices(['archived', 'fresh']))
-
-    def __str__(self):
-        return u'{} ({})'.format(self.tip, self.id)
-
-    objects = TipsManager()
 
     def col_tip(self):
         return format_html(
@@ -99,6 +94,16 @@ class Tip(models.Model):
     col_tip.short_description = 'Tip'
     col_tip.admin_order_field = 'tip'
 
+    def __str__(self):
+        return u'{} ({})'.format(self.tip, self.id)
+
+    objects = TipsManager()
+
+    class Meta:
+        verbose_name_plural = 'news'
+        index_together = [
+            ['published', 'archived']
+        ]
 
 @python_2_unicode_compatible
 class Crawl(models.Model):
@@ -120,7 +125,7 @@ class Crawl(models.Model):
 
 @python_2_unicode_compatible
 class User(models.Model):
-    username = models.CharField('User Name', max_length=20, unique=True)
+    username = models.CharField('User Name', max_length=20, unique=True, db_index=True)
     password = models.CharField('Password', max_length=64)
     is_admin = models.BooleanField('Is Administrator')
 

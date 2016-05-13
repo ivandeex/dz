@@ -60,10 +60,10 @@ class NewsAdmin(DzModelAdmin):
     if settings.NARROW_GRIDS:
         list_display = ['id', 'published', 'section', 'subsection',
                         'col_content', 'archived']
-    list_filter = ['published', 'updated',
-                   ('section', DzSelectFieldListFilter),
+    list_filter = [('section', DzSelectFieldListFilter),
                    ('subsection', DzSelectFieldListFilter),
                    DzArchivedListFilter,
+                   'updated',
                    ]
     search_fields = ['short_title', 'title', 'preamble', 'content']
     date_hierarchy = 'published'
@@ -81,11 +81,11 @@ class TipAdmin(DzModelAdmin):
     if settings.NARROW_GRIDS:
         list_display = ['id', 'published', 'place', 'title', 'col_tip',
                         'result', 'tipster', 'archived']
-    list_filter = ['published', 'updated',
-                   ('place', DzSelectFieldListFilter),
+    list_filter = [('place', DzSelectFieldListFilter),
                    ('title', DzSelectFieldListFilter),
                    ('tipster', DzSelectFieldListFilter),
                    DzArchivedListFilter,
+                   'updated',
                    ]
     search_fields = ['title', 'tip', 'text']
     date_hierarchy = 'published'
