@@ -10,10 +10,10 @@ from vanko.utils import getenv
 # Settings: https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 DEBUG = getenv('DEBUG', False)
+DEBUG_SQL = getenv('DEBUG_SQL', DEBUG)
+HEROKU = getenv('HEROKU', not DEBUG)
 
-HEROKU = getenv('HEROKU', False)
-
-SECRET_KEY = getenv('SECRET_KEY', 'ahqua4zie{S[i*o#choCa(Th?oh6oonu')
+SECRET_KEY = getenv('SECRET_KEY', 'ahXeija:eth;ahyuagohheez3uok|eoXohNaiyaphaiJiyeeyi')
 
 ALLOWED_HOSTS = getenv('ALLOWED_HOSTS', 'localhost').split(',')
 
@@ -50,6 +50,32 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
+if DEBUG:
+    INTERNAL_IPS = getenv('INTERNAL_IPS', '127.0.0.1').split(',')
+
+    INSTALLED_APPS += [
+        'debug_toolbar',
+    ]
+
+    DEBUG_TOOLBAR_PANELS = [
+        'debug_toolbar.panels.versions.VersionsPanel',
+        'debug_toolbar.panels.timer.TimerPanel',
+        'debug_toolbar.panels.settings.SettingsPanel',
+        'debug_toolbar.panels.headers.HeadersPanel',
+        'debug_toolbar.panels.request.RequestPanel',
+        'debug_toolbar.panels.sql.SQLPanel',
+        'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+        'debug_toolbar.panels.templates.TemplatesPanel',
+        'debug_toolbar.panels.cache.CachePanel',
+        'debug_toolbar.panels.signals.SignalsPanel',
+        'debug_toolbar.panels.logging.LoggingPanel',
+        'debug_toolbar.panels.redirects.RedirectsPanel',
+    ]
+
+    DEBUG_TOOLBAR_CONFIG = {
+        'SHOW_COLLAPSED': True,
+    }
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
@@ -114,7 +140,7 @@ LOGGING = {
     },
     'handlers': {
         'debug_console': {
-            'level': 'DEBUG' if DEBUG else 'FATAL',
+            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'standard',
         },
@@ -122,7 +148,7 @@ LOGGING = {
     'loggers': {
         'django.db': {
             'handlers': ['debug_console'],
-            'level': 'DEBUG',
+            'level': 'DEBUG' if DEBUG_SQL else 'CRITICAL',
             'propagate': False,
         },
     },
