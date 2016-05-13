@@ -9,9 +9,9 @@ from vanko.utils import getenv
 
 # Settings: https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
-DEBUG = getenv('DEBUG', 0)
+DEBUG = getenv('DEBUG', False)
 
-HEROKU = getenv('HEROKU', 0)
+HEROKU = getenv('HEROKU', False)
 
 SECRET_KEY = getenv('SECRET_KEY', 'ahqua4zie{S[i*o#choCa(Th?oh6oonu')
 
@@ -103,3 +103,31 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s %(module)s] %(message)s',
+        },
+    },
+    'handlers': {
+        'debug_console': {
+            'level': 'DEBUG' if DEBUG else 'FATAL',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+    },
+    'loggers': {
+        'django.db': {
+            'handlers': ['debug_console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
+
+# Custom DZ settings
+
+NARROW_GRIDS = getenv('NARROW_GRIDS', False)

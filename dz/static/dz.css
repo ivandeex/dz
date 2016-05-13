@@ -33,6 +33,22 @@ thead th {
     text-transform: none !important;
 }
 
+#changelist-filter form {
+    border-bottom: 1px solid #eaeaea;
+    margin: 5px 0;
+    padding: 0 15px 15px;
+}
+
+#changelist-filter {
+    margin-right: 10px;
+}
+
+#changelist-filter select {
+    background-color: #f8f8f8;
+    width: 100%;
+    padding: 0 0;
+}
+
 .dz_pre {
     font-style: italic;
     font-size: smaller;

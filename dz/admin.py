@@ -1,9 +1,38 @@
 from django.contrib import admin
+from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 from . import models
+
 
 admin.site.site_header = admin.site.site_title = 'D.Z.'
 admin.site.index_title = 'Index:'
 admin.site.site_url = None
+
+
+class DzSelectFieldListFilter(admin.AllValuesFieldListFilter):
+    template = 'admin/dz_list_filter.html'
+
+
+class DzArchivedListFilter(admin.SimpleListFilter):
+    title = _('Archived')
+    parameter_name = 'arch'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('-', _('All')),        # The "All" choice is not default (None)
+            ('a', _('Archived')),
+            ('f', _('Fresh')),
+        ]
+
+    def choices(self, changelist):
+        choices = super(DzArchivedListFilter, self).choices(changelist)
+        return list(choices)[1:]   # Skip the All (None) choice
+
+    def queryset(self, request, queryset):
+        if self.value() is None or self.value() == 'f':
+            return queryset.filter(archived='fresh')  # Filter by "fresh" if default (None)
+        if self.value() == 'a':
+            return queryset.filter(archived='archived')
 
 
 class DzModelAdmin(admin.ModelAdmin):
@@ -28,9 +57,14 @@ class NewsAdmin(DzModelAdmin):
     list_display = ['id', 'published', 'section', 'subsection',
                     'short_title', 'title', 'col_content',
                     'updated', 'crawled', 'url', 'archived']
+    if settings.NARROW_GRIDS:
+        list_display = ['id', 'published', 'section', 'subsection',
+                        'col_content', 'archived']
     list_filter = ['published', 'updated',
-                   # 'section', 'subsection',
-                   'archived']
+                   ('section', DzSelectFieldListFilter),
+                   ('subsection', DzSelectFieldListFilter),
+                   DzArchivedListFilter,
+                   ]
     search_fields = ['short_title', 'title', 'preamble', 'content']
     exclude = ['subtable']
     radio_fields = {'archived': admin.HORIZONTAL}
@@ -43,9 +77,15 @@ class TipAdmin(DzModelAdmin):
                     'result', 'tipster', 'coeff', 'min_coeff',
                     'stake', 'due', 'spread', 'betting', 'success',
                     'updated', 'crawled', 'details_url', 'archived']
+    if settings.NARROW_GRIDS:
+        list_display = ['id', 'published', 'place', 'title', 'col_tip',
+                        'result', 'tipster', 'archived']
     list_filter = ['published', 'updated',
-                   # 'place', 'title', 'tipster',
-                   'archived']
+                   ('place', DzSelectFieldListFilter),
+                   ('title', DzSelectFieldListFilter),
+                   ('tipster', DzSelectFieldListFilter),
+                   DzArchivedListFilter,
+                   ]
     search_fields = ['title', 'tip', 'text']
     radio_fields = {'archived': admin.HORIZONTAL}
     ordering = ['-published', '-id']
