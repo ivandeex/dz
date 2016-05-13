@@ -42,6 +42,11 @@ class DzModelAdmin(admin.ModelAdmin):
     class Media:
         css = {'all': ['dz.css']}
 
+    def changelist_view(self, request, extra_context=None):
+        tmpl_resp = super(DzModelAdmin, self).changelist_view(request, extra_context)
+        tmpl_resp.context_data['title'] = _(self.opts.verbose_name_plural.title())
+        return tmpl_resp
+
     def has_add_permission(self, request):
         return False
 
