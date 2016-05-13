@@ -8,7 +8,7 @@
 
 #changelist-form .results {
     width: auto !important;
-    overflow-x: auto !important;
+    padding-right: 10px;
 }
 
 .object-tools {
@@ -33,6 +33,12 @@ thead th {
     text-transform: none !important;
 }
 
+.dz_pre {
+    font-style: italic;
+    font-size: smaller;
+    margin-bottom: 4px;
+}
+
 .dz_title {
     font-weight: bold;
     font-size: 90%;
@@ -44,6 +50,19 @@ thead th {
     font-weight: bold;
 }
 
-.field-tip_block {
-    min-width: 280px;
+body.model-tip .field-tip_block {
+    min-width: 240px;
+}
+
+body.model-news .field-content_cut {
+    min-width: 240px;
+}
+
+body.model-news .field-title {
+    min-width: 150px;
+}
+
+#changelist td.field-url,
+#changelist td.field-details_url {
+    font-size: 70%;
 }

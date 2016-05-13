@@ -33,19 +33,28 @@ class NewsManager(models.Manager):
 
 
 class News(models.Model):
-    id = models.IntegerField(db_column='pk', primary_key=True)
-    url = models.URLField()
-    title = models.CharField(max_length=150)
-    short_title = models.CharField(max_length=80)
-    section = models.CharField(max_length=20)
-    subsection = models.CharField(max_length=80)
-    published = models.DateTimeField()
-    updated = models.DateTimeField()
-    crawled = models.DateTimeField()
-    archived = models.CharField(max_length=9, choices=as_choices(['archived', 'fresh']))
+    id = models.IntegerField('ID', db_column='pk', primary_key=True)
+    url = models.URLField('Link')
+    title = models.CharField('Title', max_length=150)
+    short_title = models.CharField('Participants', max_length=80)
+    section = models.CharField('Sport', max_length=20)
+    subsection = models.CharField('Liga', max_length=80)
+    published = models.DateTimeField('Published')
+    updated = models.DateTimeField('Updated')
+    crawled = models.DateTimeField('Fetched')
+    archived = models.CharField('Archived', max_length=9, choices=as_choices(['archived', 'fresh']))
     preamble = models.CharField(max_length=500, null=True)
-    content = models.TextField()
-    subtable = models.TextField()
+    content = models.TextField('Full Content')
+    subtable = models.TextField('Subtable')
+
+    def content_cut(self):
+        return format_html(
+            u'<div class="dz_pre">{pre}</div> <div class="dz_body"><span>'
+            u'{text}</span> <a href="{url}" target="_blank">(more...)</a></div>',
+            pre=cut_str(replace_tags(self.preamble), 60),
+            text=cut_str(replace_tags(self.content), 100),
+            url='/show_stub?id=%s' % self.id)
+    content_cut.short_description = 'Content'
 
     def __unicode__(self):
         return u'{} ({})'.format(self.title, self.id)
@@ -67,8 +76,8 @@ class Tip(models.Model):
     id = models.IntegerField('ID', db_column='pk', primary_key=True)
     title = models.CharField('Participants', max_length=150)
     place = models.CharField('Liga', max_length=40)
-    tip = models.CharField(max_length=60)
-    text = models.TextField(null=True)
+    tip = models.CharField('Tip', max_length=60)
+    text = models.TextField('Tip Text', null=True)
     betting = models.CharField('Betting (Kladionica)', max_length=32)
     coeff = models.CharField('Coeff. (Koeficijent)', max_length=6)
     min_coeff = models.CharField('Min Coeff.', max_length=6)
