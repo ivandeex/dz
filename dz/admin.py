@@ -24,13 +24,13 @@ class UserAdmin(DzModelAdmin):
 @admin.register(models.News)
 class NewsAdmin(DzModelAdmin):
     list_display = ['id', 'published', 'section', 'subsection',
-                    'short_title', 'title', 'content_cut',
+                    'short_title', 'title', 'col_content',
                     'updated', 'crawled', 'url', 'archived']
 
 
 @admin.register(models.Tip)
 class TipAdmin(DzModelAdmin):
-    list_display = ['id', 'published', 'place', 'title', 'tip_block',
+    list_display = ['id', 'published', 'place', 'title', 'col_tip',
                     'result', 'tipster', 'coeff', 'min_coeff',
                     'stake', 'due', 'spread', 'betting', 'success',
                     'updated', 'crawled', 'details_url', 'archived']

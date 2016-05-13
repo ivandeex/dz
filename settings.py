@@ -4,7 +4,6 @@ The DZ project.
 
 import os
 import dj_database_url
-
 from vanko.utils import getenv
 
 
