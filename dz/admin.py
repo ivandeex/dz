@@ -66,6 +66,7 @@ class NewsAdmin(DzModelAdmin):
                    DzArchivedListFilter,
                    ]
     search_fields = ['short_title', 'title', 'preamble', 'content']
+    date_hierarchy = 'published'
     exclude = ['subtable']
     radio_fields = {'archived': admin.HORIZONTAL}
     ordering = ['-published', '-id']
@@ -87,6 +88,7 @@ class TipAdmin(DzModelAdmin):
                    DzArchivedListFilter,
                    ]
     search_fields = ['title', 'tip', 'text']
+    date_hierarchy = 'published'
     radio_fields = {'archived': admin.HORIZONTAL}
     ordering = ['-published', '-id']
 
@@ -96,6 +98,7 @@ class CrawlAdmin(DzModelAdmin):
     list_display = ['id', 'action', 'type', 'status', 'started', 'ended',
                     'news', 'tips', 'host', 'ipaddr', 'pid']
     list_filter = ['type', 'action', 'status', 'started', 'host']
+    date_hierarchy = 'started'
     radio_fields = {'action': admin.HORIZONTAL, 'type': admin.HORIZONTAL}
     ordering = ['-id']
 
