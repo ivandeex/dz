@@ -1,6 +1,10 @@
 {% extends "admin/change_list.html" %}
 {% load i18n admin_urls %}
 
+{% block userlinks %}
+  <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
+{% endblock %}
+
 {% block object-tools %}
   {% if has_add_permission or has_crawl_permission %}
     <ul class="object-tools">
