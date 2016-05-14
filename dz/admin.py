@@ -5,6 +5,9 @@ from django.conf.urls import url
 from django.core.urlresolvers import reverse
 from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
 from django.http import HttpResponseRedirect
+from import_export.admin import ExportMixin
+from import_export.formats import base_formats
+from import_export.resources import ModelResource
 from . import models
 
 
@@ -74,7 +77,6 @@ class DzModelAdmin(admin.ModelAdmin):
             'title': _(self.opts.verbose_name_plural.title()),
             'has_crawl_permission': self.has_crawl_permission(request),
         })
-        print self.model, extra_context
         return super(DzModelAdmin, self).changelist_view(request, extra_context)
 
     def crawl_view(self, request, extra_context=None):
@@ -89,9 +91,26 @@ class DzModelAdmin(admin.ModelAdmin):
         return HttpResponseRedirect(url)
 
 
+class DzExportResource(ModelResource):
+    @classmethod
+    def field_from_django_field(self, field_name, django_field, readonly):
+        field = ModelResource.field_from_django_field(field_name, django_field, readonly)
+        field.column_name = django_field.verbose_name
+        return field
+
+
+class NewsExportResource(DzExportResource):
+    class Meta:
+        model = models.News
+        exclude = ['preamble', 'content', 'subtable']
+
+
 @admin.register(models.News)
-class NewsAdmin(DzModelAdmin):
+class NewsAdmin(ExportMixin, DzModelAdmin):
     can_crawl = True
+    resource_class = NewsExportResource
+    formats = [base_formats.XLSX]
+
     list_display = ['id', 'published', 'section', 'subsection',
                     'short_title', 'title', 'col_content',
                     'updated', 'crawled', 'url', 'archived']
@@ -110,9 +129,18 @@ class NewsAdmin(DzModelAdmin):
     ordering = ['-published', '-id']
 
 
+class TipExportResource(DzExportResource):
+    class Meta:
+        model = models.Tip
+        exclude = ['text']
+
+
 @admin.register(models.Tip)
-class TipAdmin(DzModelAdmin):
+class TipAdmin(ExportMixin, DzModelAdmin):
     can_crawl = True
+    resource_class = TipExportResource
+    formats = [base_formats.XLSX]
+
     list_display = ['id', 'published', 'place', 'title', 'col_tip',
                     'result', 'tipster', 'coeff', 'min_coeff',
                     'stake', 'due', 'spread', 'betting', 'success',

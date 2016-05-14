@@ -1,8 +1,7 @@
 django==1.9.6
 dj-database-url==0.4.1
-gunicorn==19.4.5
+django-import-export==0.4.5
 pytz==2016.4
-w3lib==1.13.0
 vanko-tools==0.1.1
 jinja2==2.8
 
@@ -27,6 +26,7 @@ python-dateutil==2.4.2
 requests==2.10.0
 sqlalchemy==1.0.12
 
+gunicorn==19.4.5
 flake8==2.5.4
 ipython==4.2.0
 ipdb==0.10.0
