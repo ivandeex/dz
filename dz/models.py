@@ -100,10 +100,10 @@ class Tip(models.Model):
     objects = TipsManager()
 
     class Meta:
-        verbose_name_plural = 'news'
         index_together = [
             ['published', 'archived']
         ]
+
 
 @python_2_unicode_compatible
 class Crawl(models.Model):

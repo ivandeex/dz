@@ -1,6 +1,10 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
+from django.conf.urls import url
+from django.core.urlresolvers import reverse
+from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
+from django.http import HttpResponseRedirect
 from . import models
 
 
@@ -10,7 +14,7 @@ admin.site.site_url = None
 
 
 class DzSelectFieldListFilter(admin.AllValuesFieldListFilter):
-    template = 'admin/dz_list_filter.html'
+    template = 'admin/dz/list_filter.html'
 
 
 class DzArchivedListFilter(admin.SimpleListFilter):
@@ -38,14 +42,10 @@ class DzArchivedListFilter(admin.SimpleListFilter):
 class DzModelAdmin(admin.ModelAdmin):
     list_per_page = 50
     actions = None
+    can_crawl = False
 
     class Media:
         css = {'all': ['dz.css']}
-
-    def changelist_view(self, request, extra_context=None):
-        tmpl_resp = super(DzModelAdmin, self).changelist_view(request, extra_context)
-        tmpl_resp.context_data['title'] = _(self.opts.verbose_name_plural.title())
-        return tmpl_resp
 
     def has_add_permission(self, request):
         return False
@@ -56,9 +56,42 @@ class DzModelAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return request.user.is_superuser
 
+    def has_crawl_permission(self, request):
+        return self.can_crawl and self.has_change_permission(request)
+
+    def get_urls(self):
+        urls = super(DzModelAdmin, self).get_urls()
+        if self.can_crawl:
+            wrap = self.admin_site.admin_view
+            info = (self.opts.app_label, self.opts.model_name)
+            extra_urls = [url(r'^crawl/$', wrap(self.crawl_view), name='%s_%s_crawl' % info)]
+            urls = extra_urls + urls
+        return urls
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        extra_context.update({
+            'title': _(self.opts.verbose_name_plural.title()),
+            'has_crawl_permission': self.has_crawl_permission(request),
+        })
+        print self.model, extra_context
+        return super(DzModelAdmin, self).changelist_view(request, extra_context)
+
+    def crawl_view(self, request, extra_context=None):
+        opts = self.opts
+        if self.has_crawl_permission(request):
+            message = '%s crawling started!' % opts.verbose_name_plural.title()
+            self.message_user(request, _(message))
+        url = reverse('admin:%s_%s_changelist' % (opts.app_label, opts.model_name),
+                      current_app=self.admin_site.name)
+        preserved_filters = self.get_preserved_filters(request)
+        url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, url)
+        return HttpResponseRedirect(url)
+
 
 @admin.register(models.News)
 class NewsAdmin(DzModelAdmin):
+    can_crawl = True
     list_display = ['id', 'published', 'section', 'subsection',
                     'short_title', 'title', 'col_content',
                     'updated', 'crawled', 'url', 'archived']
@@ -79,6 +112,7 @@ class NewsAdmin(DzModelAdmin):
 
 @admin.register(models.Tip)
 class TipAdmin(DzModelAdmin):
+    can_crawl = True
     list_display = ['id', 'published', 'place', 'title', 'col_tip',
                     'result', 'tipster', 'coeff', 'min_coeff',
                     'stake', 'due', 'spread', 'betting', 'success',
