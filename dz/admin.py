@@ -45,10 +45,10 @@ class DzArchivedListFilter(admin.SimpleListFilter):
 class DzModelAdmin(admin.ModelAdmin):
     list_per_page = 50
     actions = None
-    can_crawl = False
+    can_crawl = can_export = False
 
     class Media:
-        css = {'all': ['dz.css']}
+        css = {'all': ['dz/dz.css']}
 
     def has_add_permission(self, request):
         return False
@@ -59,29 +59,30 @@ class DzModelAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return request.user.is_superuser
 
-    def has_crawl_permission(self, request):
-        return self.can_crawl and self.has_change_permission(request)
+    def changelist_view(self, request, extra_context=None):
+        tpl_resp = super(DzModelAdmin, self).changelist_view(request, extra_context)
+        tpl_resp.context_data.update({
+            'title': _(self.opts.verbose_name_plural.title()),  # override title
+            'can_crawl': self.can_crawl,
+            'can_export': self.can_export,
+        })
+        return tpl_resp
+
+
+class DzCrawlModelAdmin(ExportMixin, DzModelAdmin):
+    change_list_template = 'admin/dz/change_list.html'
+    formats = [base_formats.XLSX]
+    can_crawl = can_export = True
 
     def get_urls(self):
-        urls = super(DzModelAdmin, self).get_urls()
-        if self.can_crawl:
-            wrap = self.admin_site.admin_view
-            info = (self.opts.app_label, self.opts.model_name)
-            extra_urls = [url(r'^crawl/$', wrap(self.crawl_view), name='%s_%s_crawl' % info)]
-            urls = extra_urls + urls
-        return urls
-
-    def changelist_view(self, request, extra_context=None):
-        extra_context = extra_context or {}
-        extra_context.update({
-            'title': _(self.opts.verbose_name_plural.title()),  # override title
-            'has_crawl_permission': self.has_crawl_permission(request),
-        })
-        return super(DzModelAdmin, self).changelist_view(request, extra_context)
+        urls = super(DzCrawlModelAdmin, self).get_urls()
+        my_urls = [url(r'^crawl/$', self.admin_site.admin_view(self.crawl_view),
+                       name='%s_%s_crawl' % (self.opts.app_label, self.opts.model_name))]
+        return my_urls + urls
 
     def crawl_view(self, request, extra_context=None):
         opts = self.opts
-        if self.has_crawl_permission(request):
+        if self.can_crawl:
             message = '%s crawling started!' % opts.verbose_name_plural.title()
             self.message_user(request, _(message))
         url = reverse('admin:%s_%s_changelist' % (opts.app_label, opts.model_name),
@@ -107,10 +108,8 @@ class NewsExportResource(DzExportResource):
 
 
 @admin.register(models.News)
-class NewsAdmin(ExportMixin, DzModelAdmin):
-    can_crawl = True
+class NewsAdmin(DzCrawlModelAdmin):
     resource_class = NewsExportResource
-    formats = [base_formats.XLSX]
 
     list_display = ['id', 'published', 'section', 'subsection',
                     'short_title', 'title', 'col_content',
@@ -137,10 +136,8 @@ class TipExportResource(DzExportResource):
 
 
 @admin.register(models.Tip)
-class TipAdmin(ExportMixin, DzModelAdmin):
-    can_crawl = True
+class TipAdmin(DzCrawlModelAdmin):
     resource_class = TipExportResource
-    formats = [base_formats.XLSX]
 
     list_display = ['id', 'published', 'place', 'title', 'col_tip',
                     'result', 'tipster', 'coeff', 'min_coeff',

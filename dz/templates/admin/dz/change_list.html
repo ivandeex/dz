@@ -6,26 +6,17 @@
 {% endblock %}
 
 {% block object-tools %}
-  {% if has_add_permission or has_crawl_permission %}
-    <ul class="object-tools">
-      {% block object-tools-items %}
-        {% if has_add_permission %}
-        <li>
-          {% url cl.opts|admin_urlname:'add' as add_url %}
-          <a href="{% add_preserved_filters add_url is_popup to_field %}" class="addlink">
-            {% blocktrans with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktrans %}
-          </a>
-        </li>
-        {% endif %}
-        {% if has_crawl_permission %}
-        <li>
-          {% url cl.opts|admin_urlname:'crawl' as crawl_url %}
-          <a href="{% add_preserved_filters crawl_url is_popup to_field %}" class="golink">
-            {% blocktrans with cl.opts.verbose_name_plural as name %}Crawl {{ name }}{% endblocktrans %}
-          </a>
-        </li>
-        {% endif %}
-      {% endblock %}
-    </ul>
-  {% endif %}
+<ul class="object-tools">
+  {% block object-tools-items %}
+    {% if has_add_permission %}
+      {{ block.super }}
+    {% endif %}
+    {% if can_crawl %}
+      <li><a href="crawl/{{ cl.get_query_string }}" class="golink">Crawl {% trans cl.opts.verbose_name_plural %}</a></li>
+    {% endif %}
+    {% if can_export %}
+      <li><a href="export/{{ cl.get_query_string }}" class="export_link">{% trans "Export" %}</a></li>
+    {% endif %}
+  {% endblock %}
+</ul>
 {% endblock %}
