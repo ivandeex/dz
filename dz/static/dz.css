@@ -1,52 +1,63 @@
-#container {
-    width: auto !important;
+
+#content {
+    padding: 10px 20px;
 }
 
-#content-main {
-    width: auto !important;
+#footer {
+    padding: 0;
 }
 
-#changelist-form .results {
-    width: auto !important;
-    padding-right: 10px;
-}
-
-.object-tools {
-    float: left;
-    margin-left: 480px;
-}
-
-#changelist table tr > td,
-#changelist table tr > th {
-    border: 1px solid #ddd;
-}
-
-#changelist table thead th {
-    white-space: normal !important;
-}
-
-#changelist table tr:hover {
-    background-color: #f4f8ff;
-}
-
-thead th {
-    text-transform: none !important;
-}
-
-#changelist-filter form {
-    border-bottom: 1px solid #eaeaea;
-    margin: 5px 0;
-    padding: 0 15px 15px;
-}
-
-#changelist-filter {
-    margin-right: 10px;
+#changelist {
+    margin-bottom: 0;
 }
 
 #changelist-filter select {
     background-color: #f8f8f8;
+    width: calc(100% - 20px);
+    margin: 0 10px;
+    padding: 0;
+}
+
+#changelist-form .results {
+    min-width: 680px;
+    min-height: 340px;
+    overflow: auto;
+}
+
+#changelist-form .results {
     width: 100%;
-    padding: 0 0;
+    height: calc(100vh - 240px);
+}
+
+#changelist-filter + #changelist-form .results {
+    width: calc(100% - 255px);
+}
+
+#toolbar ~ #changelist-form .results {
+    height: calc(100vh - 300px);
+}
+
+.object-tools {
+    margin-right: 20px;
+}
+
+#result_list {
+    width: auto;
+    height: auto;
+}
+
+#result_list td,
+#result_list th {
+    border: 1px solid #ddd;
+}
+
+#result_list th {
+    text-transform: none;
+    white-space: normal;
+}
+
+#result_list tr:hover {
+    background-color: #f4f8ff;
 }
 
 .dz_pre {
@@ -78,7 +89,7 @@ body.model-news .field-title {
     min-width: 150px;
 }
 
-#changelist td.field-url,
-#changelist td.field-details_url {
+#result_list td.field-url,
+#result_list td.field-details_url {
     font-size: 70%;
 }
