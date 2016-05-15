@@ -74,7 +74,7 @@ class DzModelAdmin(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}
         extra_context.update({
-            'title': _(self.opts.verbose_name_plural.title()),
+            'title': _(self.opts.verbose_name_plural.title()),  # override title
             'has_crawl_permission': self.has_crawl_permission(request),
         })
         return super(DzModelAdmin, self).changelist_view(request, extra_context)
@@ -86,15 +86,16 @@ class DzModelAdmin(admin.ModelAdmin):
             self.message_user(request, _(message))
         url = reverse('admin:%s_%s_changelist' % (opts.app_label, opts.model_name),
                       current_app=self.admin_site.name)
-        preserved_filters = self.get_preserved_filters(request)
-        url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, url)
+        url = add_preserved_filters(
+            {'preserved_filters': self.get_preserved_filters(request), 'opts': opts}, url)
         return HttpResponseRedirect(url)
 
 
 class DzExportResource(ModelResource):
     @classmethod
-    def field_from_django_field(self, field_name, django_field, readonly):
-        field = ModelResource.field_from_django_field(field_name, django_field, readonly)
+    def field_from_django_field(cls, field_name, django_field, readonly):
+        field = super(DzExportResource, cls)\
+            .field_from_django_field(field_name, django_field, readonly)
         field.column_name = django_field.verbose_name
         return field
 
@@ -152,7 +153,6 @@ class TipAdmin(ExportMixin, DzModelAdmin):
                    ('title', DzSelectFieldListFilter),
                    ('tipster', DzSelectFieldListFilter),
                    DzArchivedListFilter,
-                   'updated',
                    ]
     search_fields = ['title', 'tip', 'text']
     date_hierarchy = 'published'
@@ -164,7 +164,7 @@ class TipAdmin(ExportMixin, DzModelAdmin):
 class CrawlAdmin(DzModelAdmin):
     list_display = ['id', 'action', 'type', 'status', 'started', 'ended',
                     'news', 'tips', 'host', 'ipaddr', 'pid']
-    list_filter = ['type', 'action', 'status', 'started', 'host']
+    list_filter = ['type', 'action', 'status', 'host']
     date_hierarchy = 'started'
     radio_fields = {'action': admin.HORIZONTAL, 'type': admin.HORIZONTAL}
     ordering = ['-id']

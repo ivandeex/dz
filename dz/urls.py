@@ -17,8 +17,7 @@ urlpatterns = [
 if settings.DEBUG:
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns
     urlpatterns += staticfiles_urlpatterns()
-
-if settings.HEROKU:
+elif settings.HEROKU:
     from django.views.static import serve
-    static_pattern = r'^%s(?P<path>.*)$' % settings.STATIC_URL.lstrip('/')
-    urlpatterns += [url(static_pattern, serve, kwargs=dict(document_root=settings.STATIC_ROOT))]
+    pattern = r'^%s(?P<path>.*)$' % settings.STATIC_URL.lstrip('/')
+    urlpatterns += [url(pattern, serve, {'document_root': settings.STATIC_ROOT})]
