@@ -28,11 +28,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATIC_URL = '/static/'
 
-# I18n: https://docs.djangoproject.com/en/1.9/topics/i18n/
+LOCALE_PATHS = []
 
 USE_I18N = True
 USE_L10N = False
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 LANGUAGE_COOKIE_NAME = 'lang'
 
 USE_TZ = True

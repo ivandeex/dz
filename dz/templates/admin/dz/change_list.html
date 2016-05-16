@@ -12,7 +12,7 @@
       {{ block.super }}
     {% endif %}
     {% if can_crawl %}
-      <li><a href="crawl/{{ cl.get_query_string }}" class="golink">Crawl {% trans cl.opts.verbose_name_plural %}</a></li>
+      <li><a href="crawl/{{ cl.get_query_string }}" class="golink">{% blocktrans with target=cl.opts.verbose_name_plural %}Crawl {{target}}{% endblocktrans %}</a></li>
     {% endif %}
     {% if can_export %}
       <li><a href="export/{{ cl.get_query_string }}" class="export_link">{% trans "Export" %}</a></li>

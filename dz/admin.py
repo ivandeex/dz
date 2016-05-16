@@ -16,7 +16,7 @@ class DzSelectFieldListFilter(admin.AllValuesFieldListFilter):
 
 
 class DzArchivedListFilter(admin.SimpleListFilter):
-    title = _('Archived')
+    title = _('archive filter')
     parameter_name = 'arch'
 
     def lookups(self, request, model_admin):
