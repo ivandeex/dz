@@ -11,11 +11,6 @@ from import_export.resources import ModelResource
 from . import models
 
 
-admin.site.site_header = admin.site.site_title = 'D.Z.'
-admin.site.index_title = 'Index:'
-admin.site.site_url = None
-
-
 class DzSelectFieldListFilter(admin.AllValuesFieldListFilter):
     template = 'admin/dz/list_filter.html'
 
@@ -108,7 +103,6 @@ class NewsExportResource(DzExportResource):
         exclude = ['preamble', 'content', 'subtable']
 
 
-@admin.register(models.News)
 class NewsAdmin(DzCrawlModelAdmin):
     resource_class = NewsExportResource
 
@@ -136,7 +130,6 @@ class TipExportResource(DzExportResource):
         exclude = ['text']
 
 
-@admin.register(models.Tip)
 class TipAdmin(DzCrawlModelAdmin):
     resource_class = TipExportResource
 
@@ -158,7 +151,6 @@ class TipAdmin(DzCrawlModelAdmin):
     ordering = ['-published', '-id']
 
 
-@admin.register(models.Crawl)
 class CrawlAdmin(DzModelAdmin):
     list_display = ['id', 'action', 'type', 'status', 'started', 'ended',
                     'news', 'tips', 'host', 'ipaddr', 'pid']
@@ -168,7 +160,6 @@ class CrawlAdmin(DzModelAdmin):
     ordering = ['-id']
 
 
-@admin.register(models.User)
 class UserAdmin(DzModelAdmin):
     list_display = ['username', 'is_admin']
     list_filter = ['is_admin']
@@ -176,3 +167,16 @@ class UserAdmin(DzModelAdmin):
 
     def has_add_permission(self, request):
         return request.user.is_superuser
+
+
+class DzAdminSite(admin.AdminSite):
+    site_header = _('D.Z.')
+    site_title = _('D.Z.')
+    index_title = _('Index:')
+    site_url = None
+
+site = DzAdminSite(name='dz-admin')
+site.register(models.News, NewsAdmin)
+site.register(models.Tip, TipAdmin)
+site.register(models.Crawl, CrawlAdmin)
+site.register(models.User, UserAdmin)

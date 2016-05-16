@@ -1,7 +1,4 @@
-"""
-The DZ project.
-"""
-
+# -*- coding: utf-8 -*-
 import os
 import dj_database_url
 from vanko.utils import getenv
@@ -19,13 +16,13 @@ ALLOWED_HOSTS = getenv('ALLOWED_HOSTS', 'localhost').split(',')
 
 DATABASES = {'default': dj_database_url.config(conn_max_age=600)}
 
-ROOT_URLCONF = 'dz.urls'
+ROOT_URLCONF = 'proj.urls'
 
-# WSGI_APPLICATION = 'dz.wsgi.application'
+WSGI_APPLICATION = 'proj.wsgi.application'
 
 # Static files: https://docs.djangoproject.com/en/1.9/howto/static-files/
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
@@ -36,10 +33,17 @@ STATIC_URL = '/static/'
 USE_I18N = True
 USE_L10N = False
 LANGUAGE_CODE = 'en-us'
+LANGUAGE_COOKIE_NAME = 'lang'
 
 USE_TZ = True
 TIME_ZONE = 'Europe/Ljubljana'
 DATETIME_FORMAT = 'Y-m-d H:i:s'
+
+LANGUAGES = [
+    ('en', u'English (US)'),
+    ('sl', u'Slovenščina'),
+    ('ru', u'Русский'),
+]
 
 INSTALLED_APPS = [
     'dz',
@@ -81,6 +85,7 @@ if DEBUG:
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
