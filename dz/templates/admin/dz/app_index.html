@@ -1,0 +1,27 @@
+{% extends "admin/app_index.html" %}
+
+{% block content %}
+<div id="content-main">
+{% for app in app_list %}
+    <div class="app-{{ app.app_label }} module">
+    <table>
+    <caption>
+        <a href="{{ app.app_url }}" class="section">{{ app.name }}</a>
+    </caption>
+    {% for model in app.models %}
+        <tr class="model-{{ model.object_name|lower }}">
+        {% if model.admin_url %}
+            <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
+        {% else %}
+            <th scope="row">{{ model.name }}</th>
+        {% endif %}
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+    {% endfor %}
+    </table>
+    </div>
+{% endfor %}
+</div>
+{% endblock %}
+              
