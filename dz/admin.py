@@ -5,6 +5,7 @@ from django.conf.urls import url
 from django.core.urlresolvers import reverse
 from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
 from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
 from import_export.admin import ExportMixin
 from import_export.formats import base_formats
 from import_export.resources import ModelResource
@@ -174,6 +175,11 @@ class DzAdminSite(admin.AdminSite):
     site_title = _('D.Z.')
     index_title = _('Index:')
     site_url = None
+
+    def index(self, request, extra_context=None):
+        # url = reverse('admin:app_list', kwargs={'app_label': 'dz'}, current_app=self.name)
+        return redirect('%s:app_list' % self.name, app_label='dz')
+
 
 site = DzAdminSite(name='dz-admin')
 site.register(models.News, NewsAdmin)
