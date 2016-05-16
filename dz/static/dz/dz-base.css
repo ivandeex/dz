@@ -1,0 +1,30 @@
+
+ul.dz-lang-selector {
+    display: block;
+    float: right;
+    margin: auto 10px;
+    padding: 0;
+}
+
+ul.dz-lang-selector li {
+    display: inline-block;
+    list-style-type: none;
+    mar
+}
+
+ul.dz-lang-selector .dz-lang-btn {
+    padding: 1px 5px;
+    margin: 0 2px;
+}
+
+ul.dz-lang-selector .dz-lang-btn:hover {
+    text-decoration: underline;
+}
+
+ul.dz-lang-selector .dz-lang-btn.dz-lang-current {
+    color: #f5dd5d;
+}
+
+ul.dz-lang-selector .dz-lang-btn:hover {
+    text-decoration: none;
+}

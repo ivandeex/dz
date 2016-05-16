@@ -1,0 +1,15 @@
+{% load i18n %}
+{% get_current_language as cur_lang %}
+{% get_available_languages as all_langs %}
+<ul class="dz-lang-selector">
+{% for lang in all_langs %}
+  <li>
+    <form action="{% url 'set_language' %}" method="post">
+      {% csrf_token %}
+      <input name="next" type="hidden" value="{{ redirect_to }}" />
+      <input name="language" type="hidden" value="{{ lang.0 }}" />
+      <input type="submit" value="{{ lang.0 }}" class="dz-lang-btn {% if lang.0 == cur_lang %}dz-lang-current{% endif %}" {% if lang.0 == cur_lang %}disabled="disabled"{% endif %} />
+    </form>
+  </li>
+{% endfor %}
+</ul>

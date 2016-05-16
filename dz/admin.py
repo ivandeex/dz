@@ -43,7 +43,7 @@ class DzModelAdmin(admin.ModelAdmin):
     can_crawl = can_export = False
 
     class Media:
-        css = {'all': ['dz/dz.css']}
+        css = {'all': ['dz/dz-changelist.css', 'dz/dz-results.css']}
         js = ['dz/dz.js']
 
     def has_add_permission(self, request):
