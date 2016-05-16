@@ -13,7 +13,14 @@
 {% endblock %}
 
 {% block nav-global %}
-{{ block.super }}
+  {{ block.super }}
+
+  <ul class="dz-top-nav">
+  {% for model in dz_models %}
+    <li><a href="{{ model.url }}">{{ model.name }}</a></li>
+  {% endfor %}
+  </ul>
+
   {% block lang-selector %}
     {% include "admin/dz/lang_selector.html" %}
   {% endblock %}

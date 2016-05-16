@@ -1,6 +1,24 @@
 
+ul.dz-top-nav {
+    display: inline-block;
+    float: left;
+    margin: auto 20px auto 40px;
+    padding: 0;
+}
+
+ul.dz-top-nav li {
+    display: inline-block;
+    list-style-type: none;
+    margin: 0 5px;
+    padding: 0 5px;
+    font-size: 14px;
+    text-transform: uppercase;
+    text-shadow: 1px 1px #333;
+}
+
+
 ul.dz-lang-selector {
-    display: block;
+    display: inline-block;
     float: right;
     margin: auto 10px;
     padding: 0;
@@ -9,7 +27,6 @@ ul.dz-lang-selector {
 ul.dz-lang-selector li {
     display: inline-block;
     list-style-type: none;
-    mar
 }
 
 ul.dz-lang-selector .dz-lang-btn {

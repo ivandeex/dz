@@ -180,6 +180,12 @@ class DzAdminSite(admin.AdminSite):
         # url = reverse('admin:app_list', kwargs={'app_label': 'dz'}, current_app=self.name)
         return redirect('%s:app_list' % self.name, app_label='dz')
 
+    def each_context(self, request):
+        context = super(DzAdminSite, self).each_context(request)
+        context['dz_models'] = [dict(name=model['name'], url=model['admin_url'])
+                                for model in context['available_apps'][0]['models']]
+        return context
+
 
 site = DzAdminSite(name='dz-admin')
 site.register(models.News, NewsAdmin)
