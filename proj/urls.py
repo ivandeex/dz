@@ -14,7 +14,7 @@ urlpatterns = i18n_patterns(
     url(r'^admin/', admin.site.urls, name='django-admin'),
     )
 
-urlpatterns +=  [
+urlpatterns += [
     url(r'^i18n/', include('django.conf.urls.i18n')),
 ]
 
