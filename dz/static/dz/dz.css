@@ -65,7 +65,7 @@
 }
 
 #result_list th {
-    text-transform: none;
+    text-transform: capitalize;
     white-space: normal;
 }
 
