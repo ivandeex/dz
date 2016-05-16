@@ -21,8 +21,8 @@
 
 #changelist-filter select {
     background-color: #f8f8f8;
-    width: calc(100% - 20px);
-    margin: 0 10px;
+    width: calc(100% - 30px);
+    margin: 0 15px;
     padding: 0;
 }
 
