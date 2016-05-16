@@ -49,6 +49,7 @@ class DzModelAdmin(admin.ModelAdmin):
 
     class Media:
         css = {'all': ['dz/dz.css']}
+        js = ['dz/dz.js']
 
     def has_add_permission(self, request):
         return False

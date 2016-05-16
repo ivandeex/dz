@@ -11,6 +11,14 @@
     margin-bottom: 0;
 }
 
+#changelist-filter.hidden h2 {
+    margin-bottom: 0;
+}
+
+#changelist-filter.hidden h2 ~ * {
+    display: none;
+}
+
 #changelist-filter select {
     background-color: #f8f8f8;
     width: calc(100% - 20px);
@@ -22,19 +30,24 @@
     min-width: 680px;
     min-height: 340px;
     overflow: auto;
+    margin-top: 5px;
 }
 
 #changelist-form .results {
     width: 100%;
-    height: calc(100vh - 240px);
+    height: calc(100vh - 250px);
 }
 
 #changelist-filter + #changelist-form .results {
     width: calc(100% - 255px);
 }
 
+#changelist-filter.hidden + #changelist-form .results {
+    width: 100%;
+}
+
 #toolbar ~ #changelist-form .results {
-    height: calc(100vh - 300px);
+    height: calc(100vh - 310px);
 }
 
 .object-tools {
