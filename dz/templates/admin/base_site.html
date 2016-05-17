@@ -4,7 +4,7 @@
 {% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
 {% block branding %}
-<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Admin') }}</a></h1>
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
 {% endblock %}
 
 {% block extrahead %}
@@ -20,7 +20,10 @@
     <li><a href="{{ model.url }}">{{ model.name }}</a></li>
   {% endfor %}
   </ul>
+{% endblock %}
 
+{% block usertools %}
+  {{ block.super }}
   {% block lang-selector %}
     {% include "admin/dz/lang_selector.html" %}
   {% endblock %}
