@@ -4,6 +4,14 @@ import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+try:
+    from honcho.environ import parse as parse_env
+    with open(os.path.join(BASE_DIR, '.env')) as f:
+        for name, value in parse_env(f.read()).items():
+            os.environ.setdefault(name, value)
+except IOError:
+    pass
+
 # Settings: https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 DEBUG = bool(int(os.environ.get('DEBUG', False)))

@@ -28,6 +28,8 @@ python-dateutil==2.5.3
 requests==2.11.0
 sqlalchemy==1.0.14
 
+ansible==2.1.1
+honcho==0.7.1
 gunicorn==19.6.0
 flake8==3.0.4
 ipython==5.0.0
