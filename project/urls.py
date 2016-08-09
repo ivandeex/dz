@@ -12,7 +12,7 @@ urlpatterns = i18n_patterns(
     url(r'^dz/admin/', dz_admin_site.urls, name='dz-admin'),
     url(r'^dz/', include('dz.urls', namespace='dz')),
     url(r'^admin/', admin.site.urls, name='django-admin'),
-    )
+)
 
 urlpatterns += [
     url(r'^i18n/', include('django.conf.urls.i18n')),

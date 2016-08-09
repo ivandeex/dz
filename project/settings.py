@@ -1,28 +1,23 @@
 # -*- coding: utf-8 -*-
 import os
 import dj_database_url
-from vanko.utils import getenv
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Settings: https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
-DEBUG = getenv('DEBUG', False)
-DEBUG_SQL = getenv('DEBUG_SQL', DEBUG)
-HEROKU = getenv('HEROKU', not DEBUG)
+DEBUG = bool(int(os.environ.get('DEBUG', False)))
+DEBUG_SQL = bool(int(os.environ.get('DEBUG_SQL', DEBUG)))
+HEROKU = bool(int(os.environ.get('HEROKU', not DEBUG)))
 
-SECRET_KEY = getenv('SECRET_KEY', 'ahXeija:eth;ahyuagohheez3uok|eoXohNaiyaphaiJiyeeyi')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'please change me')
 
-ALLOWED_HOSTS = getenv('ALLOWED_HOSTS', 'localhost').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
 
 DATABASES = {'default': dj_database_url.config(conn_max_age=600)}
 
-ROOT_URLCONF = 'proj.urls'
-
-WSGI_APPLICATION = 'proj.wsgi.application'
-
-# Static files: https://docs.djangoproject.com/en/1.9/howto/static-files/
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT_URLCONF = 'project.urls'
+WSGI_APPLICATION = 'project.wsgi.application'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
@@ -57,7 +52,7 @@ INSTALLED_APPS = [
 ]
 
 if DEBUG:
-    INTERNAL_IPS = getenv('INTERNAL_IPS', '127.0.0.1').split(',')
+    INTERNAL_IPS = os.environ.get('INTERNAL_IPS', '127.0.0.1').split(',')
 
     INSTALLED_APPS += [
         'debug_toolbar',
@@ -160,6 +155,10 @@ LOGGING = {
     },
 }
 
+# Migration from MongoDB
+
+MONGODB_URL = os.environ.get('MONGODB_URL', '')
+
 # Custom DZ settings
 
-NARROW_GRIDS = getenv('NARROW_GRIDS', False)
+NARROW_GRIDS = bool(int(os.environ.get('NARROW_GRIDS', False)))
