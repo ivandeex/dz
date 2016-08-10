@@ -9,5 +9,7 @@
     {% include "admin/dz/lang_selector.html" %}
     <p>{% blocktrans context 'welcome' %}Hello {{csv_usernames}}!{% endblocktrans %}</p>
     <p>{% blocktrans context 'welcome' %}Welcome to {{server_name}}!{% endblocktrans %}</p>
+    <p><a href="{% url 'admin:index' %}">Django Admin</a></p>
+    <p><a href="{% url 'dz-admin:index' %}">DZ Admin</a></p>
   </body>
 </html>

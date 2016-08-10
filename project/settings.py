@@ -47,6 +47,10 @@ TIME_ZONE = 'Europe/Ljubljana'
 DATETIME_FORMAT = 'Y-m-d H:i:s'
 
 
+if DEBUG:
+    SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
+
 INSTALLED_APPS = [
     'dz',
     'django.contrib.admin',
