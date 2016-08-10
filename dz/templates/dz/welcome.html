@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+{% load i18n %}
+<html>
+  <head>
+    <meta charset="utf8">
+    <title>{% trans 'Welcome' context 'welcome' %}</title>
+  </head>
+  <body>
+    {% include "admin/dz/lang_selector.html" %}
+    <p>{% blocktrans context 'welcome' %}Hello {{csv_usernames}}!{% endblocktrans %}</p>
+    <p>{% blocktrans context 'welcome' %}Welcome to {{server_name}}!{% endblocktrans %}</p>
+  </body>
+</html>

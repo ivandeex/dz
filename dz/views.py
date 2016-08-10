@@ -1,10 +1,12 @@
-from django.http import HttpResponse
+from django.template.response import TemplateResponse
 # from django.shortcuts import render
 from .models import User
 
 
 def index(request):
     usernames = User.objects.order_by('username').values('username')
-    return HttpResponse(
-        '<html><body><p>Hello %s! Welcome to %s!</p></body></html>'
-        % (','.join(x['username'] for x in usernames), request.get_host()))
+    context = {
+        'csv_usernames': ', '.join(x['username'] for x in usernames),
+        'server_name': request.get_host(),
+    }
+    return TemplateResponse(request, 'dz/welcome.html', context)

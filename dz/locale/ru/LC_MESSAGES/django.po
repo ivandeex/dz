@@ -2,8 +2,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: vanko\n"
-"POT-Creation-Date: 2016-05-16 18:45+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-08-10 15:56+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: vanko\n"
 "Language-Team: vanko\n"
@@ -15,266 +15,297 @@ msgstr ""
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: dz/admin.py:19
+#: admin.py:20
 msgid "archive filter"
 msgstr "архив"
 
-#: dz/admin.py:24
+#: admin.py:25
 msgid "All"
 msgstr "Все"
 
-#: dz/admin.py:25 dz/models.py:10
+#: admin.py:26 models.py:10
 msgid "Archived"
 msgstr "Архивные"
 
-#: dz/admin.py:26 dz/models.py:11
+#: admin.py:27 models.py:11
 msgid "Fresh"
 msgstr "Свежие"
 
-#: dz/admin.py:173 dz/admin.py:174
+#: admin.py:174 admin.py:175
 msgid "D.Z."
 msgstr "Д.З."
 
-#: dz/admin.py:175
+#: admin.py:176
 msgid "Index:"
 msgstr "Индекс:"
 
-#: dz/models.py:24
+#: models.py:24
 msgid "news id"
 msgstr "№"
 
-#: dz/models.py:25
+#: models.py:25
 msgid "news link"
 msgstr "ссылка"
 
-#: dz/models.py:26
+#: models.py:26
+#, fuzzy
+#| msgid "news id"
 msgid "news title"
-msgstr ""
+msgstr "№"
 
-#: dz/models.py:27 dz/models.py:71
+#: models.py:27 models.py:71
 msgid "participants"
 msgstr "участники"
 
-#: dz/models.py:28
+#: models.py:28
 msgid "sport"
 msgstr "спорт"
 
-#: dz/models.py:29 dz/models.py:72
+#: models.py:29 models.py:72
 msgid "liga"
 msgstr "лига"
 
 #. Translators: Published (Objavleno)
-#: dz/models.py:30 dz/models.py:92
+#: models.py:30 models.py:92
 msgid "published"
 msgstr "опубликовано"
 
-#: dz/models.py:31 dz/models.py:93
+#: models.py:31 models.py:93
 msgid "updated"
 msgstr "обновлено"
 
-#: dz/models.py:32 dz/models.py:94
+#: models.py:32 models.py:94
 msgid "fetched"
 msgstr "собрано"
 
-#: dz/models.py:33 dz/models.py:96
+#: models.py:33 models.py:96
 msgid "archived"
 msgstr "Архивность"
 
-#: dz/models.py:34
+#: models.py:34
 msgid "news preamble"
 msgstr "преамбула"
 
-#: dz/models.py:35
+#: models.py:35
+#, fuzzy
+#| msgid "short news content"
 msgid "full news content"
-msgstr ""
+msgstr "выдержка"
 
-#: dz/models.py:36
+#: models.py:36
 msgid "news subtable"
 msgstr "таблица данных"
 
-#: dz/models.py:45
+#: models.py:45
 msgid "short news content"
 msgstr "выдержка"
 
-#: dz/models.py:54
+#: models.py:54
 msgid "news"
 msgstr "новость"
 
-#: dz/models.py:55
+#: models.py:55
 msgid "newss"
 msgstr "новости"
 
-#: dz/models.py:70
+#: models.py:70
 msgid "tip id"
 msgstr "№"
 
-#: dz/models.py:73
+#: models.py:73
 msgid "tip title"
 msgstr "заголовок"
 
 #. Translators: Betting (Kladionica)
-#: dz/models.py:76
+#: models.py:76
 msgid "betting"
 msgstr "бетинг"
 
 #. Translators: Coeff. (Koeficijent)
-#: dz/models.py:78
+#: models.py:78
 msgid "tip coefficient"
 msgstr "коеф."
 
-#: dz/models.py:79
+#: models.py:79
 msgid "minimum tip coeff"
 msgstr "мин. коеф."
 
 #. Translators: Result (Rezultat)
-#: dz/models.py:81
+#: models.py:81
 msgid "tip result"
 msgstr "результат"
 
 #. Translators: Earnings Due (Zarada)
-#: dz/models.py:83
+#: models.py:83
 msgid "earnings"
 msgstr "выплаты"
 
 #. Translators: Spread (Is. Margina)
-#: dz/models.py:85
+#: models.py:85
 msgid "spread"
 msgstr "спред"
 
 #. Translators: Stake (Ulog)
-#: dz/models.py:87
+#: models.py:87
 msgid "stake"
 msgstr "стейк"
 
 #. Translators: Success (Uspje\u0161nost)
-#: dz/models.py:89
+#: models.py:89
 msgid "tip success"
 msgstr "успешность"
 
-#: dz/models.py:90
+#: models.py:90
 msgid "tipster"
 msgstr "чья ставка"
 
-#: dz/models.py:95
+#: models.py:95
 msgid "tip link"
 msgstr "ссылка"
 
-#: dz/models.py:107
+#: models.py:107
 msgid "short tip"
 msgstr "ставка"
 
-#: dz/models.py:116
+#: models.py:116
 msgid "tip"
 msgstr "ставка"
 
-#: dz/models.py:117
+#: models.py:117
 msgid "tips"
 msgstr "ставки"
 
-#: dz/models.py:126
+#: models.py:126
 msgid "manual crawl"
 msgstr "ручное"
 
-#: dz/models.py:127
+#: models.py:127
 msgid "auto crawl"
 msgstr "авто"
 
-#: dz/models.py:131
+#: models.py:131
 msgid "news crawl"
 msgstr "новости"
 
-#: dz/models.py:132
+#: models.py:132
 msgid "tips crawl"
 msgstr "ставки"
 
 #. Translators: Job Id
-#: dz/models.py:136
+#: models.py:136
 msgid "crawl id"
 msgstr "№"
 
-#: dz/models.py:137
+#: models.py:137
 msgid "crawl type"
 msgstr "тип"
 
-#: dz/models.py:138
+#: models.py:138
 msgid "crawl target"
 msgstr "что"
 
-#: dz/models.py:139
+#: models.py:139
 msgid "crawl status"
 msgstr "статус"
 
-#: dz/models.py:140
+#: models.py:140
 msgid "started at"
 msgstr "начато"
 
-#: dz/models.py:141
+#: models.py:141
 msgid "ended at"
 msgstr "окончено"
 
-#: dz/models.py:142
+#: models.py:142
 msgid "no. of news"
 msgstr "к-во новостей"
 
-#: dz/models.py:143
+#: models.py:143
 msgid "no. of tips"
 msgstr "к-во ставок"
 
-#: dz/models.py:144
+#: models.py:144
 msgid "hostname"
 msgstr "хост"
 
-#: dz/models.py:145
+#: models.py:145
 msgid "ip address"
 msgstr "ip-адрес"
 
 #. Translators: PID
-#: dz/models.py:147
+#: models.py:147
 msgid "crawler pid"
 msgstr "ид. процесса"
 
-#: dz/models.py:153
+#: models.py:153
 msgid "crawl"
 msgstr "обновление"
 
-#: dz/models.py:154
+#: models.py:154
 msgid "crawls"
 msgstr "обновления"
 
-#: dz/models.py:159
+#: models.py:159
 msgid "dz user name"
 msgstr "имя"
 
-#: dz/models.py:160
+#: models.py:160
 msgid "dz user password"
 msgstr "пароль"
 
-#: dz/models.py:161
+#: models.py:161
 msgid "is dz administrator"
 msgstr "администратор?"
 
-#: dz/models.py:167
+#: models.py:167
 msgid "dz user"
 msgstr "пользователь"
 
-#: dz/models.py:168
+#: models.py:168
 msgid "dz users"
 msgstr "пользователи"
 
-#: dz/templates/admin/dz/change_list.html:5
+#: templates/admin/base_site.html:4
+msgid "Django site admin"
+msgstr ""
+
+#: templates/admin/base_site.html:7
+#, fuzzy
+#| msgid "is dz administrator"
+msgid "Django administration"
+msgstr "администратор?"
+
+#: templates/admin/dz/change_list.html:5
 msgid "Log out"
 msgstr ""
 
-#: dz/templates/admin/dz/change_list.html:15
+#: templates/admin/dz/change_list.html:15
 #, python-format
 msgid "Crawl %(target)s"
 msgstr "Обновить %(target)s"
 
-#: dz/templates/admin/dz/change_list.html:18
+#: templates/admin/dz/change_list.html:18
 msgid "Export"
 msgstr ""
 
-#: dz/templates/admin/dz/list_filter.html:2
+#: templates/admin/dz/list_filter.html:2
 #, python-format
 msgid " By %(filter_title)s "
 msgstr " Фильтр: %(filter_title)s "
+
+#: templates/dz/welcome.html:6
+msgctxt "welcome"
+msgid "Welcome"
+msgstr "Добро пожаловать"
+
+#: templates/dz/welcome.html:10
+#, python-format
+msgctxt "welcome"
+msgid "Hello %(csv_usernames)s!"
+msgstr "Привет, %(csv_usernames)s!"
+
+#: templates/dz/welcome.html:11
+#, python-format
+msgctxt "welcome"
+msgid "Welcome to %(server_name)s!"
+msgstr "Добро пожаловать на сервер %(server_name)s!"
