@@ -182,8 +182,9 @@ class DzAdminSite(admin.AdminSite):
 
     def each_context(self, request):
         context = super(DzAdminSite, self).each_context(request)
-        context['dz_models'] = [dict(name=model['name'], url=model['admin_url'])
-                                for model in context['available_apps'][0]['models']]
+        apps = context['available_apps']
+        models = apps[0]['models'] if apps else []  # can be empty if not logged in
+        context['dz_models'] = [dict(name=m['name'], url=m['admin_url']) for m in models]
         return context
 
 
