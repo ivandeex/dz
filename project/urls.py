@@ -30,3 +30,8 @@ elif settings.HEROKU:
     from django.views.static import serve
     pattern = r'^%s(?P<path>.*)$' % settings.STATIC_URL.lstrip('/')
     urlpatterns += [url(pattern, serve, {'document_root': settings.STATIC_ROOT})]
+
+
+if settings.DEBUG and settings.DEBUG_TOOLBAR_ENABLED:
+    import debug_toolbar
+    urlpatterns += [url(r'^__debug__/', include(debug_toolbar.urls))]

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import dj_database_url
+import django
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -63,7 +64,7 @@ INSTALLED_APPS = [
 ]
 
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -75,32 +76,30 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+_django_version = django.VERSION[0] * 100 + django.VERSION[1]
 
-if DEBUG:
+if _django_version < 110:
+    MIDDLEWARE_CLASSES = MIDDLEWARE
+
+
+DEBUG_TOOLBAR_ENABLED = True
+
+if DEBUG and DEBUG_TOOLBAR_ENABLED:
+    INSTALLED_APPS += ['debug_toolbar']
     INTERNAL_IPS = os.environ.get('INTERNAL_IPS', '127.0.0.1').split(',')
+    DEBUG_TOOLBAR_CONFIG = {'SHOW_COLLAPSED': True}
+    DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
-    INSTALLED_APPS += [
-        'debug_toolbar',
-    ]
+    if _django_version < 110:
+        MIDDLEWARE_CLASSES.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
+    else:
+        from django.utils.deprecation import MiddlewareMixin
+        from debug_toolbar.middleware import DebugToolbarMiddleware
 
-    DEBUG_TOOLBAR_PANELS = [
-        'debug_toolbar.panels.versions.VersionsPanel',
-        'debug_toolbar.panels.timer.TimerPanel',
-        'debug_toolbar.panels.settings.SettingsPanel',
-        'debug_toolbar.panels.headers.HeadersPanel',
-        'debug_toolbar.panels.request.RequestPanel',
-        'debug_toolbar.panels.sql.SQLPanel',
-        'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-        'debug_toolbar.panels.templates.TemplatesPanel',
-        'debug_toolbar.panels.cache.CachePanel',
-        'debug_toolbar.panels.signals.SignalsPanel',
-        'debug_toolbar.panels.logging.LoggingPanel',
-        'debug_toolbar.panels.redirects.RedirectsPanel',
-    ]
+        class Django110DebugToolbarMiddleware(MiddlewareMixin, DebugToolbarMiddleware):
+            pass
 
-    DEBUG_TOOLBAR_CONFIG = {
-        'SHOW_COLLAPSED': True,
-    }
+        MIDDLEWARE.insert(0, 'project.settings.Django110DebugToolbarMiddleware')
 
 
 TEMPLATES = [
