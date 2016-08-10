@@ -3,5 +3,5 @@ from __future__ import unicode_literals
 from django.apps import AppConfig
 
 
-class DzappConfig(AppConfig):
+class DzAppConfig(AppConfig):
     name = 'dz'

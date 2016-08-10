@@ -17,6 +17,13 @@
     - apt: pkg={{item}}
       with_items:
         - gettext  # for translations
+        - build-essential
+        - libpython-dev
+        - libffi-dev
+        - libssl-dev
+        - libjpeg-dev
+        - libxml2-dev
+        - libxslt1-dev
 
 - hosts: localhost
   become: true

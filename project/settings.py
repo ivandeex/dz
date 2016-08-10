@@ -2,6 +2,7 @@
 import os
 import dj_database_url
 
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 try:
@@ -12,7 +13,6 @@ try:
 except IOError:
     pass
 
-# Settings: https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 DEBUG = bool(int(os.environ.get('DEBUG', False)))
 DEBUG_SQL = bool(int(os.environ.get('DEBUG_SQL', DEBUG)))
@@ -36,16 +36,16 @@ USE_I18N = True
 USE_L10N = False
 LANGUAGE_CODE = 'en'
 LANGUAGE_COOKIE_NAME = 'lang'
-
-USE_TZ = True
-TIME_ZONE = 'Europe/Ljubljana'
-DATETIME_FORMAT = 'Y-m-d H:i:s'
-
 LANGUAGES = [
     ('en', u'English (US)'),
     ('sl', u'Slovenščina'),
     ('ru', u'Русский'),
 ]
+
+USE_TZ = True
+TIME_ZONE = 'Europe/Ljubljana'
+DATETIME_FORMAT = 'Y-m-d H:i:s'
+
 
 INSTALLED_APPS = [
     'dz',
@@ -57,6 +57,20 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'import_export',
 ]
+
+
+MIDDLEWARE_CLASSES = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
 
 if DEBUG:
     INTERNAL_IPS = os.environ.get('INTERNAL_IPS', '127.0.0.1').split(',')
@@ -84,17 +98,6 @@ if DEBUG:
         'SHOW_COLLAPSED': True,
     }
 
-MIDDLEWARE_CLASSES = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
 
 TEMPLATES = [
     {
@@ -128,8 +131,6 @@ if DEBUG:
     TEMPLATES[0]['APP_DIRS'] = True
     del TEMPLATES[0]['OPTIONS']['loaders']
 
-# Password validation
-# https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -137,6 +138,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
+
 
 LOGGING = {
     'version': 1,
@@ -161,6 +163,7 @@ LOGGING = {
         },
     },
 }
+
 
 # Migration from MongoDB
 
