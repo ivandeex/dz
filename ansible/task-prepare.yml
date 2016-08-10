@@ -11,6 +11,15 @@
 
 - hosts: localhost
   become: true
+  gather_facts: false
+  tags: install
+  tasks:
+    - apt: pkg={{item}}
+      with_items:
+        - gettext  # for translations
+
+- hosts: localhost
+  become: true
   become_user: postgres
   gather_facts: false
   tags: db
