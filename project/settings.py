@@ -27,8 +27,7 @@ DATABASES = {'default': dj_database_url.config(conn_max_age=600)}
 ROOT_URLCONF = 'project.urls'
 WSGI_APPLICATION = 'project.wsgi.application'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'dist', 'static')
 STATIC_URL = '/static/'
 
 LOCALE_PATHS = []

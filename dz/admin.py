@@ -44,8 +44,8 @@ class DzModelAdmin(admin.ModelAdmin):
     can_crawl = can_export = False
 
     class Media:
-        css = {'all': ['dz/dz-changelist.css', 'dz/dz-results.css']}
-        js = ['dz/dz.js']
+        css = {'all': ['dz/admin/changelist.css', 'dz/admin/results.css']}
+        js = ['dz/admin/filter.js']
 
     def has_add_permission(self, request):
         return False
