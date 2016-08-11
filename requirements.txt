@@ -5,6 +5,7 @@ pytz==2016.6.1
 vanko-tools==0.1.1
 jinja2==2.8
 psycopg2==2.6.2
+whitenoise==3.2.1
 
 flask==0.10.1
 flask-admin==1.4.0

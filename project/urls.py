@@ -5,7 +5,6 @@ from django.conf import settings
 from django.shortcuts import redirect
 from dz import admin as dz_admin
 
-
 urlpatterns = [
 ]
 
@@ -21,16 +20,6 @@ urlpatterns_setlang = [url(r'^i18n/', include('django.conf.urls.i18n'))]
 urlpatterns_i18n += urlpatterns_setlang
 urlpatterns += i18n_patterns(*urlpatterns_i18n)
 urlpatterns += urlpatterns_i18n   # fallback to default language for urls without langugage code
-
-
-if settings.DEBUG:
-    from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-    urlpatterns += staticfiles_urlpatterns()
-elif settings.HEROKU:
-    from django.views.static import serve
-    pattern = r'^%s(?P<path>.*)$' % settings.STATIC_URL.lstrip('/')
-    urlpatterns += [url(pattern, serve, {'document_root': settings.STATIC_ROOT})]
-
 
 if settings.DEBUG and settings.DEBUG_TOOLBAR_ENABLED:
     import debug_toolbar

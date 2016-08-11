@@ -4,6 +4,8 @@ import dj_database_url
 import django
 
 
+_django_version = django.VERSION[0] * 100 + django.VERSION[1]
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 try:
@@ -30,6 +32,7 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'dist', 'static')
 STATIC_URL = '/static/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 LOCALE_PATHS = []
 
@@ -59,13 +62,15 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'whitenoise.runserver_nostatic',  # same as manage.py runserver --nostatic
+    'django.contrib.staticfiles',     # for manage.py collectstatic
     'import_export',
 ]
 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -75,8 +80,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-_django_version = django.VERSION[0] * 100 + django.VERSION[1]
 
 if _django_version < 110:
     MIDDLEWARE_CLASSES = MIDDLEWARE
