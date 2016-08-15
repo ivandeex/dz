@@ -30,9 +30,29 @@ DATABASES = {'default': dj_database_url.config(conn_max_age=600)}
 ROOT_URLCONF = 'project.urls'
 WSGI_APPLICATION = 'project.wsgi.application'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'dist', 'static')
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'dist', 'static')
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'assets')
+]
+
+
+_webpack_stats_static = os.path.join(BASE_DIR, 'webpack/stats.json')
+_webpack_stats_hotserver = os.path.join(BASE_DIR, 'webpack/stats.hotserver.json')
+if DEBUG and os.path.exists(_webpack_stats_hotserver):
+    _webpack_stats_file = _webpack_stats_hotserver
+else:
+    _webpack_stats_file = _webpack_stats_static
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': '/',
+        'STATS_FILE': _webpack_stats_file
+    }
+}
+
 
 LOCALE_PATHS = []
 
@@ -64,7 +84,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'whitenoise.runserver_nostatic',  # same as manage.py runserver --nostatic
     'django.contrib.staticfiles',     # for manage.py collectstatic
+
     'import_export',
+    'webpack_loader',
 ]
 
 

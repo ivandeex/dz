@@ -1,0 +1,45 @@
+
+.dz-top-nav {
+  float: left;
+  margin: 0;
+  padding: 0;
+  padding-left: calc(40% - 200px);
+
+  li {
+    display: inline-block;
+    list-style-type: none;
+    margin: 0 5px;
+    padding: 0 5px;
+    font-size: 14px;
+    text-transform: uppercase;
+    text-shadow: 1px 1px #333;
+  }
+}
+
+.dz-lang-selector {
+  float: right;
+  margin: auto 10px;
+  padding: 0;
+
+  li {
+    display: inline-block;
+    list-style-type: none;
+  }
+
+  .dz-lang-btn {
+    padding: 1px 5px;
+    margin: 0 2px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &.dz-lang-current {
+      color: #f5dd5d;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+}

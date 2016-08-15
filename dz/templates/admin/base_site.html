@@ -1,5 +1,6 @@
 {% extends "admin/base.html" %}
 {% load admin_static %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
@@ -7,9 +8,14 @@
 <h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
 {% endblock %}
 
-{% block extrahead %}
+{% block extrastyle %}
 {{ block.super }}
-<link rel="stylesheet" type="text/css" href="{% static 'dz/admin/base.css' %}" />
+{% render_bundle 'dz-admin' 'css' %}
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+{% render_bundle 'dz-admin' 'js' %}
 {% endblock %}
 
 {% block nav-global %}

@@ -5,4 +5,5 @@ ansible-playbook -i hosts task-prepare.yml
 cd ..
 python manage.py makemigrations --noinput --exit && python manage.py migrate --noinput
 python manage.py compilemessages
+npm run assets
 python manage.py collectstatic --noinput
