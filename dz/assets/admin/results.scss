@@ -18,6 +18,25 @@ body {
 }
 
 #result_list {
+  width: auto;
+  height: auto;
+
+  td,
+  th {
+    border: 1px solid #ddd;
+  }
+
+  th {
+    text-transform: capitalize;
+    white-space: normal;
+  }
+
+  tr {
+    &:hover {
+      background-color: #f4f8ff;
+    }
+  }
+
   td.field-url,
   td.field-details_url {
     font-size: 70%;

@@ -27,6 +27,30 @@
     h2 ~ * {
       display: none;
     }
+
+    #toolbar {
+      display: none;
+    }
+  }
+
+  #toolbar {
+    margin: 0;
+
+    #changelist-search {
+      label {
+        float: left;
+      }
+
+      #searchbar {
+        width: 189px;
+        margin: 0;
+      }
+
+      input[type="submit"],
+      .small.quiet {
+        display: none;
+      }
+    }
   }
 }
 
@@ -54,33 +78,6 @@
   }
 }
 
-#toolbar ~ #changelist-form {
-  .results {
-    height: calc(100vh - 310px);
-  }
-}
-
 .object-tools {
   margin-right: 20px;
-}
-
-#result_list {
-  width: auto;
-  height: auto;
-
-  td,
-  th {
-    border: 1px solid #ddd;
-  }
-
-  th {
-    text-transform: capitalize;
-    white-space: normal;
-  }
-
-  tr {
-    &:hover {
-      background-color: #f4f8ff;
-    }
-  }
 }

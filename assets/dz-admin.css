@@ -49,6 +49,20 @@
 #changelist-filter.hidden h2 ~ * {
   display: none; }
 
+#changelist-filter.hidden #toolbar {
+  display: none; }
+
+#changelist-filter #toolbar {
+  margin: 0; }
+  #changelist-filter #toolbar #changelist-search label {
+    float: left; }
+  #changelist-filter #toolbar #changelist-search #searchbar {
+    width: 189px;
+    margin: 0; }
+  #changelist-filter #toolbar #changelist-search input[type="submit"],
+  #changelist-filter #toolbar #changelist-search .small.quiet {
+    display: none; }
+
 #changelist-filter + #changelist-form .results {
   width: calc(100% - 255px); }
 
@@ -63,11 +77,16 @@
   width: 100%;
   height: calc(100vh - 250px); }
 
-#toolbar ~ #changelist-form .results {
-  height: calc(100vh - 310px); }
-
 .object-tools {
   margin-right: 20px; }
+body.model-tip .field-col_tip {
+  min-width: 240px; }
+
+body.model-news .field-col_content {
+  min-width: 240px; }
+
+body.model-news .field-title {
+  min-width: 150px; }
 
 #result_list {
   width: auto;
@@ -80,18 +99,9 @@
     white-space: normal; }
   #result_list tr:hover {
     background-color: #f4f8ff; }
-body.model-tip .field-col_tip {
-  min-width: 240px; }
-
-body.model-news .field-col_content {
-  min-width: 240px; }
-
-body.model-news .field-title {
-  min-width: 150px; }
-
-#result_list td.field-url,
-#result_list td.field-details_url {
-  font-size: 70%; }
+  #result_list td.field-url,
+  #result_list td.field-details_url {
+    font-size: 70%; }
 
 .dz_pre {
   font-style: italic;

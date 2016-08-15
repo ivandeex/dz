@@ -1,5 +1,5 @@
 {% extends "admin/change_list.html" %}
-{% load i18n admin_urls %}
+{% load i18n admin_urls admin_list %}
 
 {% block userlinks %}
   <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
@@ -19,4 +19,17 @@
     {% endif %}
   {% endblock %}
 </ul>
+{% endblock %}
+
+{% block search %}
+{% endblock %}
+
+{% block filters %}
+  {% if cl.has_filters %}
+    <div id="changelist-filter">
+      <h2>{% trans 'Filter' %}</h2>
+      {% search_form cl %}
+      {% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
+    </div>
+  {% endif %}
 {% endblock %}

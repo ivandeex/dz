@@ -107,7 +107,7 @@ if _django_version < 110:
     MIDDLEWARE_CLASSES = MIDDLEWARE
 
 
-DEBUG_TOOLBAR_ENABLED = True
+DEBUG_TOOLBAR_ENABLED = bool(int(os.environ.get('DEBUG_TOOLBAR', True)))
 
 if DEBUG and DEBUG_TOOLBAR_ENABLED:
     INSTALLED_APPS += ['debug_toolbar']
