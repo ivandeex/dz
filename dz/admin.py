@@ -162,6 +162,7 @@ class CrawlAdmin(DzModelAdmin):
 
 
 class UserAdmin(DzModelAdmin):
+    fields = ['username', 'password', 'is_admin']
     list_display = ['username', 'is_admin']
     list_filter = ['is_admin']
     ordering = ['username']
