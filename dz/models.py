@@ -3,10 +3,8 @@ from django.db import models
 from django.utils.html import format_html, strip_tags
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth import get_user_model
-from django.core.exceptions import ObjectDoesNotExist
-from django.conf import settings
 from .utils import cut_str
+from .auth import User  # noqa
 
 
 ARCHIVED_CHOICES = [
@@ -155,50 +153,3 @@ class Crawl(models.Model):
     class Meta:
         verbose_name = _('crawl')
         verbose_name_plural = _('crawls')
-
-
-@python_2_unicode_compatible
-class User(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-                                primary_key=True, blank=True, db_column='id')
-
-    username = models.CharField(_('dz user name'), max_length=20, unique=True, db_index=True)
-    password = models.CharField(_('dz user password'), max_length=64)
-    is_admin = models.BooleanField(_('is dz administrator'))
-
-    def __str__(self):
-        return self.username
-
-    class Meta:
-        verbose_name = _('dz user')
-        verbose_name_plural = _('dz users')
-
-    def save(self, *args, **kwargs):
-        if self.user_id is None:
-            AuthUser = get_user_model()
-            user, new = AuthUser.objects.get_or_create(username=self.username)
-            if new:
-                user.save()
-            self.user = user
-        super(User, self).save(*args, **kwargs)
-
-        is_special = self.username == 'admin'
-        user = self.user
-        user.is_active = True
-        user.is_staff = True
-        user.is_superuser = self.is_admin or is_special
-        user.username = self.username
-        user.first_name = self.username
-        user.email = self.username + '@example.com'
-        if not is_special:
-            user.set_password(self.password)
-        user.save()
-
-    def delete(self, *args, **kwargs):
-        if self.username != 'admin':
-            try:
-                self.user.is_active = False
-                self.user.save()
-            except ObjectDoesNotExist:
-                pass
-        return super(User, self).delete(*args, **kwargs)
