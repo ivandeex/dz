@@ -175,7 +175,6 @@ class DzAdminSite(admin.AdminSite):
     site_header = _('D.Z.')
     site_title = _('D.Z.')
     index_title = _('Index:')
-    site_url = None
 
     def index(self, request, extra_context=None):
         # url = reverse('admin:app_list', kwargs={'app_label': 'dz'}, current_app=self.name)
