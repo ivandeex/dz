@@ -71,7 +71,8 @@ TIME_ZONE = 'Europe/Ljubljana'
 DATETIME_FORMAT = 'Y-m-d H:i:s'
 
 
-if DEBUG:
+DEBUG_SESSIONS = bool(int(os.environ.get('DEBUG_SESSIONS', False)))
+if DEBUG_SESSIONS:
     SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
 
