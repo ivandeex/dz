@@ -42,25 +42,45 @@ class DzModelAdmin(admin.ModelAdmin):
     list_per_page = 50
     actions = None
     can_crawl = can_export = False
+    _get_readonly_fields_called = False
 
     # class Media:
     #     css = {'all': ['dz/admin/changelist.css', 'dz/admin/results.css']}
     #     js = ['dz/admin/filter.js']
 
+    def has_dz_permissions(self, request, require_admin=True):
+        try:
+            dz_user = request.user.dz_user
+            return dz_user.is_admin or not require_admin
+        except (models.User.DoesNotExist, AttributeError):
+            return request.user.is_superuser
+
+    def has_module_permission(self, request):
+        return self.has_dz_permissions(request, require_admin=False)
+
     def has_add_permission(self, request):
-        return False
+        return self.has_dz_permissions(request)
 
     def has_change_permission(self, request, obj=None):
-        return request.user.is_superuser
+        return self.has_dz_permissions(request)
 
     def has_delete_permission(self, request, obj=None):
-        return request.user.is_superuser
+        return self.has_dz_permissions(request)
+
+    def get_readonly_fields(self, request, obj=None):
+        if self._get_readonly_fields_called or self.has_dz_permissions(request):
+            return super(DzModelAdmin, self).get_readonly_fields(request, obj)
+        try:
+            self._get_readonly_fields_called = True
+            return self.get_fields(request, obj)
+        finally:
+            self._get_readonly_fields_called = False
 
     def changelist_view(self, request, extra_context=None):
         tpl_resp = super(DzModelAdmin, self).changelist_view(request, extra_context)
         tpl_resp.context_data.update({
             'title': _(self.opts.verbose_name_plural.title()),  # override title
-            'can_crawl': self.can_crawl,
+            'can_crawl': self.can_crawl and self.has_dz_permissions(request),
             'can_export': self.can_export,
         })
         return tpl_resp
@@ -70,6 +90,9 @@ class DzCrawlModelAdmin(ExportMixin, DzModelAdmin):
     change_list_template = 'admin/dz/change_list.html'
     formats = [base_formats.XLSX]
     can_crawl = can_export = True
+
+    def has_change_permission(self, request, obj=None):
+        return self.has_dz_permissions(request, require_admin=False)
 
     def get_urls(self):
         urls = super(DzCrawlModelAdmin, self).get_urls()
