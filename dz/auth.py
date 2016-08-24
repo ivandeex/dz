@@ -3,6 +3,7 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.conf import settings
 from django.db.models import signals
 from django.dispatch.dispatcher import receiver
@@ -25,7 +26,7 @@ class User(models.Model):
         verbose_name_plural = _('dz users')
 
     @property
-    def is_special(self):
+    def is_super(self):
         return self.username == 'admin'
 
 
@@ -44,12 +45,26 @@ def _pre_save_dz_user(sender, **kwargs):
 def _post_save_dz_user(sender, **kwargs):
     dz_user = kwargs['instance']
     auth_user = dz_user.user
-    auth_user.is_active = auth_user.is_staff = True
-    auth_user.is_superuser = dz_user.is_admin or dz_user.is_special
     auth_user.username = auth_user.first_name = dz_user.username
     auth_user.email = '%s@example.com' % dz_user.username
-    if not dz_user.is_special:
+    auth_user.is_active = auth_user.is_staff = True
+
+    auth_user.is_superuser = dz_user.is_super
+    if not dz_user.is_super:
         auth_user.set_password(dz_user.password)
+
+    auth_perms = auth_user.user_permissions
+    perms_mgr = Permission.objects
+    app_label = 'dz'
+    if dz_user.is_admin:
+        all_dz_perms = perms_mgr.filter(content_type__app_label=app_label)
+        auth_perms.set(all_dz_perms)
+        for perm in ('view_news', 'view_tips'):
+            auth_perms.remove(perms_mgr.get(codename=perm, content_type__app_label=app_label))
+    else:
+        auth_perms.clear()
+        for perm in ('change_news', 'change_tip', 'view_news', 'view_tips'):
+            auth_perms.add(perms_mgr.get(codename=perm, content_type__app_label=app_label))
     auth_user.save()
 
 
@@ -75,5 +90,5 @@ def _post_save_auth_user(sender, **kwargs):
 def _on_delete_dz_user(sender, **kwargs):
     dz_user = kwargs['instance']
     auth_user = dz_user.user
-    if not dz_user.is_special:
+    if not dz_user.is_super:
         auth_user.delete()

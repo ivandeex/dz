@@ -57,6 +57,10 @@ class News(models.Model):
         index_together = [
             ['published', 'archived']
         ]
+        permissions = [
+            ('crawl_news', _('Can crawl news')),
+            ('view_news', _('Can only view news')),
+        ]
 
 
 class TipsManager(models.Manager):
@@ -118,6 +122,10 @@ class Tip(models.Model):
         verbose_name_plural = _('tips')
         index_together = [
             ['published', 'archived']
+        ]
+        permissions = [
+            ('crawl_tips', _('Can crawl tips')),
+            ('view_tips', _('Can only view tips')),
         ]
 
 

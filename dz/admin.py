@@ -41,34 +41,21 @@ class DzArchivedListFilter(admin.SimpleListFilter):
 class DzModelAdmin(admin.ModelAdmin):
     list_per_page = 50
     actions = None
-    can_crawl = can_export = False
+    can_export = False
     _get_readonly_fields_called = False
 
     # class Media:
     #     css = {'all': ['dz/admin/changelist.css', 'dz/admin/results.css']}
     #     js = ['dz/admin/filter.js']
 
-    def has_dz_permissions(self, request, require_admin=True):
-        try:
-            dz_user = request.user.dz_user
-            return dz_user.is_admin or not require_admin
-        except (models.User.DoesNotExist, AttributeError):
-            return request.user.is_superuser
+    def user_is_readonly(self, auth_user):
+        return False
 
-    def has_module_permission(self, request):
-        return self.has_dz_permissions(request, require_admin=False)
-
-    def has_add_permission(self, request):
-        return self.has_dz_permissions(request)
-
-    def has_change_permission(self, request, obj=None):
-        return self.has_dz_permissions(request)
-
-    def has_delete_permission(self, request, obj=None):
-        return self.has_dz_permissions(request)
+    def user_can_crawl(self, auth_user):
+        return False
 
     def get_readonly_fields(self, request, obj=None):
-        if self._get_readonly_fields_called or self.has_dz_permissions(request):
+        if self._get_readonly_fields_called or not self.user_is_readonly(request.user):
             return super(DzModelAdmin, self).get_readonly_fields(request, obj)
         try:
             self._get_readonly_fields_called = True
@@ -80,7 +67,7 @@ class DzModelAdmin(admin.ModelAdmin):
         tpl_resp = super(DzModelAdmin, self).changelist_view(request, extra_context)
         tpl_resp.context_data.update({
             'title': _(self.opts.verbose_name_plural.title()),  # override title
-            'can_crawl': self.can_crawl and self.has_dz_permissions(request),
+            'can_crawl': self.user_can_crawl(request.user),
             'can_export': self.can_export,
         })
         return tpl_resp
@@ -89,10 +76,7 @@ class DzModelAdmin(admin.ModelAdmin):
 class DzCrawlModelAdmin(ExportMixin, DzModelAdmin):
     change_list_template = 'admin/dz/change_list.html'
     formats = [base_formats.XLSX]
-    can_crawl = can_export = True
-
-    def has_change_permission(self, request, obj=None):
-        return self.has_dz_permissions(request, require_admin=False)
+    can_export = True
 
     def get_urls(self):
         urls = super(DzCrawlModelAdmin, self).get_urls()
@@ -147,6 +131,12 @@ class NewsAdmin(DzCrawlModelAdmin):
     radio_fields = {'archived': admin.HORIZONTAL}
     ordering = ['-published', '-id']
 
+    def user_is_readonly(self, auth_user):
+        return auth_user.has_perm('dz.view_news')
+
+    def user_can_crawl(self, auth_user):
+        return auth_user.has_perm('dz.crawl_news')
+
 
 class TipExportResource(DzExportResource):
     class Meta:
@@ -173,6 +163,12 @@ class TipAdmin(DzCrawlModelAdmin):
     date_hierarchy = 'published'
     radio_fields = {'archived': admin.HORIZONTAL}
     ordering = ['-published', '-id']
+
+    def user_is_readonly(self, auth_user):
+        return auth_user.has_perm('dz.view_tips')
+
+    def user_can_crawl(self, auth_user):
+        return auth_user.has_perm('dz.crawl_tips')
 
 
 class CrawlAdmin(DzModelAdmin):
