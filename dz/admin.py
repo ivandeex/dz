@@ -54,6 +54,11 @@ class DzModelAdmin(admin.ModelAdmin):
     def user_can_crawl(self, auth_user):
         return False
 
+    def get_list_display_links(self, request, list_display):
+        if self.user_is_readonly(request.user):
+            return None
+        return super(DzModelAdmin, self).get_list_display_links(request, list_display)
+
     def get_readonly_fields(self, request, obj=None):
         if self._get_readonly_fields_called or not self.user_is_readonly(request.user):
             return super(DzModelAdmin, self).get_readonly_fields(request, obj)
