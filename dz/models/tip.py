@@ -38,7 +38,7 @@ class Tip(models.Model):
     stake = models.CharField(_('stake'), max_length=8)
     # Translators: Success (Uspje\u0161nost)
     success = models.CharField(_('tip success'), max_length=12, null=True)
-    tipster = models.CharField(_('tipster'), max_length=12)
+    tipster = models.CharField(_('tipster'), max_length=12, db_index=True)
     # Translators: Published (Objavleno)
     published = models.DateTimeField(_('published'), null=True, db_index=True)
     updated = models.DateTimeField(_('updated'))
