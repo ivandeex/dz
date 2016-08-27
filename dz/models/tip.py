@@ -4,7 +4,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import format_html, strip_tags
 from .common import ARCHIVED_CHOICES
-from .common import cut_str
+from .common import CutStr
 
 
 class TipsManager(models.Manager):
@@ -12,7 +12,8 @@ class TipsManager(models.Manager):
 
     def get_queryset(self, *args, **kw):
         qs = super(TipsManager, self).get_queryset(*args, **kw)
-        return qs.defer('text')
+        qs = qs.defer('text').annotate(text_cut=CutStr('text', 80))
+        return qs
 
 
 @python_2_unicode_compatible
@@ -51,7 +52,7 @@ class Tip(models.Model):
             u'<div class="dz_body"><span>{cut}</span> '
             u'<a data-toggle="modal" href="{url}" title="Show text" '
             u'data-target="#fa_modal_window">(more...)</a></div>',
-            cut=cut_str(strip_tags(self.text or ''), 80),
+            cut=strip_tags(self.text_cut or ''),
             url='show_tip?id=%s' % self.id,
             tip=self.tip)
     col_tip.short_description = _('short tip')

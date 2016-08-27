@@ -1,4 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
+from django.db.models import CharField, TextField
+from django.db.models.functions import Length, Substr, Concat
+from django.db.models import Case, When, Value
 
 
 ARCHIVED_CHOICES = [
@@ -7,12 +10,12 @@ ARCHIVED_CHOICES = [
 ]
 
 
-def as_choices(seq):
-    return [(x, x) for x in seq]
+CharField.register_lookup(Length, 'length')
+TextField.register_lookup(Length, 'length')
 
 
-def cut_str(text, length):
-    text = text or ''
-    if len(text) > length:
-        text = text[:length] + '...'
-    return text
+def CutStr(field, length):
+    when = {('%s__length__gt' % field): length, 'then': Value('...')}
+    return Concat(Substr(field, 1, length),
+                  Case(When(**when), default_value=Value('')),
+                  output_field=CharField(max_length=length+3))

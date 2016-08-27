@@ -132,7 +132,7 @@ class NewsAdmin(DzCrawlModelAdmin):
                    ]
     search_fields = ['short_title', 'title', 'preamble', 'content']
     date_hierarchy = 'published'
-    exclude = ['subtable']
+    exclude = ['content', 'subtable']
     radio_fields = {'archived': admin.HORIZONTAL}
     ordering = ['-published', '-id']
 
@@ -165,6 +165,7 @@ class TipAdmin(DzCrawlModelAdmin):
                    DzArchivedListFilter,
                    ]
     search_fields = ['title', 'tip', 'text']
+    exclude = ['text']
     date_hierarchy = 'published'
     radio_fields = {'archived': admin.HORIZONTAL}
     ordering = ['-published', '-id']

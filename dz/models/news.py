@@ -4,7 +4,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import format_html, strip_tags
 from .common import ARCHIVED_CHOICES
-from .common import cut_str
+from .common import CutStr
 
 
 class NewsManager(models.Manager):
@@ -12,7 +12,9 @@ class NewsManager(models.Manager):
 
     def get_queryset(self, *args, **kw):
         qs = super(NewsManager, self).get_queryset(*args, **kw)
-        return qs.defer('content', 'subtable')
+        qs = qs.defer('content').annotate(content_cut=CutStr('content', 100))
+        qs = qs.defer('preamble').annotate(preamble_cut=CutStr('preamble', 60))
+        return qs
 
 
 @python_2_unicode_compatible
@@ -35,8 +37,8 @@ class News(models.Model):
         return format_html(
             u'<div class="dz_pre">{pre}</div> <div class="dz_body"><span>'
             u'{text}</span> <a href="{url}" target="_blank">(more...)</a></div>',
-            pre=cut_str(strip_tags(self.preamble), 60),
-            text=cut_str(strip_tags(self.content), 100),
+            pre=strip_tags(self.preamble_cut),
+            text=strip_tags(self.content_cut),
             url='/show_stub?id=%s' % self.id)
     col_content.short_description = _('short news content')
     col_content.admin_order_field = 'preamble'
