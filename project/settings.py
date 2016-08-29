@@ -16,14 +16,16 @@ try:
 except IOError:
     pass
 
+getenv = os.environ.get
 
-DEBUG = bool(int(os.environ.get('DEBUG', False)))
-DEBUG_SQL = bool(int(os.environ.get('DEBUG_SQL', DEBUG)))
-HEROKU = bool(int(os.environ.get('HEROKU', not DEBUG)))
 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'please change me')
+DEBUG = bool(int(getenv('DEBUG', False)))
+DEBUG_SQL = bool(int(getenv('DEBUG_SQL', DEBUG)))
+HEROKU = bool(int(getenv('HEROKU', not DEBUG)))
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
+SECRET_KEY = getenv('SECRET_KEY', 'please change me')
+
+ALLOWED_HOSTS = getenv('ALLOWED_HOSTS', 'localhost').split(',')
 
 DATABASES = {'default': dj_database_url.config(conn_max_age=600)}
 
@@ -71,7 +73,7 @@ TIME_ZONE = 'Europe/Ljubljana'
 DATETIME_FORMAT = 'Y-m-d H:i:s'
 
 
-DEBUG_SESSIONS = bool(int(os.environ.get('DEBUG_SESSIONS', False)))
+DEBUG_SESSIONS = bool(int(getenv('DEBUG_SESSIONS', False)))
 if DEBUG_SESSIONS:
     SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
@@ -108,11 +110,11 @@ if _django_version < 110:
     MIDDLEWARE_CLASSES = MIDDLEWARE
 
 
-DEBUG_TOOLBAR_ENABLED = bool(int(os.environ.get('DEBUG_TOOLBAR', True)))
+DEBUG_TOOLBAR_ENABLED = bool(int(getenv('DEBUG_TOOLBAR', True)))
 
 if DEBUG and DEBUG_TOOLBAR_ENABLED:
     INSTALLED_APPS += ['debug_toolbar']
-    INTERNAL_IPS = os.environ.get('INTERNAL_IPS', '127.0.0.1').split(',')
+    INTERNAL_IPS = getenv('INTERNAL_IPS', '127.0.0.1').split(',')
     DEBUG_TOOLBAR_CONFIG = {'SHOW_COLLAPSED': True}
     DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
@@ -199,8 +201,8 @@ LOGGING = {
 
 # Migration from MongoDB
 
-MONGODB_URL = os.environ.get('MONGODB_URL', '')
+MONGODB_URL = getenv('MONGODB_URL', '')
 
 # Custom DZ settings
 
-NARROW_GRIDS = bool(int(os.environ.get('NARROW_GRIDS', False)))
+NARROW_GRIDS = bool(int(getenv('NARROW_GRIDS', False)))
