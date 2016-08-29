@@ -1,13 +1,21 @@
 import random
 import hashlib
-import json
 import logging
 from datetime import datetime
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q, F
 from django.template.response import TemplateResponse
 from django.conf import settings
 from . import models
+
+try:
+    import cjson as json
+except ImportError:
+    try:
+        import simplejson as json
+    except ImportError:
+        import json
 
 
 def index(request):
@@ -42,6 +50,7 @@ def prepare_api_response():
     return meta, utc
 
 
+@csrf_exempt
 def api_spider_run(request):
     my_meta, utc = prepare_api_response()
 
@@ -80,6 +89,7 @@ def api_spider_run(request):
     return HttpResponse(json.dumps(response), content_type='application/json')
 
 
+@csrf_exempt
 def api_spider_results(request):
     my_meta, utc = prepare_api_response()
 

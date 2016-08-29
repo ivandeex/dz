@@ -11,7 +11,8 @@ urlpatterns = [
 urlpatterns_i18n = [
     url(r'^admin/', admin.site.urls),
     url(r'^dz/admin/', dz_admin.site.urls),
-    url(r'^dz/', include('dz.urls')),
+    url(r'^dz/', include('dz.urls', namespace='dz')),
+    url(r'^', include('dz.urls', namespace='dz2')),
     url(r'^$', lambda request: redirect('dz:index')),
 ]
 

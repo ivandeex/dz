@@ -28,7 +28,7 @@ if True:
         TakeFirstItemLoader, Item, Field,
         StripField, JoinField, DateTimeField)
     from vanko.utils import (
-        getenv, decode_userpass, randsleep, result_as_list, extract_datetime)
+        getenv, decode_userpass, randsleep, as_list, extract_datetime)
     from vanko.scrapy.webdriver import WebdriverRequest, WebdriverResponse
     # from vanko.utils.pdb import set_trace
 
@@ -50,12 +50,11 @@ CustomSettings.register(
     SINGLE_PK=0,
     WITH_IMAGES=True,
     STARTTIME='',
-    )
+)
 
-SERVICE_POLL_SECONDS = 50
-WEB_SERVER = getenv('WEB_SERVER', 'http://dz.vanko.me')
-SECRET_KEY = getenv('SECRET_KEY', 'kLIuJ_dvoznak2016_v3')
-API_ROOT = '/api/spider/'
+SERVICE_POLL_SECONDS = getenv('POLL_SECONDS', 50)
+WEB_SERVER = getenv('WEB_SERVER', 'http://dz.more.vanko.me/dz/api/spider/')
+SECRET_KEY = getenv('SECRET_KEY', 'kLIuJ_dvoznak2016_v4')
 
 
 class NewsItem(Item):
@@ -147,7 +146,7 @@ class DvoznakSpider(CustomSpider):
             self.tips_list(response)
         elif 'news' in self.action_list:
             result = self.wd_news_safe(response)
-        for x in result_as_list(result):
+        for x in as_list(result):
             yield x
 
     def wd_login(self, response):
@@ -455,7 +454,7 @@ def api_request(logger, action, request, starttime=None, type=None, **kwargs):
     data['meta'] = meta
     status = data.get('status', 'status')
 
-    url = urljoin(web_server, API_ROOT + request)
+    url = urljoin(web_server, request)
     try:
         res = requests.post(url, json=data).json()
         meta = res.pop('meta', {})
@@ -480,7 +479,7 @@ class Schedule(object):
         time(12, 02): 'tips',
         time(10, 00): 'news',
         time(18, 30): 'news',
-        }
+    }
 
     def __init__(self):
         self.last_mtime = self.mtime
@@ -603,17 +602,24 @@ class Service(object):
         Process2(target=run_spider, kwargs=kwargs).start()
 
 
-def getopt(optname):
+def getopt(optname, env=None):
     for arg in sys.argv:
         mo = re.match(r'^--%s(?:=(.*))?$' % optname, arg)
         if mo:
-            return mo.group(1) or ''
+            val = mo.group(1) or ''
+            if env:
+                os.environ[env] = val
+            return val
     return None
 
 
 def main():
     from vanko.scrapy import setup_stderr
     logging.getLogger('requests.packages.urllib3').setLevel(logging.WARN)
+
+    getopt('server', env='WEB_SERVER')
+    getopt('secret', env='SECRET_KEY')
+    getopt('pollsec', env='POLL_SECONDS')
 
     if getopt('action'):
         return run_spider(DvoznakSpider, argv=True)
