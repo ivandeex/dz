@@ -1,10 +1,12 @@
+from __future__ import unicode_literals
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.conf.urls import url
 from django.core.urlresolvers import reverse
 from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseNotFound
+from django.template.response import TemplateResponse
 from django.shortcuts import redirect
 from import_export.admin import ExportMixin
 from import_export.formats import base_formats
@@ -69,6 +71,8 @@ class DzModelAdmin(admin.ModelAdmin):
             self._get_readonly_fields_called = False
 
     def changelist_view(self, request, extra_context=None):
+        request.current_app = self.admin_site.name
+        self._request = request
         tpl_resp = super(DzModelAdmin, self).changelist_view(request, extra_context)
         tpl_resp.context_data.update({
             'title': _(self.opts.verbose_name_plural.title()),  # override title
@@ -85,17 +89,18 @@ class DzCrawlModelAdmin(ExportMixin, DzModelAdmin):
 
     def get_urls(self):
         urls = super(DzCrawlModelAdmin, self).get_urls()
-        my_urls = [url(r'^crawl/$', self.admin_site.admin_view(self.crawl_view),
-                       name='%s_%s_crawl' % (self.opts.app_label, self.opts.model_name))]
-        return my_urls + urls
+        wrap = self.admin_site.admin_view
+        rev_fmt = self.opts.app_label, self.opts.model_name
+        crawl_url = url(r'^crawl/$', wrap(self.crawl_view), name='%s_%s_crawl' % rev_fmt)
+        return [crawl_url] + urls
 
     def crawl_view(self, request, extra_context=None):
         opts = self.opts
-        if self.can_crawl:
+        if self.user_can_crawl(request.user):
             message = '%s crawling started!' % opts.verbose_name_plural.title()
             self.message_user(request, _(message))
-        url = reverse('admin:%s_%s_changelist' % (opts.app_label, opts.model_name),
-                      current_app=self.admin_site.name)
+        rev_fmt = opts.app_label, opts.model_name
+        url = reverse('admin:%s_%s_changelist' % rev_fmt, current_app=self.admin_site.name)
         url = add_preserved_filters(
             {'preserved_filters': self.get_preserved_filters(request), 'opts': opts}, url)
         return HttpResponseRedirect(url)
@@ -142,6 +147,26 @@ class NewsAdmin(DzCrawlModelAdmin):
     def user_can_crawl(self, auth_user):
         return auth_user.has_perm('dz.crawl_news')
 
+    def col_content(self, obj):
+        tpl = TemplateResponse(self._request, 'admin/dz/news_content_col.html',
+                               context=dict(obj=obj, opts=self.opts))
+        return tpl.rendered_content
+    col_content.short_description = _('short news content')
+    col_content.admin_order_field = 'preamble'
+
+    def get_urls(self):
+        news_stub_url = url(r'^(?P<id>\d+)/news_stub/$',
+                            self.admin_site.admin_view(self.news_stub_view),
+                            name='%s_%s_news_stub' % (self.opts.app_label, self.opts.model_name))
+        return [news_stub_url] + super(NewsAdmin, self).get_urls()
+
+    def news_stub_view(self, request, id):
+        obj = self.get_object(request, id)
+        if obj:
+            return TemplateResponse(request, 'admin/dz/news_stub.html', dict(obj=obj))
+        else:
+            return HttpResponseNotFound()
+
 
 class TipExportResource(DzExportResource):
     class Meta:
@@ -175,6 +200,27 @@ class TipAdmin(DzCrawlModelAdmin):
 
     def user_can_crawl(self, auth_user):
         return auth_user.has_perm('dz.crawl_tips')
+
+    def col_tip(self, obj):
+        tpl = TemplateResponse(self._request, 'admin/dz/tip_text_col.html',
+                               context=dict(obj=obj, opts=self.opts))
+        return tpl.rendered_content
+    col_tip.short_description = _('short tip')
+    col_tip.admin_order_field = 'tip'
+
+    def get_urls(self):
+        tip_text_url = url(r'^(?P<id>\d+)/tip_text/$',
+                           self.admin_site.admin_view(self.tip_text_view),
+                           name='%s_%s_tip_text' % (self.opts.app_label, self.opts.model_name))
+        return [tip_text_url] + super(TipAdmin, self).get_urls()
+
+    def tip_text_view(self, request, id):
+        obj = self.get_object(request, id)
+        if obj:
+            return TemplateResponse(request, 'admin/dz/tip_text_popup.html',
+                                    dict(obj=obj, is_popup=True))
+        else:
+            return HttpResponseNotFound()
 
 
 class CrawlAdmin(DzModelAdmin):

@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-from django.utils.html import format_html, strip_tags
 from .common import ARCHIVED_CHOICES
 from .common import CutStr
 
@@ -45,18 +44,6 @@ class Tip(models.Model):
     crawled = models.DateTimeField(_('fetched'))
     details_url = models.URLField(_('tip link'))
     archived = models.CharField(_('archived'), max_length=9, choices=ARCHIVED_CHOICES)
-
-    def col_tip(self):
-        return format_html(
-            u'<div class="dz_title">{tip}</div>'
-            u'<div class="dz_body"><span>{cut}</span> '
-            u'<a data-toggle="modal" href="{url}" title="Show text" '
-            u'data-target="#fa_modal_window">(more...)</a></div>',
-            cut=strip_tags(self.text_cut or ''),
-            url='show_tip?id=%s' % self.id,
-            tip=self.tip)
-    col_tip.short_description = _('short tip')
-    col_tip.admin_order_field = 'tip'
 
     def __str__(self):
         return u'{} ({})'.format(self.tip, self.id)

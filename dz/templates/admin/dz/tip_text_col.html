@@ -1,0 +1,8 @@
+{% load i18n admin_urls %}
+<div class="dz_title">{{ obj.tip }}</div>
+{% if obj.text_cut %}
+<div class="dz_body">
+  <span>{{ obj.text_cut | striptags }}</span>
+  <a href="{% url opts|admin_urlname:'tip_text' id=obj.id %}" title="{% trans 'Show text' %}" id="{% blocktrans %}Tip {{obj.id}}{% endblocktrans %}" onclick="return showRelatedObjectLookupPopup(this);">({% trans 'more...' %})</a>
+</div>
+{% endif %}

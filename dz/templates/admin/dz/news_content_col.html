@@ -1,0 +1,6 @@
+{% load i18n admin_urls %}
+<div class="dz_pre">{{ obj.preamble_cut | striptags }}</div>
+<div class="dz_body">
+  <span>{{ obj.content_cut | striptags }}</span>
+  <a href="{% url opts|admin_urlname:'news_stub' id=obj.id %}" target="_blank">({% trans 'more...' %})</a>
+</div>
