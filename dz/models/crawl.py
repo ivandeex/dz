@@ -23,7 +23,7 @@ class Crawl(models.Model):
     action = models.CharField(_('crawl target'), max_length=6,
                               choices=ACTION_CHOICES, db_index=True)
     status = models.CharField(_('crawl status'), max_length=10)
-    started = models.DateTimeField(_('started at'))
+    started = models.DateTimeField(_('started at'), null=True)
     ended = models.DateTimeField(_('ended at'), null=True)
     news = models.SmallIntegerField(_('no. of news'))
     tips = models.SmallIntegerField(_('no. of tips'))
