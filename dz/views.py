@@ -10,12 +10,13 @@ from django.conf import settings
 from . import models
 
 try:
-    import cjson as json
+    import cjson
+    json_encode = cjson.encode
+    json_decode = cjson.decode
 except ImportError:
-    try:
-        import simplejson as json
-    except ImportError:
-        import json
+    import json
+    json_encode = json.dumps
+    json_decode = json.loads
 
 
 def index(request):
@@ -31,7 +32,7 @@ def parse_api_request(request):
     assert request.method == 'POST', 'Invalid request type'
     assert request.content_type == 'application/json', 'Invalid content type'
 
-    res = json.loads(request.body.decode(request.encoding or settings.DEFAULT_CHARSET))
+    res = json_decode(request.body.decode(request.encoding or settings.DEFAULT_CHARSET))
     meta = res.pop('meta')
 
     ref_digest = meta.pop('digest', '')
@@ -86,7 +87,8 @@ def api_spider_run(request):
         response = dict(okay=True, action=action, env=env, meta=my_meta)
     except Exception as err:
         response = dict(okay=False, error=repr(err), meta=my_meta)
-    return HttpResponse(json.dumps(response), content_type='application/json')
+
+    return HttpResponse(json_encode(response), content_type='application/json')
 
 
 @csrf_exempt
@@ -159,4 +161,4 @@ def api_spider_results(request):
         logging.getLogger(__name__).info('Invalid message from spider: %s', err)
         response = dict(okay=False, error=repr(err), meta=my_meta)
 
-    return HttpResponse(json.dumps(response), content_type='application/json')
+    return HttpResponse(json_encode(response), content_type='application/json')
