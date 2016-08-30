@@ -38,7 +38,7 @@ class DzArchivedListFilter(admin.SimpleListFilter):
 
 class DzModelAdmin(admin.ModelAdmin):
     list_per_page = 50
-    actions = None
+    # actions = None
     can_export = False
     _get_readonly_fields_called = False
 
@@ -70,11 +70,12 @@ class DzModelAdmin(admin.ModelAdmin):
         request.current_app = self.admin_site.name
         self._request = request
         tpl_resp = super(DzModelAdmin, self).changelist_view(request, extra_context)
-        tpl_resp.context_data.update({
-            'title': _(self.opts.verbose_name_plural.title()),  # override title
-            'can_crawl': self.user_can_crawl(request.user),
-            'can_export': self.can_export,
-        })
+        if hasattr(tpl_resp, 'context_data'):
+            tpl_resp.context_data.update({
+                'title': _(self.opts.verbose_name_plural.title()),  # override title
+                'can_crawl': self.user_can_crawl(request.user),
+                'can_export': self.can_export,
+            })
         return tpl_resp
 
 
