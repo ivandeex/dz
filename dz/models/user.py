@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.conf import settings
-from django.db.models import signals
+from django.db.models import signals, Q
 from django.dispatch.dispatcher import receiver
 
 
@@ -56,15 +56,15 @@ def _post_save_dz_user(sender, **kwargs):
     auth_perms = auth_user.user_permissions
     perms_mgr = Permission.objects
     app_label = 'dz'
+    all_dz_perms = perms_mgr.filter(content_type__app_label=app_label)
+
     if dz_user.is_admin:
-        all_dz_perms = perms_mgr.filter(content_type__app_label=app_label)
-        auth_perms.set(all_dz_perms)
-        for perm in ('view_news', 'view_tips'):
-            auth_perms.remove(perms_mgr.get(codename=perm, content_type__app_label=app_label))
+        skip_perm_codes = ('add_crawl', 'add_news', 'add_tip', 'view_news', 'view_tips')
+        auth_perms.set(all_dz_perms.filter(~Q(codename__in=skip_perm_codes)))
     else:
-        auth_perms.clear()
-        for perm in ('change_news', 'change_tip', 'view_news', 'view_tips'):
-            auth_perms.add(perms_mgr.get(codename=perm, content_type__app_label=app_label))
+        view_perm_codes = ('change_news', 'change_tip', 'view_news', 'view_tips')
+        auth_perms.set(all_dz_perms.filter(codename__in=view_perm_codes))
+
     auth_user.save()
 
 

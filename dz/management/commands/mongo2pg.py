@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.utils import timezone
 from pymongo import MongoClient
-from dz.models import News, Tip, Crawl, User
+from dz import models
 
 
 class Command(BaseCommand):
@@ -15,26 +15,48 @@ class Command(BaseCommand):
                 dt = timezone.datetime.strptime(dt, '%Y-%m-%d %H:%M:%S')
             return timezone.make_aware(dt)
 
-    def handle(self, *args, **options):
-        mongodb = MongoClient(settings.MONGODB_URL).get_default_database()
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--table', '-t', dest='table', help='Table(s) to import',
+            default='all', choices=['all', 'users', 'crawls', 'tips', 'news']
+        )
 
-        User.objects.all().delete()
+    def handle(self, *args, **options):
+        table = options['table']
+        self.mongodb = MongoClient(settings.MONGODB_URL).get_default_database()
+        if table in ('users', 'all'):
+            count = self.import_users()
+            print '%d users imported' % count
+        if table in ('crawls', 'all'):
+            count = self.import_crawls()
+            print '%d crawls imported' % count
+        if table in ('tips', 'all'):
+            count = self.import_tips()
+            print '%d tips imported' % count
+        if table in ('news', 'all'):
+            count = self.import_news()
+            print '%d news imported' % count
+        self.mongodb.client.close()
+
+    def import_users(self):
+        models.User.objects.all().delete()
         count = 0
-        for item in mongodb.dvoznak_users.find(sort=[('username', 1)]):
-            User.objects.create(
+        for item in self.mongodb.dvoznak_users.find(sort=[('username', 1)]):
+            models.User.objects.create(
                 username=item['username'],
                 password=item['password'],
                 is_admin=item['is_admin'],
             )
             count += 1
-        print '%d users imported' % count
+        return count
 
-        Crawl.objects.all().delete()
+    def import_crawls(self):
+        models.Crawl.objects.all().delete()
         count = 0
         ordering = [('pk', 1)]
-        mongodb.dvoznak_crawls.create_index(ordering)
-        for item in mongodb.dvoznak_crawls.find(sort=ordering):
-            Crawl.objects.create(
+        self.mongodb.dvoznak_crawls.create_index(ordering)
+        for item in self.mongodb.dvoznak_crawls.find(sort=ordering):
+            models.Crawl.objects.create(
                 id=item['pk'],
                 type=item['type'],
                 action=item['action'],
@@ -48,14 +70,15 @@ class Command(BaseCommand):
                 pid=item['pid'],
             )
             count += 1
-        print '%d crawls imported' % count
+        return count
 
-        Tip.objects.all().delete()
+    def import_tips(self):
+        models.Tip.objects.all().delete()
         ordering = [('published', 1), ('crawled', 1)]
-        mongodb.dvoznak_tips.create_index(ordering)
+        self.mongodb.dvoznak_tips.create_index(ordering)
         count = 0
-        for item in mongodb.dvoznak_tips.find(sort=ordering):
-            Tip.objects.create(
+        for item in self.mongodb.dvoznak_tips.find(sort=ordering):
+            models.Tip.objects.create(
                 id=item['pk'],
                 title=item['title'],
                 place=item['place'],
@@ -77,18 +100,19 @@ class Command(BaseCommand):
                 archived=item['archived'],
             )
             count += 1
-        print '%d tips imported' % count
+        return count
 
-        News.objects.all().delete()
+    def import_news(self):
+        models.News.objects.all().delete()
         ordering = [('published', 1), ('crawled', 1)]
-        mongodb.dvoznak_news.create_index(ordering)
+        self.mongodb.dvoznak_news.create_index(ordering)
         count = 0
-        for item in mongodb.dvoznak_news.find(sort=ordering):
+        for item in self.mongodb.dvoznak_news.find(sort=ordering):
             if 'published' not in item:
                 item['published'] = item['updated']
             item.setdefault('preamble', '')
             item.setdefault('content', '')
-            News.objects.create(
+            models.News.objects.create(
                 id=item['pk'],
                 url=item['url'],
                 title=item['title'],
@@ -104,4 +128,4 @@ class Command(BaseCommand):
                 subtable=item['subtable'],
             )
             count += 1
-        print '%d news imported' % count
+        return count
