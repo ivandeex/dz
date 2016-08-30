@@ -21,9 +21,13 @@ class Command(BaseCommand):
             default='all', choices=['all', 'users', 'crawls', 'tips', 'news']
         )
 
+        parser.add_argument(
+            '--url', '-u', dest='mongourl', default=settings.MONGODB_URL, help='MongoDB URL'
+        )
+
     def handle(self, *args, **options):
         table = options['table']
-        self.mongodb = MongoClient(settings.MONGODB_URL).get_default_database()
+        self.mongodb = MongoClient(options['mongourl']).get_default_database()
         if table in ('users', 'all'):
             count = self.import_users()
             print '%d users imported' % count
