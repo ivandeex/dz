@@ -132,6 +132,8 @@ def api_spider_results(request):
                         item[time] = json2datetime(item[time], utc=False)
                     else:
                         item[time] = None
+                if item['published'] is None:
+                    item['published'] = item['updated']
 
                 pk = int(item.pop('pk'))
                 try:
