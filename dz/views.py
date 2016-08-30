@@ -132,8 +132,8 @@ def api_spider_results(request):
                         item[time] = json2datetime(item[time], utc=False)
                     else:
                         item[time] = None
-                if item['published'] is None:
-                    item['published'] = item['updated']
+                item['published'] = item['published'] or item['updated'] or item['crawled']
+                item['updated'] = item['updated'] or item['published']
 
                 pk = int(item.pop('pk'))
                 try:
@@ -155,27 +155,27 @@ def api_spider_results(request):
                 model.objects.filter(~Q(pk__in=pk_set)).update(archived='archived')
 
         try:
-            c = models.Crawl.objects.get(host=meta['host'], action=action, started=start_time)
+            crawl = models.Crawl.objects.get(host=meta['host'], action=action, started=start_time)
             if status == 'partial':
-                c.news = F('news') + counts['news']
-                c.tips = F('tips') + counts['tips']
+                crawl.news = F('news') + counts['news']
+                crawl.tips = F('tips') + counts['tips']
             else:
-                c.news = counts['news']
-                c.tips = counts['tips']
+                crawl.news = counts['news']
+                crawl.tips = counts['tips']
         except models.Crawl.DoesNotExist:
-            c = models.Crawl.objects.create(news=counts['news'], tips=counts['tips'])
+            crawl = models.Crawl.objects.create(news=counts['news'], tips=counts['tips'])
 
-        c.host = meta['host']
-        c.action = action
+        crawl.host = meta['host']
+        crawl.action = action
 
-        c.ipaddr = meta['ipaddr']
-        c.pid = meta['pid']
-        c.status = status
+        crawl.ipaddr = meta['ipaddr']
+        crawl.pid = meta['pid']
+        crawl.status = status
 
-        c.started = start_time
+        crawl.started = start_time
         if status != 'partial':
-            c.ended = timezone.now().replace(microsecond=0)
-        c.save()
+            crawl.ended = timezone.now().replace(microsecond=0)
+        crawl.save()
 
         response = dict(okay=True, meta=my_meta)
 

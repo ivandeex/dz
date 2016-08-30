@@ -198,9 +198,10 @@ LOGGING = {
     },
 }
 
+# Final crawl results (api_spider_results) can be large (8MB):
+DATA_UPLOAD_MAX_MEMORY_SIZE = 8388608000
 
 # Migration from MongoDB
-
 MONGODB_URL = getenv('MONGODB_URL', '')
 
 # Custom DZ settings
