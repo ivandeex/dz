@@ -52,7 +52,7 @@ CustomSettings.register(
     STARTTIME='',
 )
 
-SERVICE_POLL_SECONDS = getenv('POLL_SECONDS', 50)
+POLL_SECONDS = getenv('POLL_SECONDS', 50)
 WEB_SERVER = getenv('WEB_SERVER', 'http://dz.more.vanko.me/dz/api/spider/')
 SECRET_KEY = getenv('SECRET_KEY', 'kLIuJ_dvoznak2016_v4')
 
@@ -190,7 +190,6 @@ class DvoznakSpider(CustomSpider):
 
     def on_tips(self):
         self.clear_cache('all')
-        self.clear_redis()
         self.logger.info('Crawling tips')
 
     def tips_list(self, response):
@@ -246,7 +245,6 @@ class DvoznakSpider(CustomSpider):
 
     def on_news(self):
         self.clear_cache('all')
-        self.clear_redis()
         self.logger.info('Crawling news')
 
     def wd_news_safe(self, response):
@@ -570,7 +568,7 @@ class Service(object):
     def run(self):
         print 'Service running'
         while 1:
-            sleep(SERVICE_POLL_SECONDS)
+            sleep(POLL_SECONDS)
             try:
                 self.loop()
             except Exception as err:
@@ -587,8 +585,7 @@ class Service(object):
             env = res.get('env', {})
             return self.run_action(action, env)
 
-        res = api_request(logger=self.logger, action='service', type='manual',
-                          request='run')
+        res = api_request(logger=self.logger, action='service', type='manual', request='run')
         if res:
             action = res.get('action', None)
             env = res.get('env', {})
@@ -616,10 +613,6 @@ def getopt(optname, env=None):
 def main():
     from vanko.scrapy import setup_stderr
     logging.getLogger('requests.packages.urllib3').setLevel(logging.WARN)
-
-    getopt('server', env='WEB_SERVER')
-    getopt('secret', env='SECRET_KEY')
-    getopt('pollsec', env='POLL_SECONDS')
 
     if getopt('action'):
         return run_spider(DvoznakSpider, argv=True)

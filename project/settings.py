@@ -206,5 +206,6 @@ MONGODB_URL = getenv('MONGODB_URL', '')
 # Custom DZ settings
 
 NARROW_GRIDS = bool(int(getenv('NARROW_GRIDS', False)))
-BOT_SECRET_KEY = getenv('BOT_SECRET_KEY', 'please change me')
+SPIDER_SECRET_KEY = getenv('SPIDER_SECRET_KEY', 'please change me')
 SPIDER_LOG_LEVEL = getenv('SPIDER_LOG_LEVEL', 'INFO')
+SPIDER_TIME_ZONE = getenv('SPIDER_TIME_ZONE', TIME_ZONE)

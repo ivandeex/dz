@@ -1,6 +1,7 @@
 import random
 import hashlib
 import logging
+import pytz
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q, F
@@ -37,7 +38,7 @@ def parse_api_request(request):
 
     ref_digest = meta.pop('digest', '')
     digest_src = '|'.join([str(meta[key]) for key in sorted(meta.keys())])
-    digest = hashlib.sha1(digest_src + settings.BOT_SECRET_KEY).hexdigest()
+    digest = hashlib.sha1(digest_src + settings.SPIDER_SECRET_KEY).hexdigest()
     assert digest == ref_digest, 'Invalid digest'
 
     return res, meta
@@ -45,10 +46,25 @@ def parse_api_request(request):
 
 def prepare_api_response():
     now = timezone.now().replace(microsecond=0)
-    meta = dict(utc=str(now.astimezone(timezone.utc)), rand=str(random.randint(1, 99)))
+    meta = dict(utc=datetime2json(now), rand=str(random.randint(1, 99)))
+
     digest = '|'.join([str(meta[key]) for key in sorted(meta.keys())])
-    meta['digest'] = hashlib.sha1(digest + settings.BOT_SECRET_KEY).hexdigest()
+    meta['digest'] = hashlib.sha1(digest + settings.SPIDER_SECRET_KEY).hexdigest()
+
     return meta, now
+
+
+def datetime2json(dt):
+    if timezone.is_naive(dt):
+        dt = timezone.make_aware(dt)
+    naive_utc = dt.astimezone(timezone.utc).replace(tzinfo=None) 
+    return str(naive_utc)
+
+
+def json2datetime(time_str, utc=False):
+    dt = timezone.datetime.strptime(time_str, '%Y-%m-%d %H:%M:%S')
+    tzinfo = pytz.UTC if utc else pytz.timezone(settings.SPIDER_TIME_ZONE)
+    return dt.replace(tzinfo=tzinfo)
 
 
 @csrf_exempt
@@ -81,7 +97,7 @@ def api_spider_run(request):
                             .values_list('pk', flat=True))
             seen_news_str = ','.join(str(pk) for pk in seen_news_pk)
             env = dict(NEWS_TO_SKIP=seen_news_str,
-                       STARTTIME=str(data['started']),
+                       STARTTIME=datetime2json(now),
                        WITH_IMAGES=0,
                        DOWNLOAD_DELAY=30,
                        LOG_LEVEL=settings.SPIDER_LOG_LEVEL)
@@ -94,18 +110,13 @@ def api_spider_run(request):
     return HttpResponse(json_encode(response), content_type='application/json')
 
 
-def json2datetime(time_str):
-    dt = timezone.datetime.strptime(time_str, '%Y-%m-%d %H:%M:%S')
-    return timezone.make_aware(dt)  # naive -> django timezone (ljubljana)
-
-
 @csrf_exempt
 def api_spider_results(request):
     my_meta, now = prepare_api_response()
 
     try:
         res, meta = parse_api_request(request)
-        start_time = json2datetime(meta['starttime'])
+        start_time = json2datetime(meta['starttime'], utc=True)
         action = meta.get('action', '') or 'unnamed'
         status = res.get('status', 'unknown')
         counts = dict(tips=0, news=0)
@@ -117,15 +128,19 @@ def api_spider_results(request):
                 item['archived'] = 'fresh'
 
                 for time in ('crawled', 'updated', 'published'):
-                    if time in item:
-                        item[time] = json2datetime(item[time]) if item[time] else None
+                    if item.get(time):
+                        item[time] = json2datetime(item[time], utc=False)
+                    else:
+                        item[time] = None
 
                 pk = int(item.pop('pk'))
-                can_insert = ('url' in item or 'details_url' in item)
-                if can_insert:
-                    obj = model.objects.get_or_create(pk=pk)
-                else:
-                    obj = models.objects.get(pk=pk)
+                try:
+                    obj = model.objects.get(pk=pk)
+                except model.DoesNotExist:
+                    can_insert = ('url' in item or 'details_url' in item)
+                    if not can_insert:
+                        raise ValueError('Object not found, cannot create')
+                    obj = model(pk=pk)
 
                 for field, value in item.items():
                     setattr(obj, field, value)
@@ -135,10 +150,10 @@ def api_spider_results(request):
                 counts[name] += 1
 
             if counts[name] > 1:
-                model.objects(~Q(pk__in=pk_set)).update(archived='archived')
+                model.objects.filter(~Q(pk__in=pk_set)).update(archived='archived')
 
         try:
-            c = models.Crawl.get(host=meta['host'], action=action, started=start_time)
+            c = models.Crawl.objects.get(host=meta['host'], action=action, started=start_time)
             if status == 'partial':
                 c.news = F('news') + counts['news']
                 c.tips = F('tips') + counts['tips']
@@ -146,7 +161,7 @@ def api_spider_results(request):
                 c.news = counts['news']
                 c.tips = counts['tips']
         except models.Crawl.DoesNotExist:
-            c = models.Crawl.create(news=counts['news'], tips=counts['tips'])
+            c = models.Crawl.objects.create(news=counts['news'], tips=counts['tips'])
 
         c.host = meta['host']
         c.action = action
