@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from import_export.admin import ExportMixin
 from import_export.formats import base_formats
 from import_export.resources import ModelResource
+from ..models import Crawl
 
 
 class DzSelectFieldListFilter(admin.AllValuesFieldListFilter):
@@ -81,6 +82,7 @@ class DzCrawlModelAdmin(ExportMixin, DzModelAdmin):
     change_list_template = 'admin/dz/change_list.html'
     formats = [base_formats.XLSX]
     can_export = True
+    crawl_action = None
 
     def get_urls(self):
         urls = super(DzCrawlModelAdmin, self).get_urls()
@@ -91,7 +93,8 @@ class DzCrawlModelAdmin(ExportMixin, DzModelAdmin):
 
     def crawl_view(self, request, extra_context=None):
         opts = self.opts
-        if self.user_can_crawl(request.user):
+        if self.crawl_action and self.user_can_crawl(request.user):
+            Crawl.add(self.crawl_action)
             message = '%s crawling started!' % opts.verbose_name_plural.title()
             self.message_user(request, _(message))
         rev_fmt = opts.app_label, opts.model_name

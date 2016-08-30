@@ -43,6 +43,8 @@ class TipAdmin(DzCrawlModelAdmin):
     def user_can_crawl(self, auth_user):
         return auth_user.has_perm('dz.crawl_tips')
 
+    crawl_action = 'tips'
+
     def col_tip(self, obj):
         tpl = TemplateResponse(self._request, 'admin/dz/tip_text_col.html',
                                context=dict(obj=obj, opts=self.opts))

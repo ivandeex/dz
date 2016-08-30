@@ -42,6 +42,8 @@ class NewsAdmin(DzCrawlModelAdmin):
     def user_can_crawl(self, auth_user):
         return auth_user.has_perm('dz.crawl_news')
 
+    crawl_action = 'news'
+
     def col_content(self, obj):
         tpl = TemplateResponse(self._request, 'admin/dz/news_content_col.html',
                                context=dict(obj=obj, opts=self.opts))
