@@ -13,9 +13,9 @@ var config = {
   },
 
   output: {
-    path: path.join(base_dir, 'assets'),
+    path: path.join(base_dir, 'assets/dz-admin'),
     filename: '[name].js',
-    publicPath: '/static/'
+    publicPath: '/static/dz-admin/'
   },
 
   devtool: 'source-map',

@@ -28,10 +28,6 @@
       color: #f5dd5d; }
       .dz-lang-selector .dz-lang-btn.dz-lang-current:hover {
         text-decoration: none; }
-
-.dz-close-btn {
-  float: right;
-  margin: 8px 0 auto 20px; }
 #content {
   padding: 10px 20px; }
 

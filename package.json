@@ -6,9 +6,9 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "clean": "rimraf assets dist",
+    "clean": "rimraf assets/dz-admin dist",
     "lint": "sass-lint -v -q && eslint */assets",
-    "preassets": "rimraf assets",
+    "preassets": "rimraf assets/dz-admin",
     "assets": "webpack --config webpack/config.js",
     "watch": "webpack --config webpack/config.js --watch",
     "hotserver": "node webpack/server.js"
