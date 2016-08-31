@@ -67,6 +67,22 @@ def json2datetime(time_str, utc=False):
     return dt.replace(tzinfo=tzinfo)
 
 
+def merge_ranges(data):
+    res = []
+    beg = end = None
+    for v in data:
+        if end is None:
+            beg = end = v
+        elif v == end + 1:
+            end = v
+        else:
+            res.append(str(beg) if beg == end else '%d-%d' % (beg, end))
+            beg = end = v
+    if end is not None:
+        res.append(str(beg) if beg == end else '%d-%d' % (beg, end))
+    return ','.join(res)
+
+
 @csrf_exempt
 def api_spider_run(request):
     my_meta, now = prepare_api_response()
@@ -93,14 +109,13 @@ def api_spider_run(request):
                 crawl.save()
 
         if action:
-            seen_news_pk = (models.News.objects.distinct('pk').order_by('pk')
-                            .values_list('pk', flat=True))
-            seen_news_str = ','.join(str(pk) for pk in seen_news_pk)
-            env = dict(NEWS_TO_SKIP=seen_news_str,
-                       STARTTIME=datetime2json(now),
+            env = dict(STARTTIME=datetime2json(now),
                        WITH_IMAGES=0,
                        DOWNLOAD_DELAY=30,
                        LOG_LEVEL=settings.SPIDER_LOG_LEVEL)
+            if action == 'news':
+                seen_news = models.News.objects.distinct('pk').order_by('pk')
+                env['NEWS_TO_SKIP'] = merge_ranges(seen_news.values_list('pk', flat=True))
 
         response = dict(okay=True, action=action, env=env, meta=my_meta)
 

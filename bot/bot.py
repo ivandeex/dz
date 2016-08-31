@@ -100,6 +100,19 @@ class TipsItem(Item):
     crawled = Field()
 
 
+def split_ranges(range_str):
+    res = set()
+    if range_str:
+        for token in range_str.split(','):
+            if '-' in token:
+                beg, end = token.split('-')
+                for val in range(int(beg), int(end) + 1):
+                    res.add(val)
+            else:
+                res.add(int(token))
+    return res
+
+
 class DvoznakSpider(CustomSpider):
 
     name = BOT_NAME
@@ -119,10 +132,7 @@ class DvoznakSpider(CustomSpider):
         self.single_pk = s.getint('SINGLE_PK', 0)
         self.with_images = s.getbool('WITH_IMAGES', True)
 
-        self.seen = []
-        seen = s.get('NEWS_TO_SKIP', '').strip()
-        if seen:
-            self.seen = set([int(x.strip()) for x in seen.split(',')])
+        self.seen = split_ranges(s.get('NEWS_TO_SKIP', '').strip())
 
         self.news = []
         self.tips = []
