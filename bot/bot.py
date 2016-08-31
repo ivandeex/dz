@@ -3,7 +3,6 @@ import os
 import sys
 import re
 import logging
-import mimetypes
 import hashlib
 import random
 import requests
@@ -13,7 +12,6 @@ from multiprocessing import freeze_support
 from datetime import datetime, time
 from time import sleep
 from urlparse import urljoin
-from scrapy.loader.processors import Identity
 from selenium.webdriver.common.by import By
 
 
@@ -48,7 +46,6 @@ CustomSettings.register(
     WEBDRIVER_BROWSER='phantomjs',
     MAX_NEWS=0,
     SINGLE_PK=0,
-    WITH_IMAGES=True,
     STARTTIME='',
 )
 
@@ -71,12 +68,6 @@ class NewsItem(Item):
     content = JoinField(strip=True, sep='\n')
     subtable = JoinField(strip=True, sep='\n')
     subtable2 = JoinField(strip=True, sep='\n')
-    image1_filename = Field()
-    image1_mimetype = Field()
-    image1_base64data = Field()
-    # Temporary fields:
-    image_urls = Field(output_processor=Identity())
-    images = Field()
 
 
 class TipsItem(Item):
@@ -130,7 +121,6 @@ class DvoznakSpider(CustomSpider):
         self.delay_base = s.getint('DOWNLOAD_DELAY', 40)
         self.max_news = s.getint('MAX_NEWS', 0)
         self.single_pk = s.getint('SINGLE_PK', 0)
-        self.with_images = s.getbool('WITH_IMAGES', True)
 
         self.seen = split_ranges(s.get('NEWS_TO_SKIP', '').strip())
 
@@ -271,7 +261,7 @@ class DvoznakSpider(CustomSpider):
                     self.homepage, callback=self.wd_start,
                     dont_filter=True, meta=dict(dont_cache=True))
             self.logger.info('Too many failures. Baling out.')
-        self.logger.info('***** All news ready. Fetching images *****')
+        self.logger.info('***** All news ready. *****')
         return self.news
 
     def wd_news_unsafe(self, response):
@@ -365,7 +355,6 @@ class DvoznakSpider(CustomSpider):
         ldr.add_css('short_title', '.nlsn_title_text ::text')
         ldr.add_css('title', '.nlsn_content > h2 ::text')
         ldr.add_css('published', '.najva-meta-published > span ::text')
-        ldr.add_css('image_urls', '.najava_pic_wrap.floatl > img ::attr(src)')
         ldr.add_css('preamble', '.nlsn_content > h3 ::text')
         ldr.add_css('content', '.nlsn_content > p')
         ldr.add_css('subtable', '.nlsn_table_wrap')
@@ -375,28 +364,10 @@ class DvoznakSpider(CustomSpider):
         item = ldr.load_item()
         item['subtable'] = u'{}\n<div class="subtable2">\n{}\n</div>'.format(
             item.pop('subtable', ''), item.pop('subtable2', ''))
-        if self.with_images:
-            item['image_urls'] = [response.urljoin(img_url) for img_url in
-                                  item.get('image_urls', [])][:1]
-        else:
-            item['image_urls'] = []
         self.news.append(item)
 
     def process_news_item(self, item):
-        image_dir = self.settings.get('IMAGES_STORE')
-        item['image1_filename'] = ''
-        item['image1_base64data'] = ''
-        if item.get('images', []):
-            image = item['images'][0]
-            full_path = os.path.join(image_dir, image['path'])
-            file_name = os.path.basename(full_path)
-            with open(full_path, 'rb') as fd:
-                bin_data = fd.read()
-            item['image1_filename'] = file_name
-            item['image1_mimetype'] = mimetypes.guess_type(file_name)[0] or ''
-            item['image1_base64data'] = bin_data.encode('base64').rstrip()
-        del item['images']
-        del item['image_urls']
+        pass
 
     # ############## SENDING ##############
 

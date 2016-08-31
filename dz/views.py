@@ -110,7 +110,6 @@ def api_spider_run(request):
 
         if action:
             env = dict(STARTTIME=datetime2json(now),
-                       WITH_IMAGES=0,
                        DOWNLOAD_DELAY=30,
                        LOG_LEVEL=settings.SPIDER_LOG_LEVEL)
             if action == 'news':
