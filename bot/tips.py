@@ -1,8 +1,8 @@
 import re
 from datetime import datetime
-from parsel import Selector
+from urlparse import urljoin
 from .utils import extract_datetime, first_text
-from .spider import DzSpider
+from .spider import BaseSpider
 
 
 DATAMAP = dict(
@@ -19,26 +19,19 @@ DATAMAP = dict(
 )
 
 
-class TipsSpider(DzSpider):
+class TipsSpider(BaseSpider):
+    action = 'tips'
 
-    def wd_start(self, response):
-        self.wd_login(response)
-        self.wd_click_menu(response, 'Prognoze')
-        self.tips_list(response)
+    def run(self):
+        self.login()
+        self.click_menu('Prognoze')
+        for sel in self.wait_css('.tiprog_list_block'):
+            self.parse_tip(sel)
 
-    def on_tips(self):
-        self.clear_cache('all')
-        self.logger.info('Crawling tips')
-
-    def tips_list(self, response):
-        response.wait_css('.tiprog_list_block')
-        for sel in Selector(text=response.get_body()).css('.tiprog_list_block'):
-            self.parse_tip(sel, response)
-
-    def parse_tip(self, sel, response):
+    def parse_tip(self, sel):
         item = {}
         rel_url = sel.css('.tpl_right > h3 > a::attr(href)').extract_first()
-        details_url = response.urljoin(rel_url)
+        details_url = urljoin(self.webdriver.current_url, rel_url)
 
         try:
             pk = int(re.search(r'id_dogadjaj=(\d+)', details_url).group(1))

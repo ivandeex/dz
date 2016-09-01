@@ -9,15 +9,21 @@ django-webpack-loader==0.3.3
 whitenoise==3.2.1
 python-cjson==1.1.0
 
-flask==0.10.1
-flask-admin==1.4.0
-flask-login==0.3.2
-flask-sqlalchemy==2.1
-flask-sslify==0.1.5
-wtforms==2.1
+parsel==1.0.3
+selenium==2.53.6
+requests==2.11.0
+
+ansible==2.1.1
+honcho==0.7.1
+gunicorn==19.6.0
+pymongo==3.3.0
+
+flake8==3.0.4
+ipython==5.0.0
+ipdb==0.10.1
+django-debug-toolbar==1.5
 
 scrapy==1.1.1
-parsel==1.0.3
 # sudo apt install libxml2-dev libxslt1-dev
 # export CFLAGS=-I/usr/include/libxml2
 lxml==3.6.1
@@ -26,16 +32,12 @@ pillow==3.3.0
 # sudo apt install libffi-dev
 cffi==1.7.0
 twisted==16.3.0
-selenium==2.53.6
 python-dateutil==2.5.3
-requests==2.11.0
-sqlalchemy==1.0.14
 
-ansible==2.1.1
-honcho==0.7.1
-pymongo==3.3.0
-gunicorn==19.6.0
-flake8==3.0.4
-ipython==5.0.0
-ipdb==0.10.1
-django-debug-toolbar==1.5
+flask==0.10.1
+flask-admin==1.4.0
+flask-login==0.3.2
+flask-sqlalchemy==2.1
+flask-sslify==0.1.5
+wtforms==2.1
+sqlalchemy==1.0.14

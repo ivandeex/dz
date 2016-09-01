@@ -13,11 +13,14 @@ DEFAULT_POLL_SECONDS = 50
 
 
 def run_action(action, env={}):
-    from vanko.utils.multiprocessing import Process2
-    from vanko.scrapy import run_spider
     spider_cls = dict(news=NewsSpider, tips=TipsSpider)[action]
-    kwargs = dict(spider_cls=spider_cls, action=action, env=env)
-    Process2(target=run_spider, kwargs=kwargs).start()
+    final_env = os.environ.copy()
+    final_env.update(env)
+    spider = spider_cls(final_env)
+    try:
+        spider.run()
+    finally:
+        spider.close()
 
 
 class Schedule(object):

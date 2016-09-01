@@ -1,31 +1,15 @@
-import logging
+import os
+import tempfile
+from time import time, sleep
 from datetime import datetime
+from selenium.webdriver import PhantomJS, DesiredCapabilities
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions
+from parsel import Selector
+from vanko.utils import decode_userpass, randsleep, getenv
 from .api import send_results
-
-from vanko.scrapy import CustomSettings, CustomSpider, setup_spider
-from vanko.utils import decode_userpass, randsleep
-from vanko.scrapy.webdriver import WebdriverRequest
-
-
-setup_spider(__name__)
-BOT_NAME = 'dvoznak'
-logger = logging.getLogger(BOT_NAME)
-
-
-CustomSettings.register(
-    NEWS_TO_SKIP='',
-    USERPASS='',
-    STORAGE='normal',
-    HTTPCACHE_EXPIRATION_SECS=600,
-    DOWNLOAD_DELAY=40,
-    AUTOTHROTTLE_START_DELAY=80,
-    AUTOTHROTTLE_ENABLED=True,
-    WEBDRIVER_BROWSER='phantomjs',
-    MAX_NEWS=0,
-    SINGLE_PK=0,
-    STARTTIME='',
-)
+from .main import logger
 
 
 def split_ranges(range_str):
@@ -41,24 +25,20 @@ def split_ranges(range_str):
     return res
 
 
-class DzSpider(CustomSpider):
-
-    name = BOT_NAME
-    allowed_domains = ['dvoznak.com']
+class BaseSpider(object):
     user_agent = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 ' \
                  '(KHTML, like Gecko) Chrome/45.0.2454.93 Safari/537.36'
     login_pending = True
-    homepage = 'http://www.dvoznak.com/'
+    home_url = 'http://www.dvoznak.com/'
+    timeout = 60
+    pollsec = 10
+    action = None
 
-    def __init__(self, *args, **kwargs):
-        s = self.settings_init
-        self.username, self.password = decode_userpass(s.get('USERPASS'))
-        self.starttime = s.get('STARTTIME') or str(datetime.utcnow().replace(microsecond=0))
-        self.delay_base = s.getint('DOWNLOAD_DELAY', 40)
-        self.max_news = s.getint('MAX_NEWS', 0)
-        self.single_pk = s.getint('SINGLE_PK', 0)
-
-        self.seen = split_ranges(s.get('NEWS_TO_SKIP', '').strip())
+    def __init__(self, env={}):
+        self.starttime = env.get('STARTTIME', str(datetime.utcnow().replace(microsecond=0)))
+        self.delay = int(env.get('PAGE_DELAY', 20))
+        self.seen = split_ranges(env.get('NEWS_TO_SKIP', '').strip())
+        self.single_pk = int(env.get('SINGLE_PK', 0))
 
         self.news = []
         self.tips = []
@@ -68,49 +48,98 @@ class DzSpider(CustomSpider):
         self.tocrawl = 0
         self.ercount = 0
 
-    def on_finished(self):
-        send_results(self.logger, self.news, self.tips,
-                     self.action_list, self.starttime, 'finished')
-        self.close_database()
+        caps = DesiredCapabilities.PHANTOMJS.copy()
+        caps['phantomjs.page.settings.userAgent'] = self.user_agent
 
-    def start_requests(self):
-        yield WebdriverRequest(
-            self.homepage, callback=self.wd_start,
-            dont_filter=True, meta=dict(dont_cache=True))
+        self.webdriver = PhantomJS(
+            executable_path=env.get('PHANTOMJS_BINARY', 'phantomjs'),
+            desired_capabilities=caps,
+            service_args=['--load-images=no'],
+            service_log_path=os.path.join(tempfile.gettempdir(), 'phantomjs.log')
+        )
 
-    def wd_login(self, response):
-        response.wait_for_ajax()
+        self.webdriver.get(self.home_url)
+
+    def close(self):
+        try:
+            send_results(self.news, self.tips, self.action, self.starttime, 'finished')
+        finally:
+            self.webdriver.quit()
+            self.webdriver = None
+
+    def page_sel(self):
+        return Selector(self.webdriver.page_source)
+
+    def login(self):
+        self.wait_for_ajax()
         randsleep(2)
-        if not (self.username and self.password):
-            self.logger.info('Working without login (browser)')
+
+        username, password = decode_userpass(getenv('USERPASS'))
+        if not (username and password):
+            logger.info('Working without login (browser)')
             return
-        form_name = 'prijava'
-        form = response.css('form[name="%s"]' % form_name)
-        id_user = form.css(
-            'input[type="text"]::attr(id)').extract_first()
-        id_pass = form.css(
-            'input[type="password"]::attr(id)').extract_first()
 
-        self.logger.debug('Opening login drawer')
-        response.click_safe('login_btn')
-        response.wait_for_ajax()
+        page_sel = self.page_sel()
+        form = page_sel.css('form[name="prijava"]')
+        id_user = form.css('input[type="text"]::attr(id)').extract_first()
+        id_pass = form.css('input[type="password"]::attr(id)').extract_first()
+
+        logger.debug('Opening login drawer')
+        self.click('login_btn', by=By.ID)
+        self.wait_for_ajax()
         randsleep(2)
-        self.logger.debug('Filling the form')
-        response.send_keys_safe(id_user, self.username)
-        response.send_keys_safe(id_pass, self.password)
+
+        logger.debug('Filling the form')
+        self.send_keys(id_user, self.username)
+        self.send_keys(id_pass, self.password)
         randsleep(2)
-        self.logger.debug('Click the login button')
-        response.click_safe('Prijava', by=By.NAME)
+
+        logger.debug('Click the login button')
+        self.click('Prijava', by=By.NAME)
         randsleep(4)
-        self.logger.info('Logged in as %s (browser)', self.username)
 
-    def wd_click_menu(self, response, menu):
-        self.logger.debug('Searching for %s menu', menu)
-        el = response.webdriver.find_element_by_xpath(
-            '//ul[@id="mainmenu"]/li/a[contains(.,"%s")]' % menu)
-        self.logger.debug('Clicking on %s menu', menu)
+        logger.info('Logged in as %s (browser)', username)
+
+    def click_menu(self, menu):
+        logger.debug('Searching for %s menu', menu)
+        xpath = '//ul[@id="mainmenu"]/li/a[contains(.,"%s")]' % menu
+        el = self.webdriver.find_element_by_xpath(xpath)
+        logger.debug('Clicking on %s menu', menu)
         el.click()
-        self.logger.debug('Waiting for menu ajax to finish')
-        response.wait_for_ajax()
-        self.logger.debug('Safety delay after click')
+
+        logger.debug('Waiting for menu ajax to finish')
+        self.wait_for_ajax()
+        logger.debug('Safety delay after click')
         randsleep(4)
+
+    def wait_css(self, css):
+        end_time = time() + self.timeout
+        while time() < end_time:
+            result = self.page_sel().css(css)
+            if result:
+                return result
+            sleep(min(self.pollsec, max(0, end_time - time())))
+
+    def get_ajax_activity(self):
+        counts = self.webdriver.execute_script(
+            'return [window.jQuery && window.jQuery.active, '
+            'window.Ajax && window.Ajax.activeRequestCount, '
+            'window.dojo && window.io.XMLHTTPTransport.inFlight.length];')
+        logger.debug('active ajax requests: %s', counts)
+        return sum(n for n in counts if n is not None)
+
+    def wait_for_ajax(self):
+        end_time = time() + self.timeout
+        while self.get_ajax_activity() and time() < end_time:
+            sleep(min(self.pollsec, max(0, end_time - time())))
+
+    def send_keys(self, id, keys):
+        el = self.webdriver.find_element_by_id(id)
+        el.clear()
+        el.send_keys(keys)
+
+    def click(self, id, by):
+        cond = expected_conditions.element_to_be_clickable((by, id))
+        el = WebDriverWait(self.webdriver, self.timeout).until(cond)
+        logger.debug('now click %s', id)
+        el.click()

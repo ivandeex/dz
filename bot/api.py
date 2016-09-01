@@ -5,44 +5,40 @@ import hashlib
 import requests
 from urlparse import urljoin
 from datetime import datetime
+from vanko.utils import getenv
+from .main import logger
 
-
-getenv = os.environ.get
 
 WEB_SERVER = getenv('WEB_SERVER', 'http://dz.more.vanko.me/dz/api/spider/')
 SECRET_KEY = getenv('SECRET_KEY', 'kLIuJ_dvoznak2016_v4')
 
 
-def send_partial_news(logger, news, action_list, starttime, last=0):
+def send_partial_news(news, starttime, last=0):
     news = news[:]
-    if last > 0:
+    if last:
         last = min(len(news), last)
         news = news[-last:]
     logger.debug('Sending partial results')
     try:
-        send_results(logger, news, [], action_list, starttime, 'partial')
+        send_results(news, [], 'news', starttime, 'partial')
     except Exception as err:
         logger.info('Sending choked: %s', err)
 
 
-def send_results(logger, news, tips, action_list, starttime, status):
+def send_results(news, tips, action, starttime, status):
     datas = dict(news=news, tips=tips)
     for name in sorted(datas.keys()):
         arr = datas[name]
         for no, item in enumerate(arr):
             item = dict(item)
             for date in ('crawled', 'updated', 'published'):
-                if hasattr(item, date):
-                    item[date] = str(item[date].replace(microsecond=0))
                 if item.get(date, None):
                     item[date] = str(item[date].replace(microsecond=0))
             arr[no] = dict(item)
-    action = ','.join([a for a in action_list if a in datas])
-    api_request(logger=logger, action=action, request='results', starttime=starttime,
-                status=status, news=news, tips=tips)
+    api_request(action, 'results', starttime, status=status, news=news, tips=tips)
 
 
-def api_request(logger, action, request, starttime=None, type=None, **kwargs):
+def api_request(action, request, starttime=None, type=None, **kwargs):
     web_server = WEB_SERVER
     secret = SECRET_KEY
     if not (web_server and secret):
