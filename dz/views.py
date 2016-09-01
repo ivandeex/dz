@@ -57,7 +57,7 @@ def prepare_api_response():
 def datetime2json(dt):
     if timezone.is_naive(dt):
         dt = timezone.make_aware(dt)
-    naive_utc = dt.astimezone(timezone.utc).replace(tzinfo=None) 
+    naive_utc = dt.astimezone(timezone.utc).replace(tzinfo=None)
     return str(naive_utc)
 
 
