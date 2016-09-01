@@ -1,35 +1,17 @@
 import re
 from datetime import datetime
+from parsel import Selector
+from vanko.utils import randsleep, as_list
+from vanko.scrapy.webdriver import WebdriverRequest
 from .api import send_partial_news
 from .spider import DzSpider
-
-from vanko.scrapy import TakeFirstItemLoader, Item, Field, StripField, JoinField, DateTimeField
-from vanko.utils import randsleep, as_list
-from vanko.scrapy.webdriver import WebdriverRequest, WebdriverResponse
-
-
-class NewsItem(Item):
-    pk = Field()
-    url = Field()
-    crawled = Field()
-    section = StripField()
-    subsection = StripField()
-    updated = DateTimeField(fix=True, dayfirst=True)
-    short_title = StripField()
-    title = StripField()
-    published = DateTimeField(fix=True, dayfirst=True)
-    preamble = StripField()
-    content = JoinField(strip=True, sep='\n')
-    subtable = JoinField(strip=True, sep='\n')
-    subtable2 = JoinField(strip=True, sep='\n')
+from .utils import extract_datetime, first_text
 
 
 class NewsSpider(DzSpider):
 
     def wd_start(self, response):
-        assert isinstance(response, WebdriverResponse)
-        result = self.wd_news_safe(response)
-        for x in as_list(result):
+        for x in as_list(self.wd_news_safe(response)):
             yield x
 
     def on_news(self):
@@ -136,23 +118,29 @@ class NewsSpider(DzSpider):
         randsleep(self.delay_base / 2)
 
     def parse_news(self, response, url, pk):
-        ldr = TakeFirstItemLoader(NewsItem(), response)
-        ldr.add_value('url', url)
-        ldr.add_value('pk', pk)
-        ldr.add_value('crawled', datetime.utcnow().replace(microsecond=0))
-        ldr.add_css('section', '.lnfl ::text')
-        ldr.add_css('subsection', '.lnfl.tename ::text')
-        ldr.add_css('updated', '.nls_subt_left ::text')
-        ldr.add_css('short_title', '.nlsn_title_text ::text')
-        ldr.add_css('title', '.nlsn_content > h2 ::text')
-        ldr.add_css('published', '.najva-meta-published > span ::text')
-        ldr.add_css('preamble', '.nlsn_content > h3 ::text')
-        ldr.add_css('content', '.nlsn_content > p')
-        ldr.add_css('subtable', '.nlsn_table_wrap')
-        ldr.add_xpath('subtable2',
-                      '//div[@id="nls_najava"]'
-                      '/following-sibling::*[name()="ul" or name()="div"]')
-        item = ldr.load_item()
-        item['subtable'] = u'{}\n<div class="subtable2">\n{}\n</div>'.format(
-            item.pop('subtable', ''), item.pop('subtable2', ''))
+        sel = Selector(text=response.get_body())
+        item = {}
+
+        item['url'] = url
+        item['pk'] = pk
+        item['crawled'] = datetime.utcnow().replace(microsecond=0)
+
+        item['section'] = first_text(sel, '.lnfl')
+        item['subsection'] = first_text(sel, '.lnfl.tename')
+        item['short_title'] = first_text(sel, '.nlsn_title_text')
+        item['title'] = first_text(sel, '.nlsn_content > h2')
+
+        item['updated'] = first_text(sel, '.nls_subt_left')
+        item['updated'] = extract_datetime(item['updated'], fix=True, dayfirst=True)
+        item['published'] = first_text(sel, '.najva-meta-published > span')
+        item['published'] = extract_datetime(item['published'], fix=True, dayfirst=True)
+
+        item['preamble'] = first_text(sel, '.nlsn_content > h3')
+        item['content'] = '\n'.join(x.strip() for x in sel.css('.nlsn_content > p').extract())
+
+        subtable1 = '\n'.join(x.strip() for x in sel.css('.nlsn_table_wrap').extract())
+        subtable2_xp = '//div[@id="nls_najava"]/following-sibling::*[name()="ul" or name()="div"]'
+        subtable2 = '\n'.join(x.strip() for x in sel.xpath(subtable2_xp).extract())
+        item['subtable'] = u'%s\n<div class="subtable2">\n%s\n</div>' % (subtable1, subtable2)
+
         self.news.append(item)
