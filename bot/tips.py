@@ -1,22 +1,22 @@
 import re
 from datetime import datetime
 from urlparse import urljoin
-from .utils import extract_datetime, first_text
+from .utils import logger, extract_datetime, first_text
 from .spider import BaseSpider
 
 
-DATAMAP = dict(
-    result='rezultat',
-    tipster='tipster',
-    coeff='koeficijent',
-    min_coeff='min. koef.',
-    stake='ulog',
-    due='zarada',
-    spread='is. margina',
-    betting='kladionica',
-    success=u'uspje\u0161nost',
-    published='objavljeno',
-)
+DATA_MAP = {
+    'result': 'rezultat',
+    'tipster': 'tipster',
+    'coeff': 'koeficijent',
+    'min_coeff': 'min. koef.',
+    'stake': 'ulog',
+    'due': 'zarada',
+    'spread': 'is. margina',
+    'betting': 'kladionica',
+    'success': u'uspje\u0161nost',
+    'published': 'objavljeno',
+}
 
 
 class TipsSpider(BaseSpider):
@@ -25,7 +25,7 @@ class TipsSpider(BaseSpider):
     def run(self):
         self.login()
         self.click_menu('Prognoze')
-        for sel in self.wait_css('.tiprog_list_block'):
+        for sel in self.wait_for_css('.tiprog_list_block'):
             self.parse_tip(sel)
 
     def parse_tip(self, sel):
@@ -36,7 +36,7 @@ class TipsSpider(BaseSpider):
         try:
             pk = int(re.search(r'id_dogadjaj=(\d+)', details_url).group(1))
         except Exception:
-            self.logger.info('Skipping tip %s', details_url)
+            logger.info('Skipping tip %s', details_url)
             return
         item['pk'] = pk
 
@@ -47,8 +47,7 @@ class TipsSpider(BaseSpider):
         item['title'] = first_text(sel, '.tpl_right > h3 > a')
         item['tip'] = first_text(sel, '.tiprot_left > strong')
 
-        item['updated'] = first_text(sel, '.tiprot_right')
-        item['updated'] = extract_datetime(item['updated'], fix=True, dayfirst=True)
+        item['updated'] = extract_datetime(first_text(sel, '.tiprot_right'))
 
         all_p = sel.css('.tipoprog_content_wrap').xpath('text()').extract()
         item['text'] = u' '.join(p.strip() for p in all_p if p.strip())
@@ -62,8 +61,8 @@ class TipsSpider(BaseSpider):
             if label == 'kladionica' and not d[label]:
                 d[label] = row.css('td a::attr(title)').extract_first() or ''
 
-        for dst, src in DATAMAP.items():
+        for dst, src in DATA_MAP.items():
             item[dst] = d.get(src, '')
 
-        item['published'] = extract_datetime(item['published'], fix=True, dayfirst=True)
+        item['published'] = extract_datetime(item['published'])
         self.tips.append(item)

@@ -1,15 +1,14 @@
 import os
 import tempfile
-from time import time, sleep
+from time import time
 from datetime import datetime
+from parsel import Selector
 from selenium.webdriver import PhantomJS, DesiredCapabilities
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
-from parsel import Selector
-from vanko.utils import decode_userpass, randsleep, getenv
+from .utils import logger, randsleep, poll_sleep
 from .api import send_results
-from .main import logger
 
 
 def split_ranges(range_str):
@@ -31,7 +30,6 @@ class BaseSpider(object):
     login_pending = True
     home_url = 'http://www.dvoznak.com/'
     timeout = 60
-    pollsec = 10
     action = None
 
     def __init__(self, env={}):
@@ -74,7 +72,7 @@ class BaseSpider(object):
         self.wait_for_ajax()
         randsleep(2)
 
-        username, password = decode_userpass(getenv('USERPASS'))
+        username, _sep, password = os.environ.get('USERPASS', '').partition(':')
         if not (username and password):
             logger.info('Working without login (browser)')
             return
@@ -112,26 +110,24 @@ class BaseSpider(object):
         logger.debug('Safety delay after click')
         randsleep(4)
 
-    def wait_css(self, css):
+    def wait_for_css(self, css):
         end_time = time() + self.timeout
         while time() < end_time:
             result = self.page_sel().css(css)
             if result:
                 return result
-            sleep(min(self.pollsec, max(0, end_time - time())))
-
-    def get_ajax_activity(self):
-        counts = self.webdriver.execute_script(
-            'return [window.jQuery && window.jQuery.active, '
-            'window.Ajax && window.Ajax.activeRequestCount, '
-            'window.dojo && window.io.XMLHTTPTransport.inFlight.length];')
-        logger.debug('active ajax requests: %s', counts)
-        return sum(n for n in counts if n is not None)
+            poll_sleep(end_time)
 
     def wait_for_ajax(self):
         end_time = time() + self.timeout
-        while self.get_ajax_activity() and time() < end_time:
-            sleep(min(self.pollsec, max(0, end_time - time())))
+        while time() < end_time:
+            ajax_counts = self.webdriver.execute_script(
+                'return [window.jQuery && window.jQuery.active, '
+                'window.Ajax && window.Ajax.activeRequestCount, '
+                'window.dojo && window.io.XMLHTTPTransport.inFlight.length];')
+            if not any(ajax_counts):
+                return True
+            poll_sleep(end_time)
 
     def send_keys(self, id, keys):
         el = self.webdriver.find_element_by_id(id)

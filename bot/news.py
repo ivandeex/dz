@@ -1,10 +1,8 @@
 import re
 from datetime import datetime
-from vanko.utils import randsleep
 from .api import send_partial_news
 from .spider import BaseSpider
-from .main import logger
-from .utils import extract_datetime, first_text
+from .utils import logger, extract_datetime, first_text, randsleep
 
 
 class NewsSpider(BaseSpider):
@@ -68,15 +66,15 @@ class NewsSpider(BaseSpider):
         link.click()
         logger.debug('Waiting for ajax')
         self.wait_for_ajax()
-        logger.debug('Sleep for ~ %d seconds', self.delay_base)
-        randsleep(self.delay_base)
+        logger.debug('Sleep ~%dsec', self.delay)
+        randsleep(self.delay)
 
         logger.debug('Scrape article with pk %s url %s', pk, url)
         self.parse_news(url, pk)
         self.crawled.add(url)
         news_count = len(self.crawled)
         logger.info('Crawled news #%d of %d %s', news_count, self.tocrawl, url)
-        if 0 < self.max_news <= news_count or (self.single_pk and pk == self.single_pk):
+        if self.single_pk and pk == self.single_pk:
             logger.debug('Reached configured news limit')
             self.loop_on = False
             return
@@ -104,10 +102,8 @@ class NewsSpider(BaseSpider):
         item['short_title'] = first_text(sel, '.nlsn_title_text')
         item['title'] = first_text(sel, '.nlsn_content > h2')
 
-        item['updated'] = first_text(sel, '.nls_subt_left')
-        item['updated'] = extract_datetime(item['updated'], fix=True, dayfirst=True)
-        item['published'] = first_text(sel, '.najva-meta-published > span')
-        item['published'] = extract_datetime(item['published'], fix=True, dayfirst=True)
+        item['updated'] = extract_datetime(first_text(sel, '.nls_subt_left'))
+        item['published'] = extract_datetime(first_text(sel, '.najva-meta-published > span'))
 
         item['preamble'] = first_text(sel, '.nlsn_content > h3')
         item['content'] = '\n'.join(x.strip() for x in sel.css('.nlsn_content > p').extract())

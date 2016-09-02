@@ -5,12 +5,10 @@ import hashlib
 import requests
 from urlparse import urljoin
 from datetime import datetime
-from vanko.utils import getenv
-from .main import logger
+from .utils import logger
 
-
-WEB_SERVER = getenv('WEB_SERVER', 'http://dz.more.vanko.me/dz/api/spider/')
-SECRET_KEY = getenv('SECRET_KEY', 'kLIuJ_dvoznak2016_v4')
+DEFAULT_WEB_SERVER = 'http://dz.more.vanko.me/dz/api/spider/'
+DEFAULT_SECRET_KEY = 'kLIuJ_dvoznak2016_v4'
 
 
 def send_partial_news(news, starttime, last=0):
@@ -39,11 +37,9 @@ def send_results(news, tips, action, starttime, status):
 
 
 def api_request(action, request, starttime=None, type=None, **kwargs):
-    web_server = WEB_SERVER
-    secret = SECRET_KEY
-    if not (web_server and secret):
-        print 'Requests not active'
-        return
+    web_server = os.environ.get('WEB_SERVER', DEFAULT_WEB_SERVER)
+    secret = os.environ.get('SECRET_KEY', DEFAULT_SECRET_KEY)
+    assert web_server and secret, 'Requests not active'
 
     meta = {}
     meta['action'] = action
@@ -56,7 +52,7 @@ def api_request(action, request, starttime=None, type=None, **kwargs):
     meta['rand'] = str(random.randint(1, 99))
 
     digest = '|'.join([str(meta[key]) for key in sorted(meta.keys())])
-    meta['digest'] = hashlib.sha1(digest + SECRET_KEY).hexdigest()
+    meta['digest'] = hashlib.sha1(digest + secret).hexdigest()
     data = kwargs.copy()
     data['meta'] = meta
     status = data.get('status', 'status')
@@ -67,7 +63,7 @@ def api_request(action, request, starttime=None, type=None, **kwargs):
         meta = res.pop('meta', {})
         ref_digest = meta.pop('digest', '')
         digest = '|'.join([str(meta[key]) for key in sorted(meta.keys())])
-        assert hashlib.sha1(digest + SECRET_KEY).hexdigest() == ref_digest
+        assert hashlib.sha1(digest + secret).hexdigest() == ref_digest
         if logger:
             logger.info('Webserver returned %r for %r (%s)',
                         res, request, status)

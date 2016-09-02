@@ -1,26 +1,14 @@
 import os
-import sys
 import re
-import logging
 from datetime import time, datetime
 from time import sleep
+from .utils import logger, get_project_dir
 from .api import api_request
 from .news import NewsSpider
 from .tips import TipsSpider
 
 
 DEFAULT_POLL_SECONDS = 50
-
-
-def run_action(action, env={}):
-    spider_cls = dict(news=NewsSpider, tips=TipsSpider)[action]
-    final_env = os.environ.copy()
-    final_env.update(env)
-    spider = spider_cls(final_env)
-    try:
-        spider.run()
-    finally:
-        spider.close()
 
 
 class Schedule(object):
@@ -65,12 +53,12 @@ class Schedule(object):
     def load(self):
         try:
             self.parse()
-            print 'Using schedule from %s' % self.filename
-            print 'New schedule: %s' % self
+            logger.info('Using schedule from %s', self.filename)
+            logger.info('New schedule: %s', self)
         except (IOError, OSError, AssertionError) as error:
-            print 'Failed to read schedule %s: %s' % (self.filename, error)
+            logger.error('Failed to read schedule %s: %s', self.filename, error)
             self.schedule = self.default_schedule.copy()
-            print 'Using default schedule: %s' % self
+            logger.info('Using default schedule: %s', self)
 
         now = datetime.now().replace(microsecond=0)
         self.pendingrun = {}
@@ -91,10 +79,7 @@ class Schedule(object):
 
     @property
     def filename(self):
-        from vanko.scrapy import DEFAULT_PROJECT_DIR
-        from .spider import BOT_NAME
-
-        path = os.path.join(DEFAULT_PROJECT_DIR, BOT_NAME, 'schedule.txt')
+        path = os.path.join(get_project_dir(), 'dvoznak', 'schedule.txt')
         return os.path.abspath(path)
 
     @property
@@ -111,41 +96,42 @@ class Schedule(object):
 
 
 class Service(object):
-    def __init__(self, setup_logging=False):
-        self.logger = None
-        if setup_logging:
-            logging.basicConfig(
-                format='%(asctime)s (%(process)d) [%(name)s] %(message)s',
-                datefmt='%Y-%m-%d %H:%M:%S',
-                stream=sys.stdout, level=logging.INFO)
-            self.logger = logging.getLogger('dvoznak_service')
+    def __init__(self):
         self.schedule = Schedule()
 
     def run(self):
-        print 'Service running'
+        logger.info('Service running')
         while 1:
             poll_seconds = int(os.environ.get('POLL_SECONDS', DEFAULT_POLL_SECONDS))
             sleep(poll_seconds)
             try:
                 self.loop()
             except Exception as err:
-                print 'Service caught %r' % err
+                logger.error('Service error: %r', err)
 
     def loop(self):
         self.schedule.reload()
         self.schedule.nightly()
         action, starttime = self.schedule.take_action()
         if action:
-            print 'Scheduled crawl for {} at {}'.format(action, starttime)
-            res = api_request(logger=self.logger, action=action, type='auto',
-                              starttime=starttime, request='run')
-            env = res.get('env', {})
-            return run_action(action, env)
+            logger.info('Scheduled crawl for %s at %s', action, starttime)
+            res = api_request(action=action, type='auto', starttime=starttime, request='run')
+            return self.action(action, res.get('env', {}))
 
-        res = api_request(logger=self.logger, action='service', type='manual', request='run')
+        res = api_request(action='service', type='manual', request='run')
         if res:
             action = res.get('action', None)
-            env = res.get('env', {})
-            self.last_env = env.copy()
+            self.last_env = res.get('env', {})
             if action:
-                return run_action(action, env)
+                return self.action(action, self.last_env)
+
+    @staticmethod
+    def action(action, env={}):
+        spider_cls = dict(news=NewsSpider, tips=TipsSpider)[action]
+        environ = os.environ.copy()
+        environ.update(env)
+        spider = spider_cls(environ)
+        try:
+            spider.run()
+        finally:
+            spider.close()
