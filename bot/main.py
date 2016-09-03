@@ -16,16 +16,18 @@ def main():
     from .utils import getopt, setup_logging
 
     action = getopt('action')
-    userpass = getopt('userpass') or ''
-    service = bool(getopt('service') is not None or userpass)
+    service = getopt('service')
 
     setup_logging(service)
 
     getopt('server', 'WEB_SERVER')
     getopt('secret', 'SECRET_KEY')
+    getopt('pollsec', 'POLL_SECONDS')
+    getopt('userpass', 'USERPASS')
+    getopt('images', 'LOAD_IMAGES')
+    getopt('debug', 'DEBUG')
 
     if service:
-        os.environ['USERPASS'] = userpass
         Service().run()
     elif action:
         Service.action(action)

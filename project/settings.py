@@ -21,6 +21,7 @@ getenv = os.environ.get
 
 DEBUG = bool(int(getenv('DEBUG', False)))
 DEBUG_SQL = bool(int(getenv('DEBUG_SQL', DEBUG)))
+DEBUG_API = bool(int(getenv('DEBUG_API', DEBUG)))
 HEROKU = bool(int(getenv('HEROKU', not DEBUG)))
 
 SECRET_KEY = getenv('SECRET_KEY', 'please change me')
@@ -195,6 +196,11 @@ LOGGING = {
             'level': 'DEBUG' if DEBUG_SQL else 'CRITICAL',
             'propagate': False,
         },
+        'dz': {
+            'handlers': ['debug_console'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
     },
 }
 
@@ -208,5 +214,8 @@ MONGODB_URL = getenv('MONGODB_URL', '')
 
 NARROW_GRIDS = bool(int(getenv('NARROW_GRIDS', False)))
 SPIDER_SECRET_KEY = getenv('SPIDER_SECRET_KEY', 'please change me')
-SPIDER_LOG_LEVEL = getenv('SPIDER_LOG_LEVEL', 'INFO')
 SPIDER_TIME_ZONE = getenv('SPIDER_TIME_ZONE', TIME_ZONE)
+SPIDER_PAGE_DELAY = int(getenv('SPIDER_PAGE_DELAY', 50))
+SPIDER_LOAD_IMAGES = bool(int(getenv('SPIDER_LOAD_IMAGES', True)))
+SPIDER_USERPASS = getenv('SPIDER_USERPASS', '')
+SPIDER_LOG_LEVEL = getenv('SPIDER_LOG_LEVEL', 'DEBUG' if DEBUG else 'INFO')

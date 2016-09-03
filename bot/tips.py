@@ -1,8 +1,8 @@
 import re
-from datetime import datetime
 from urlparse import urljoin
 from .utils import logger, extract_datetime, first_text
 from .spider import BaseSpider
+from .api import api_send_item
 
 
 DATA_MAP = {
@@ -26,7 +26,10 @@ class TipsSpider(BaseSpider):
         self.login()
         self.click_menu('Prognoze')
         for sel in self.wait_for_css('.tiprog_list_block'):
-            self.parse_tip(sel)
+            item = self.parse_tip(sel)
+            if item:
+                self.crawled_ids.add(item['pk'])
+                api_send_item(self.action, self.start_time, self.debug, item)
 
     def parse_tip(self, sel):
         item = {}
@@ -36,12 +39,10 @@ class TipsSpider(BaseSpider):
         try:
             pk = int(re.search(r'id_dogadjaj=(\d+)', details_url).group(1))
         except Exception:
-            logger.info('Skipping tip %s', details_url)
+            logger.info('Skip tip %s', details_url)
             return
         item['pk'] = pk
-
         item['details_url'] = details_url
-        item['crawled'] = datetime.utcnow().replace(microsecond=0)
 
         item['place'] = first_text(sel, '.tpl_right > h3 > span')
         item['title'] = first_text(sel, '.tpl_right > h3 > a')
@@ -65,4 +66,4 @@ class TipsSpider(BaseSpider):
             item[dst] = d.get(src, '')
 
         item['published'] = extract_datetime(item['published'])
-        self.tips.append(item)
+        return item

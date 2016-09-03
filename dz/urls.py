@@ -1,9 +1,10 @@
 from django.conf.urls import url
-from . import views
+from . import views, api
 
 app_name = 'dz'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^api/spider/run/?$', views.api_spider_run, name='api-spider-run'),
-    url(r'^api/spider/results/?$', views.api_spider_results, name='api-spider.reults')
+    url(r'^api/crawl/job/?$', api.api_crawl_job),
+    url(r'^api/crawl/item/?$', api.api_crawl_item),
+    url(r'^api/crawl/ended/?$', api.api_crawl_ended),
 ]

@@ -95,14 +95,13 @@ class DzCrawlModelAdmin(ExportMixin, DzModelAdmin):
     def crawl_view(self, request, extra_context=None):
         opts = self.opts
         if self.crawl_action and self.user_can_crawl(request.user):
-            Crawl.add(self.crawl_action)
-            message = '%s crawling started!' % opts.verbose_name_plural.title()
+            status = Crawl.add_manual_crawl(self.crawl_action)
+            message = '%s crawling %s!' % (opts.verbose_name_plural.title(), status)
             self.message_user(request, _(message))
         rev_fmt = opts.app_label, opts.model_name
         url = reverse('admin:%s_%s_changelist' % rev_fmt, current_app=self.admin_site.name)
-        url = add_preserved_filters(
-            {'preserved_filters': self.get_preserved_filters(request), 'opts': opts}, url)
-        return HttpResponseRedirect(url)
+        filter_kwargs = dict(opts=opts, preserved_filters=self.get_preserved_filters(request))
+        return HttpResponseRedirect(add_preserved_filters(filter_kwargs, url))
 
 
 class DzExportResource(ModelResource):

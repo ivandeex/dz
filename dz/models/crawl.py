@@ -1,23 +1,18 @@
 from __future__ import unicode_literals
+import logging
 from django.db import models
 from django.db.models import Max
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from .common import TYPE_CHOICES, ACTION_CHOICES
+from .schedule import Schedule
+
+logger = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
 class Crawl(models.Model):
-    TYPE_CHOICES = [
-        ('manual', _('manual crawl')),
-        ('auto', _('auto crawl')),
-    ]
-
-    ACTION_CHOICES = [
-        ('news', _('news crawl')),
-        ('tips', _('tips crawl')),
-    ]
-
     # Translators: Job Id
     id = models.AutoField(_('crawl id'), primary_key=True)
     type = models.CharField(_('crawl type'), max_length=8,
@@ -27,10 +22,8 @@ class Crawl(models.Model):
     status = models.CharField(_('crawl status'), max_length=10)
     started = models.DateTimeField(_('started at'), null=True)
     ended = models.DateTimeField(_('ended at'), null=True)
-    news = models.SmallIntegerField(_('no. of news'), default=0)
-    tips = models.SmallIntegerField(_('no. of tips'), default=0)
+    count = models.SmallIntegerField(_('no. of items'), default=0)
     host = models.CharField(_('hostname'), max_length=24, db_index=True)
-    ipaddr = models.CharField(_('ip address'), max_length=20)
     # Translators: PID
     pid = models.CharField(_('crawler pid'), max_length=6)
 
@@ -47,9 +40,26 @@ class Crawl(models.Model):
         super(Crawl, self).save(*args, **kwargs)
 
     @classmethod
-    def add(cls, action):
+    def add_manual_crawl(cls, action):
         now = timezone.now().replace(microsecond=0)
+        auto_time, auto_action = Schedule.get_next_job(consume=False)
+        if auto_action == action and abs((auto_time - now).total_seconds()) < 60:
+            return 'refused'
         try:
             Crawl.objects.get(action=action, status='waiting').update(started=now)
+            return 'updated'
         except Crawl.DoesNotExist:
             Crawl.objects.create(action=action, status='waiting', started=now, type='manual')
+            return 'added'
+
+    @classmethod
+    def get_manual_crawl(cls):
+        return cls.objects.filter(status='waiting').order_by('pk').first()
+
+    @classmethod
+    def get_auto_crawl(cls, consume=True):
+        time, action = Schedule.get_next_job(consume)
+        if consume and time and action:
+            logger.info('Schedule auto job %s at %02d:%02d', action, time.hour, time.minute)
+            crawl = cls.objects.create(action=action, status='waiting', started=time, type='auto')
+            return crawl

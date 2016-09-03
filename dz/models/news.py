@@ -32,11 +32,6 @@ class News(models.Model):
     content = models.TextField(_('full news content'))
     subtable = models.TextField(_('news subtable'))
 
-    def __str__(self):
-        return u'{} ({})'.format(self.title, self.id)
-
-    objects = NewsManager()
-
     class Meta:
         verbose_name = _('news')
         verbose_name_plural = _('newss')
@@ -47,3 +42,12 @@ class News(models.Model):
             ('crawl_news', _('Can crawl news')),
             ('view_news', _('Can only view news')),
         ]
+
+    objects = NewsManager()
+
+    def __str__(self):
+        return u'{} ({})'.format(self.title, self.id)
+
+    @classmethod
+    def get_seen_ids(cls):
+        return cls.objects.distinct('id').order_by('id').values_list('id', flat=True)

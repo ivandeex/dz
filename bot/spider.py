@@ -8,43 +8,26 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 from .utils import logger, randsleep, poll_sleep
-from .api import send_results
+from .api import api_send_ended, dt2json
 
-
-def split_ranges(range_str):
-    res = set()
-    if range_str:
-        for token in range_str.split(','):
-            if '-' in token:
-                beg, end = token.split('-')
-                for val in range(int(beg), int(end) + 1):
-                    res.add(val)
-            else:
-                res.add(int(token))
-    return res
+DEFAULT_PAGE_DELAY = 10
 
 
 class BaseSpider(object):
     user_agent = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 ' \
                  '(KHTML, like Gecko) Chrome/45.0.2454.93 Safari/537.36'
-    login_pending = True
     home_url = 'http://www.dvoznak.com/'
     timeout = 60
     action = None
 
-    def __init__(self, env={}):
-        self.starttime = env.get('STARTTIME', str(datetime.utcnow().replace(microsecond=0)))
-        self.delay = int(env.get('PAGE_DELAY', 20))
-        self.seen = split_ranges(env.get('NEWS_TO_SKIP', '').strip())
-        self.single_pk = int(env.get('SINGLE_PK', 0))
+    def __init__(self, env):
+        self.start_time = env.get('START_TIME', dt2json(datetime.utcnow()))
+        self.page_delay = int(env.get('PAGE_DELAY', DEFAULT_PAGE_DELAY))
+        self.load_images = bool(int(env.get('LOAD_IMAGES', True)))
+        self.debug = bool(int(env.get('DEBUG', False)))
+        self.username, _, self.password = env.get('USERPASS', '').partition(':')
 
-        self.news = []
-        self.tips = []
-        self.crawled = set()
-        self.skipped = set()
-        self.numinfo = True
-        self.tocrawl = 0
-        self.ercount = 0
+        self.crawled_ids = set()
 
         caps = DesiredCapabilities.PHANTOMJS.copy()
         caps['phantomjs.page.settings.userAgent'] = self.user_agent
@@ -52,18 +35,19 @@ class BaseSpider(object):
         self.webdriver = PhantomJS(
             executable_path=env.get('PHANTOMJS_BINARY', 'phantomjs'),
             desired_capabilities=caps,
-            service_args=['--load-images=no'],
+            service_args=([] if self.load_images else ['--load-images=no']),
             service_log_path=os.path.join(tempfile.gettempdir(), 'phantomjs.log')
         )
 
         self.webdriver.get(self.home_url)
 
+    def end(self):
+        logger.info('Crawling finished')
+        api_send_ended(self.action, self.start_time, self.debug, self.crawled_ids)
+
     def close(self):
-        try:
-            send_results(self.news, self.tips, self.action, self.starttime, 'finished')
-        finally:
-            self.webdriver.quit()
-            self.webdriver = None
+        self.webdriver.quit()
+        self.webdriver = None
 
     def page_sel(self):
         return Selector(self.webdriver.page_source)
@@ -72,8 +56,7 @@ class BaseSpider(object):
         self.wait_for_ajax()
         randsleep(2)
 
-        username, _sep, password = os.environ.get('USERPASS', '').partition(':')
-        if not (username and password):
+        if not (self.username and self.password):
             logger.info('Working without login (browser)')
             return
 
@@ -96,18 +79,16 @@ class BaseSpider(object):
         self.click('Prijava', by=By.NAME)
         randsleep(4)
 
-        logger.info('Logged in as %s (browser)', username)
+        logger.info('Logged in as %s (browser)', self.username)
 
     def click_menu(self, menu):
-        logger.debug('Searching for %s menu', menu)
+        logger.debug('Clicking on %s menu', menu)
         xpath = '//ul[@id="mainmenu"]/li/a[contains(.,"%s")]' % menu
         el = self.webdriver.find_element_by_xpath(xpath)
-        logger.debug('Clicking on %s menu', menu)
         el.click()
 
         logger.debug('Waiting for menu ajax to finish')
         self.wait_for_ajax()
-        logger.debug('Safety delay after click')
         randsleep(4)
 
     def wait_for_css(self, css):

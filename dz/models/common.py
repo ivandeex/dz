@@ -5,10 +5,21 @@ from django.db.models import Case, When, Value
 
 
 ARCHIVED_CHOICES = [
+    # TODO: make boolean
     ('archived', _('Archived')),
     ('fresh', _('Fresh')),
 ]
 
+TYPE_CHOICES = [
+    # TODO make boolean, name 'manual'
+    ('manual', _('manual crawl')),
+    ('auto', _('auto crawl')),
+]
+
+ACTION_CHOICES = [
+    ('news', _('news crawl')),
+    ('tips', _('tips crawl')),
+]
 
 CharField.register_lookup(Length, 'length')
 TextField.register_lookup(Length, 'length')

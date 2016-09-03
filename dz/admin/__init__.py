@@ -9,12 +9,16 @@ from .. import models
 
 
 class CrawlAdmin(DzModelAdmin):
-    list_display = ['id', 'action', 'type', 'status', 'started', 'ended',
-                    'news', 'tips', 'host', 'ipaddr', 'pid']
+    list_display = ['id', 'action', 'type', 'status', 'started', 'ended', 'count', 'host', 'pid']
     list_filter = ['type', 'action', 'status', 'host']
     date_hierarchy = 'started'
     radio_fields = {'action': admin.HORIZONTAL, 'type': admin.HORIZONTAL}
     ordering = ['-id']
+
+
+class ScheduleAdmin(DzModelAdmin):
+    list_display = ['time', 'action']
+    ordering = ['time', 'action']
 
 
 class UserAdmin(DzModelAdmin):
@@ -48,4 +52,5 @@ site = DzAdminSite(name='dz-admin')
 site.register(models.News, NewsAdmin)
 site.register(models.Tip, TipAdmin)
 site.register(models.Crawl, CrawlAdmin)
+site.register(models.Schedule, ScheduleAdmin)
 site.register(models.User, UserAdmin)

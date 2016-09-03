@@ -1,84 +1,91 @@
 import re
-from datetime import datetime
-from .api import send_partial_news
+from .api import api_send_item
 from .spider import BaseSpider
-from .utils import logger, extract_datetime, first_text, randsleep
+from .utils import logger, extract_datetime, first_text, randsleep, split_ranges
 
 
 class NewsSpider(BaseSpider):
     action = 'news'
 
-    def run(self):
-        try:
-            self.login()
-            self.click_menu('Najave')
-            self.loop_on = True
-            while self.loop_on:
-                self.news_loop()
-        except Exception as err:
-            self.ercount += 1
-            if self.ercount < len(self.news) * 2 + 5:
-                logger.info('Overriding browser issue %r', err)
-                send_partial_news(self.news, self.starttime, last=0)
-                randsleep(5)
-            logger.info('Too many failures. Baling out.')
+    def __init__(self, env):
+        self.seen_news = split_ranges(env.get('SEEN_NEWS', '').strip())
+        self.skipped_urls = set()
+        self.crawled_urls = set()
+        self.num_info = True
+        self.to_crawl = 0
+        self.err_count = 0
+        self.looping = True
+        super(NewsSpider, self).__init__(env)
 
-    def news_loop(self):
+    def run(self):
+        self.login()
+        self.click_menu('Najave')
+        while self.looping:
+            try:
+                self.next_news()
+            except Exception as err:
+                logger.error('Browser issue %r', err)
+                if self.debug:
+                    raise
+                self.err_count += 1
+                if self.err_count > len(self.news) * 2 + 5:
+                    break
+                randsleep(5)
+
+    def next_news(self):
         logger.debug('Requesting all news links')
         xpath = '//*[contains(@class,"rswcl_najava")]//h3/a'
         news_links = self.webdriver.find_elements_by_xpath(xpath)
 
-        if self.numinfo:
-            self.numinfo = False
-            self.tocrawl = len(news_links)
-            logger.info('To crawl at most %d news', self.tocrawl)
+        if self.num_info:
+            self.num_info = False
+            self.to_crawl = len(news_links)
+            logger.info('To crawl at most %d news', self.to_crawl)
 
         for link in news_links:
             url = link.get_attribute('href')
-            logger.debug('Link %s has url %s', link, url)
-            if url in self.skipped or url in self.crawled:
-                logger.debug('This url has been skipped or crawled')
+            if url in self.skipped_urls:
+                logger.debug('Skipped url %s', url)
+                continue
+            if url in self.crawled_urls:
+                logger.debug('Already crawled url %s', url)
                 continue
             logger.debug('Select url %s', url)
             break
         else:
             logger.debug('No more urls to try')
-            self.loop_on = False
+            self.looping = False
             return
 
         try:
             pk = int(re.search(r'id_dogadjaj=(\d+)', url).group(1))
             logger.debug('Exctracted pk %s from url %s', pk, url)
         except Exception:
-            self.skipped.add(url)
-            self.tocrawl = max(1, self.tocrawl - 1)
-            logger.warn('Skip archived news %s', url)
+            self.skipped_urls.add(url)
+            self.to_crawl = max(1, self.to_crawl - 1)
+            logger.warn('Skip invalid url %s', url)
             return
 
-        if (not self.single_pk and pk in self.seen) or (self.single_pk and pk != self.single_pk):
-            self.skipped.add(url)
-            self.tocrawl = max(1, self.tocrawl - 1)
+        if pk in self.seen_news:
+            self.skipped_urls.add(url)
+            self.to_crawl = max(1, self.to_crawl - 1)
             logger.info('News already seen %s', url)
-            self.news.append(dict(pk=pk, crawled=datetime.utcnow().replace(microsecond=0)))
             return
 
         logger.debug('Clicking on link %s', url)
         link.click()
         logger.debug('Waiting for ajax')
         self.wait_for_ajax()
-        logger.debug('Sleep ~%dsec', self.delay)
-        randsleep(self.delay)
+        logger.debug('Sleep ~ %d sec before page', self.page_delay)
+        randsleep(self.page_delay)
 
         logger.debug('Scrape article with pk %s url %s', pk, url)
-        self.parse_news(url, pk)
-        self.crawled.add(url)
-        news_count = len(self.crawled)
-        logger.info('Crawled news #%d of %d %s', news_count, self.tocrawl, url)
-        if self.single_pk and pk == self.single_pk:
-            logger.debug('Reached configured news limit')
-            self.loop_on = False
-            return
-        send_partial_news(self.news, self.starttime, last=1)
+        item = self.parse_news(url, pk)
+        logger.info('Crawled news #%d of %d, %s',
+                    len(self.crawled_ids) + 1, self.to_crawl, url)
+        self.crawled_urls.add(url)
+        self.crawled_ids.add(pk)
+        api_send_item(self.action, self.start_time, self.debug, item)
 
         logger.debug('Click on the back button')
         self.webdriver.back()
@@ -86,8 +93,8 @@ class NewsSpider(BaseSpider):
         logger.debug('Wait for ajax')
         self.wait_for_ajax()
 
-        logger.debug('Sleep ~%ds', self.delay)
-        randsleep(self.delay)
+        logger.debug('Sleep ~ %d sec after page', self.page_delay)
+        randsleep(self.page_delay)
 
     def parse_news(self, url, pk):
         sel = self.page_sel()
@@ -95,7 +102,6 @@ class NewsSpider(BaseSpider):
 
         item['url'] = url
         item['pk'] = pk
-        item['crawled'] = datetime.utcnow().replace(microsecond=0)
 
         item['section'] = first_text(sel, '.lnfl')
         item['subsection'] = first_text(sel, '.lnfl.tename')
@@ -113,4 +119,4 @@ class NewsSpider(BaseSpider):
         subtable2 = '\n'.join(x.strip() for x in sel.xpath(subtable2_xp).extract())
         item['subtable'] = u'%s\n<div class="subtable2">\n%s\n</div>' % (subtable1, subtable2)
 
-        self.news.append(item)
+        return item
