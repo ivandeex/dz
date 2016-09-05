@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.conf import settings
 from django.db.models import signals, Q
-from django.dispatch.dispatcher import receiver
+from django.dispatch import receiver
 
 
 @python_2_unicode_compatible

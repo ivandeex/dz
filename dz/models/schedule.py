@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.conf import settings
 from django.db.models import signals
-from django.dispatch.dispatcher import receiver
+from django.dispatch import receiver
 from threading import RLock
 from datetime import timedelta
 from .common import ACTION_CHOICES
