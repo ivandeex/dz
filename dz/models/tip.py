@@ -2,35 +2,24 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-from .common import ARCHIVED_CHOICES
 from .common import CutStr
-
-
-class TipsManager(models.Manager):
-    use_for_related_fields = True
-
-    def get_queryset(self, *args, **kw):
-        qs = super(TipsManager, self).get_queryset(*args, **kw)
-        qs = qs.defer('text').annotate(text_cut=CutStr('text', 80))
-        return qs
 
 
 @python_2_unicode_compatible
 class Tip(models.Model):
     id = models.IntegerField(_('tip id'), db_column='pk', primary_key=True)
-    title = models.CharField(_('participants'), max_length=150, db_index=True)
-    place = models.CharField(_('liga'), max_length=40, db_index=True)
-    tip = models.CharField(_('tip title'), max_length=60)
-    text = models.TextField('tip text', null=True)
+    league = models.CharField(_('league'), max_length=40, db_index=True)
+    parties = models.CharField(_('parties'), max_length=150, db_index=True)
+    title = models.CharField(_('tip title'), max_length=60)
     # Translators: Betting (Kladionica)
     betting = models.CharField(_('betting'), max_length=32)
     # Translators: Coeff. (Koeficijent)
-    coeff = models.CharField(_('tip coefficient'), max_length=6)
-    min_coeff = models.CharField(_('minimum tip coeff'), max_length=6)
+    rate = models.CharField(_('tip rate'), max_length=6)
+    minrate = models.CharField(_('minimum tip rate'), max_length=6)
     # Translators: Result (Rezultat)
     result = models.CharField(_('tip result'), max_length=15)
     # Translators: Earnings Due (Zarada)
-    due = models.CharField(_('earnings'), max_length=8)
+    earnings = models.CharField(_('earnings'), max_length=8)
     # Translators: Spread (Is. Margina)
     spread = models.CharField(_('spread'), max_length=8)
     # Translators: Stake (Ulog)
@@ -42,13 +31,14 @@ class Tip(models.Model):
     published = models.DateTimeField(_('published'), null=True, db_index=True)
     updated = models.DateTimeField(_('updated'))
     crawled = models.DateTimeField(_('fetched'))
-    details_url = models.URLField(_('tip link'))
-    archived = models.CharField(_('archived'), max_length=9, choices=ARCHIVED_CHOICES)
+    link = models.URLField(_('tip link'))
+    archived = models.BooleanField(_('archived'))
+
+    # large text fields
+    text = models.TextField('tip text', null=True)
 
     def __str__(self):
         return u'{} ({})'.format(self.tip, self.id)
-
-    objects = TipsManager()
 
     class Meta:
         verbose_name = _('tip')
@@ -60,3 +50,13 @@ class Tip(models.Model):
             ('crawl_tips', _('Can crawl tips')),
             ('view_tips', _('Can only view tips')),
         ]
+
+    class Manager(models.Manager):
+        use_for_related_fields = True
+
+        def get_queryset(self, *args, **kw):
+            qs = super(Tip.Manager, self).get_queryset(*args, **kw)
+            qs = qs.defer('text').annotate(text_cut=CutStr('text', 80))
+            return qs
+
+    objects = Manager()

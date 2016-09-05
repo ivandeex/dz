@@ -56,7 +56,7 @@ def parse_request(request, command):
 
     req_utc = json2datetime(req['time'], utc=True).replace(tzinfo=None)
     diff = (datetime.utcnow() - req_utc).total_seconds()
-    assert abs(diff) < 600, 'Invalid request time'
+    assert abs(diff) < 600, 'Invalid request time stamp'
 
     assert re.match(r'^\d\d\d$', req['rand']), 'Invalid request rand'
 
@@ -111,10 +111,10 @@ def split_ranges(range_str):
     return res
 
 
-def get_model(action):
-    assert action in ('news', 'tips'), 'Invalid action'
+def get_model(target):
+    assert target in ('news', 'tips'), 'Invalid target'
     model_classes = dict(news=models.News, tips=models.Tip)
-    return model_classes[action]
+    return model_classes[target]
 
 
 @csrf_exempt
@@ -133,7 +133,7 @@ def api_crawl_job(request):
         crawl = models.Crawl.get_manual_crawl() or models.Crawl.get_auto_crawl()
         if crawl:
             seen_news = ''
-            if crawl.action == 'news':
+            if crawl.target == 'news':
                 seen_news = merge_ranges(models.News.get_seen_ids())
 
             crawl.host = req['host']
@@ -144,7 +144,7 @@ def api_crawl_job(request):
             crawl.save()
 
             resp['found'] = True
-            resp['action'] = crawl.action
+            resp['target'] = crawl.target
             resp['start_time'] = datetime2json(crawl.started)
             resp['seen_news'] = seen_news
             resp['page_delay'] = settings.SPIDER_PAGE_DELAY
@@ -161,55 +161,55 @@ def api_crawl_job(request):
 def api_crawl_item(request):
     try:
         req = parse_request(request, 'item')
-        Model = get_model(req['action'])
+        Model = get_model(req['target'])
 
         data = req['data']
         data['crawled'] = json2datetime(data['crawled'], utc=True)
         data['updated'] = json2datetime(data['updated'], utc=False)
         data['published'] = json2datetime(data['published'], utc=False)
 
-        pk = int(data['pk'])
+        id = int(data['id'])
         try:
-            item = Model.objects.get(pk=pk)
+            item = Model.objects.get(id=id)
         except Model.DoesNotExist:
-            item = Model(pk=pk)
+            item = Model(id=id)
         for field, value in data.items():
             setattr(item, field, value)
-        item.archived = 'fresh'
+        item.archived = False
         item.save()
 
         crawl, created = models.Crawl.objects.get_or_create(
             started=json2datetime(req['start_time'], utc=True),
-            action=req['action'],
+            target=req['target'],
             host=req['host'],
             pid=req['pid'],
         )
         crawl.count = F('count') + 1
-        crawl.status = 'partial'
+        crawl.status = 'running'
         crawl.ended = None
         crawl.save()
 
-        return make_response(ok=True, pk=pk, action=req['action'])
+        return make_response(ok=True, id=id, target=req['target'])
 
     except Exception as err:
         if settings.DEBUG:
             raise
         logger.info('Invalid item packet: %s', err)
-        return make_response(ok=False, error=repr(err), pk=pk, action=['action'])
+        return make_response(ok=False, error=repr(err), id=id, target=['target'])
 
 
 @csrf_exempt
-def api_crawl_ended(request):
+def api_crawl_complete(request):
     try:
-        req = parse_request(request, 'ended')
+        req = parse_request(request, 'complete')
 
-        Model = get_model(req['action'])
+        Model = get_model(req['target'])
         ids = split_ranges(req['ids'])
-        Model.objects.filter(id__in=ids).update(archived='fresh')
-        Model.objects.filter(~Q(id__in=ids)).update(archived='archived')
+        Model.objects.filter(id__in=ids).update(archived=False)
+        Model.objects.filter(~Q(id__in=ids)).update(archived=True)
 
         crawl, created = models.Crawl.objects.get_or_create(
-            action=req['action'],
+            target=req['target'],
             started=json2datetime(req['start_time'], utc=True),
             host=req['host'],
             pid=req['pid'],
@@ -219,10 +219,10 @@ def api_crawl_ended(request):
         crawl.ended = timezone.now()
         crawl.save()
 
-        return make_response(ok=True, action=req['action'])
+        return make_response(ok=True, target=req['target'])
 
     except Exception as err:
         if settings.DEBUG:
             raise
         logger.info('Invalid final packet: %s', err)
-        return make_response(ok=False, error=repr(err), action=req['action'])
+        return make_response(ok=False, error=repr(err), target=req['target'])

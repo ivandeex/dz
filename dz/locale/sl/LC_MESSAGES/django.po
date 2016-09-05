@@ -16,11 +16,11 @@ msgstr ""
 
 #: admin.py:20
 msgid "archive filter"
-msgstr "freshness"
+msgstr "svežina"
 
 #: admin.py:25
 msgid "All"
-msgstr ""
+msgstr "Vse"
 
 #: admin.py:26 models.py:10
 msgid "Archived"
@@ -28,7 +28,7 @@ msgstr "Arhivsko"
 
 #: admin.py:27 models.py:11
 msgid "Fresh"
-msgstr "Sveže"
+msgstr "Novo"
 
 #: admin.py:174 admin.py:175
 msgid "D.Z."
@@ -40,27 +40,27 @@ msgstr "Početna:"
 
 #: models.py:24
 msgid "news id"
-msgstr "id"
+msgstr "broj"
 
 #: models.py:25
 msgid "news link"
-msgstr "link"
+msgstr "vezu"
 
 #: models.py:26
 msgid "news title"
-msgstr "title"
+msgstr "naslov"
 
 #: models.py:27 models.py:71
-msgid "participants"
+msgid "parties"
 msgstr "udeleženci"
 
 #: models.py:28
 msgid "sport"
-msgstr ""
+msgstr "sportski"
 
 #: models.py:29 models.py:72
-msgid "liga"
-msgstr ""
+msgid "league"
+msgstr "liga"
 
 #. Translators: Published (Objavleno)
 #: models.py:30 models.py:92
@@ -85,7 +85,7 @@ msgstr "preamble"
 
 #: models.py:35
 msgid "full news content"
-msgstr "full content"
+msgstr "sadrz^aj"
 
 #: models.py:36
 msgid "news subtable"
@@ -93,11 +93,11 @@ msgstr "subtable"
 
 #: models.py:45
 msgid "short news content"
-msgstr "content (kratko)"
+msgstr "kratak sadržaj"
 
 #: models.py:54
 msgid "news"
-msgstr "najave"
+msgstr "najava"
 
 #: models.py:55
 msgid "newss"
@@ -105,11 +105,11 @@ msgstr "najave"
 
 #: models.py:70
 msgid "tip id"
-msgstr "id"
+msgstr "broj"
 
 #: models.py:73
 msgid "tip title"
-msgstr "title"
+msgstr "naslov"
 
 #. Translators: Betting (Kladionica)
 #: models.py:76
@@ -118,12 +118,12 @@ msgstr "kladionica"
 
 #. Translators: Coeff. (Koeficijent)
 #: models.py:78
-msgid "tip coefficient"
+msgid "tip rate"
 msgstr "koeficijent"
 
 #: models.py:79
-msgid "minimum tip coeff"
-msgstr "min. coeff."
+msgid "minimum tip rate"
+msgstr "min. koef."
 
 #. Translators: Result (Rezultat)
 #: models.py:81
@@ -152,15 +152,15 @@ msgstr "uspješnost"
 
 #: models.py:90
 msgid "tipster"
-msgstr ""
+msgstr "tipster"
 
 #: models.py:95
 msgid "tip link"
-msgstr "link"
+msgstr "vezu"
 
 #: models.py:107
-msgid "short tip"
-msgstr "prognoz"
+msgid "tip cut"
+msgstr "opis"
 
 #: models.py:116
 msgid "tip"
@@ -172,11 +172,11 @@ msgstr "prognoze"
 
 #: models.py:126
 msgid "manual crawl"
-msgstr "manual"
+msgstr "navodilo"
 
 #: models.py:127
 msgid "auto crawl"
-msgstr "auto"
+msgstr "samodejno"
 
 #: models.py:131
 msgid "news crawl"
@@ -189,48 +189,40 @@ msgstr "prognoze"
 #. Translators: Job Id
 #: models.py:136
 msgid "crawl id"
-msgstr "job id"
+msgstr "id"
 
 #: models.py:137
 msgid "crawl type"
-msgstr "type"
+msgstr "tip"
 
 #: models.py:138
 msgid "crawl target"
-msgstr "target"
+msgstr "kaj"
 
 #: models.py:139
 msgid "crawl status"
-msgstr "status"
+msgstr "stanje"
 
 #: models.py:140
 msgid "started at"
-msgstr ""
+msgstr "začel v"
 
 #: models.py:141
 msgid "ended at"
-msgstr ""
-
-#: models.py:142
-msgid "no. of news"
-msgstr ""
+msgstr "končalo na"
 
 #: models.py:143
-msgid "no. of tips"
-msgstr ""
+msgid "no. of items"
+msgstr "količina"
 
 #: models.py:144
 msgid "hostname"
 msgstr "kompjuter"
 
-#: models.py:145
-msgid "ip address"
-msgstr "IP address"
-
 #. Translators: PID
 #: models.py:147
 msgid "crawler pid"
-msgstr "process id"
+msgstr "postopek id"
 
 #: models.py:153
 msgid "crawl"

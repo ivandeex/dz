@@ -30,11 +30,11 @@ def json2dt(dt_str):
     return datetime.strptime(dt_str, '%Y-%m-%d %H:%M:%S')
 
 
-def api_request(command, **kwargs):
+def api_request(command, params):
     web_server = os.environ.get('WEB_SERVER', DEFAULT_WEB_SERVER)
     secret_key = os.environ.get('SECRET_KEY', DEFAULT_SECRET_KEY)
 
-    req = kwargs.copy()
+    req = params.copy()
     req['time'] = dt2json(datetime.utcnow())
     req['rand'] = str(random.randint(100, 999))
     req['host'] = socket.gethostname()
@@ -48,7 +48,7 @@ def api_request(command, **kwargs):
     resp = resp.json()
 
     diff = (json2dt(resp['time']) - datetime.utcnow()).total_seconds()
-    assert abs(diff) < 600, 'Invalid response time'
+    assert abs(diff) < 600, 'Invalid response time stamp'
 
     assert re.match(r'^\d\d\d$', req['rand']), 'Invalid response rand'
 
@@ -59,14 +59,14 @@ def api_request(command, **kwargs):
     return resp
 
 
-def api_send_item(action, start_time, debug, item):
+def api_send_item(target, start_time, debug, item):
     try:
         data = item.copy()
         data['crawled'] = dt2json(datetime.utcnow())
         data['updated'] = dt2json(data['updated'])
         data['published'] = dt2json(data['published'])
 
-        resp = api_request('item', action=action, start_time=start_time, data=data)
+        resp = api_request('item', dict(target=target, start_time=start_time, data=data))
         if not resp['ok']:
             logger.info('Server returned "item" failure: %s', resp['error'])
     except Exception as err:
@@ -75,12 +75,12 @@ def api_send_item(action, start_time, debug, item):
             raise
 
 
-def api_send_ended(action, start_time, debug, ids):
+def api_send_complete(target, start_time, debug, ids):
     try:
         str_ids = merge_ranges(sorted(ids))
-        resp = api_request('ended', action=action, start_time=start_time, ids=str_ids)
+        resp = api_request('complete', dict(target=target, start_time=start_time, ids=str_ids))
         if not resp['ok']:
-            logger.info('Server returned "ended" failure: %s', resp['error'])
+            logger.info('Server returned "complete" failure: %s', resp['error'])
     except Exception as err:
         logger.info('Item sending failed: %r', err)
         if debug:

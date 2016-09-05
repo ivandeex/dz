@@ -6,14 +6,16 @@ from dz import models
 
 
 class Command(BaseCommand):
-    help = 'Migrates MongoDB data into Postgres'
+    help = 'Migrates MongoDB data to Django database'
 
     @staticmethod
     def convert_datetime(dt):
         if dt:
             if isinstance(dt, basestring):
                 dt = timezone.datetime.strptime(dt, '%Y-%m-%d %H:%M:%S')
-            return timezone.make_aware(dt)
+            if not timezone.is_aware(dt):
+                dt = timezone.make_aware(dt)
+            return dt
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -62,15 +64,14 @@ class Command(BaseCommand):
         for item in self.mongodb.dvoznak_crawls.find(sort=ordering):
             models.Crawl.objects.create(
                 id=item['pk'],
-                type=item['type'],
-                action=item['action'],
+                target=item['action'],
+                manual=item['type'] == 'manual',
                 status=item['status'],
                 started=self.convert_datetime(item['started']),
                 ended=self.convert_datetime(item.get('ended')),
-                news=item['news'],
-                tips=item['tips'],
+                count=item['news'] if item['action'] == 'news' else item['tips'],
                 host=item['host'],
-                ipaddr=item['ipaddr'],
+                # ignored: item['ipaddr']
                 pid=item['pid'],
             )
             count += 1
@@ -84,15 +85,15 @@ class Command(BaseCommand):
         for item in self.mongodb.dvoznak_tips.find(sort=ordering):
             models.Tip.objects.create(
                 id=item['pk'],
-                title=item['title'],
-                place=item['place'],
-                tip=item['tip'],
+                league=item['place'],
+                parties=item['title'],
+                title=item['tip'],
                 text=item.get('text'),
                 betting=item['betting'],
-                coeff=item['coeff'],
-                min_coeff=item['min_coeff'],
+                rate=item['coeff'],
+                minrate=item['min_coeff'],
                 result=item['result'],
-                due=item['due'],
+                earnings=item['due'],
                 spread=item['spread'],
                 stake=item['stake'],
                 success=item['success'],
@@ -100,8 +101,8 @@ class Command(BaseCommand):
                 published=self.convert_datetime(item['published']),
                 updated=self.convert_datetime(item['updated']),
                 crawled=self.convert_datetime(item['crawled']),
-                details_url=item['details_url'],
-                archived=item['archived'],
+                link=item['details_url'],
+                archived=item['archived'] != 'fresh',
             )
             count += 1
         return count
@@ -118,15 +119,15 @@ class Command(BaseCommand):
             item.setdefault('content', '')
             models.News.objects.create(
                 id=item['pk'],
-                url=item['url'],
+                link=item['url'],
                 title=item['title'],
-                short_title=item['short_title'],
-                section=item['section'],
-                subsection=item['subsection'],
+                sport=item['section'],
+                league=item['subsection'],
+                parties=item['short_title'],
                 published=self.convert_datetime(item['published']),
                 updated=self.convert_datetime(item['updated']),
                 crawled=self.convert_datetime(item['crawled']),
-                archived=item['archived'],
+                archived=item['archived'] != 'fresh',
                 preamble=item['preamble'],
                 content=item['content'],
                 subtable=item['subtable'],

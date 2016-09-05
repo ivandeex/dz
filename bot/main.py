@@ -15,7 +15,7 @@ def main():
     from .service import Service
     from .utils import getopt, setup_logging
 
-    action = getopt('action')
+    target = getopt('target')
     service = getopt('service')
     debug = getopt('debug', 'DEBUG')
 
@@ -30,8 +30,8 @@ def main():
 
     if service:
         Service().run()
-    elif action:
-        Service.action(action)
+    elif target:
+        Service.action(target)
 
 
 if __name__ == '__main__':

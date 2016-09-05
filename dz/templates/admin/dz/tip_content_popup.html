@@ -1,16 +1,16 @@
 {% extends "admin/base.html" %}
 {% load i18n %}
 
-{% block title %}{% blocktrans with id=obj.id %}Tip {{id}}{% endblocktrans %}{% endblock %}
+{% block title %}{% blocktrans with id=tip.id %}Tip #{{id}}{% endblocktrans %}{% endblock %}
 
 {% block content %}
 <div id="header">
   <div id="branding">
-    <h1 id="site-name">{% blocktrans with id=obj.id %}Tip {{id}}{% endblocktrans %}</h1>
+    <h1 id="site-name">{{tip.title}} [{{tip.id}}]</h1>
   </div>
   <div id="user-tools">
     <button onclick="window.close()">{% trans 'Close' %}</button>
   </div>
 </div>
-<p>{{ obj.text }}</p>
+<p>{{ tip.text }}</p>
 {% endblock %}

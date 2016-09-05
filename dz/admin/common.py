@@ -31,9 +31,9 @@ class DzArchivedListFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() is None or self.value() == 'f':
-            return queryset.filter(archived='fresh')  # Filter by "fresh" if default (None)
+            return queryset.filter(archived=False)  # Filter by "fresh" if default (None)
         if self.value() == 'a':
-            return queryset.filter(archived='archived')
+            return queryset.filter(archived=True)
 
 
 class DzModelAdmin(admin.ModelAdmin):
@@ -96,8 +96,7 @@ class DzCrawlModelAdmin(ExportMixin, DzModelAdmin):
         opts = self.opts
         if self.crawl_action and self.user_can_crawl(request.user):
             status = Crawl.add_manual_crawl(self.crawl_action)
-            message = '%s crawling %s!' % (opts.verbose_name_plural.title(), status)
-            self.message_user(request, _(message))
+            self.message_user(request, _('Crawling %s!' % status))
         rev_fmt = opts.app_label, opts.model_name
         url = reverse('admin:%s_%s_changelist' % rev_fmt, current_app=self.admin_site.name)
         filter_kwargs = dict(opts=opts, preserved_filters=self.get_preserved_filters(request))

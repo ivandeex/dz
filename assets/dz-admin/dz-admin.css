@@ -82,10 +82,10 @@
   margin-top: 5px;
   width: 100%;
   height: calc(100vh - 288px); }
-body.model-tip .field-col_tip {
+body.model-tip .field-content_cut {
   min-width: 240px; }
 
-body.model-news .field-col_content {
+body.model-news .field-content_cut {
   min-width: 240px; }
 
 body.model-news .field-title {
@@ -102,8 +102,7 @@ body.model-news .field-title {
     white-space: normal; }
   #result_list tr:hover {
     background-color: #f4f8ff; }
-  #result_list td.field-url,
-  #result_list td.field-details_url {
+  #result_list td.field-link {
     font-size: 70%; }
 
 .dz_pre {

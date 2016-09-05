@@ -1,5 +1,4 @@
 from __future__ import unicode_literals, absolute_import
-from django.contrib import admin
 from django.template.response import TemplateResponse
 from django.http import HttpResponseNotFound
 from django.conf import settings
@@ -19,22 +18,21 @@ class TipExportResource(DzExportResource):
 class TipAdmin(DzCrawlModelAdmin):
     resource_class = TipExportResource
 
-    list_display = ['id', 'published', 'place', 'title', 'col_tip',
-                    'result', 'tipster', 'coeff', 'min_coeff',
-                    'stake', 'due', 'spread', 'betting', 'success',
-                    'updated', 'crawled', 'details_url', 'archived']
+    list_display = ['id', 'published', 'league', 'parties', 'content_cut',
+                    'result', 'tipster', 'rate', 'minrate',
+                    'stake', 'earnings', 'spread', 'betting', 'success',
+                    'updated', 'crawled', 'link', 'archived_str']
     if settings.NARROW_GRIDS:
-        list_display = ['id', 'published', 'place', 'title', 'col_tip',
+        list_display = ['id', 'published', 'place', 'title', 'content_cut',
                         'result', 'tipster', 'archived']
-    list_filter = [('place', DzSelectFieldListFilter),
-                   ('title', DzSelectFieldListFilter),
+    list_filter = [('league', DzSelectFieldListFilter),
+                   ('parties', DzSelectFieldListFilter),
                    ('tipster', DzSelectFieldListFilter),
                    DzArchivedListFilter,
                    ]
-    search_fields = ['title', 'tip', 'text']
+    search_fields = ['parties', 'title', 'text']
     exclude = ['text']
     date_hierarchy = 'published'
-    radio_fields = {'archived': admin.HORIZONTAL}
     ordering = ['-published', '-id']
 
     def user_is_readonly(self, auth_user):
@@ -45,23 +43,29 @@ class TipAdmin(DzCrawlModelAdmin):
 
     crawl_action = 'tips'
 
-    def col_tip(self, obj):
-        tpl = TemplateResponse(self._request, 'admin/dz/tip_text_col.html',
-                               context=dict(obj=obj, opts=self.opts))
+    def content_cut(self, obj):
+        tpl = TemplateResponse(self._request, 'admin/dz/tip_content_cut.html',
+                               context=dict(tip=obj, opts=self.opts))
         return tpl.rendered_content
-    col_tip.short_description = _('short tip')
-    col_tip.admin_order_field = 'tip'
+    content_cut.short_description = _('tip cut')
+    content_cut.admin_order_field = 'title'
+
+    def archived_str(self, obj):
+        return _('Archived') if obj.archived else _('Fresh')
+    archived_str.short_description = _('archived')
+    archived_str.admin_order_field = 'archived'
 
     def get_urls(self):
-        tip_text_url = url(r'^(?P<id>\d+)/tip_text/$',
-                           self.admin_site.admin_view(self.tip_text_view),
-                           name='%s_%s_tip_text' % (self.opts.app_label, self.opts.model_name))
-        return [tip_text_url] + super(TipAdmin, self).get_urls()
+        tip_content_url = url(
+            r'^(?P<id>\d+)/tip-content/$',
+            self.admin_site.admin_view(self.tip_content_view),
+            name='%s_%s_tip_content' % (self.opts.app_label, self.opts.model_name))
+        return [tip_content_url] + super(TipAdmin, self).get_urls()
 
-    def tip_text_view(self, request, id):
-        obj = self.get_object(request, id)
-        if obj:
-            return TemplateResponse(request, 'admin/dz/tip_text_popup.html',
-                                    dict(obj=obj, is_popup=True))
+    def tip_content_view(self, request, id):
+        tip = self.get_object(request, id)
+        if tip:
+            return TemplateResponse(request, 'admin/dz/tip_content_popup.html',
+                                    dict(tip=tip, is_popup=True))
         else:
             return HttpResponseNotFound()

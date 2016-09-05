@@ -8,10 +8,10 @@ from .api import api_send_item
 DATA_MAP = {
     'result': 'rezultat',
     'tipster': 'tipster',
-    'coeff': 'koeficijent',
-    'min_coeff': 'min. koef.',
+    'rate': 'koeficijent',
+    'minrate': 'min. koef.',
     'stake': 'ulog',
-    'due': 'zarada',
+    'earnings': 'zarada',
     'spread': 'is. margina',
     'betting': 'kladionica',
     'success': u'uspje\u0161nost',
@@ -20,7 +20,7 @@ DATA_MAP = {
 
 
 class TipsSpider(BaseSpider):
-    action = 'tips'
+    target = 'tips'
 
     def run(self):
         self.login()
@@ -28,25 +28,25 @@ class TipsSpider(BaseSpider):
         for sel in self.wait_for_css('.tiprog_list_block'):
             item = self.parse_tip(sel)
             if item:
-                self.crawled_ids.add(item['pk'])
-                api_send_item(self.action, self.start_time, self.debug, item)
+                self.crawled_ids.add(item['id'])
+                api_send_item(self.target, self.start_time, self.debug, item)
 
     def parse_tip(self, sel):
         item = {}
         rel_url = sel.css('.tpl_right > h3 > a::attr(href)').extract_first()
-        details_url = urljoin(self.webdriver.current_url, rel_url)
+        link = urljoin(self.webdriver.current_url, rel_url)
 
         try:
-            pk = int(re.search(r'id_dogadjaj=(\d+)', details_url).group(1))
+            id = int(re.search(r'id_dogadjaj=(\d+)', link).group(1))
         except Exception:
-            logger.info('Skip tip %s', details_url)
+            logger.info('Skip tip %s', link)
             return
-        item['pk'] = pk
-        item['details_url'] = details_url
+        item['id'] = id
+        item['link'] = link
 
-        item['place'] = first_text(sel, '.tpl_right > h3 > span')
-        item['title'] = first_text(sel, '.tpl_right > h3 > a')
-        item['tip'] = first_text(sel, '.tiprot_left > strong')
+        item['league'] = first_text(sel, '.tpl_right > h3 > span')
+        item['parties'] = first_text(sel, '.tpl_right > h3 > a')
+        item['title'] = first_text(sel, '.tiprot_left > strong')
 
         item['updated'] = extract_datetime(first_text(sel, '.tiprot_right'))
 

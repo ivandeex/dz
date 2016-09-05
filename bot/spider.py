@@ -8,7 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 from .utils import logger, randsleep, poll_sleep
-from .api import api_send_ended, dt2json
+from .api import api_send_complete, dt2json
 
 DEFAULT_PAGE_DELAY = 50
 
@@ -18,7 +18,7 @@ class BaseSpider(object):
                  '(KHTML, like Gecko) Chrome/45.0.2454.93 Safari/537.36'
     home_url = 'http://www.dvoznak.com/'
     timeout = 60
-    action = None
+    target = None
 
     def __init__(self, env):
         self.start_time = env.get('START_TIME', dt2json(datetime.utcnow()))
@@ -42,8 +42,8 @@ class BaseSpider(object):
         self.webdriver.get(self.home_url)
 
     def end(self):
-        logger.info('Crawling finished')
-        api_send_ended(self.action, self.start_time, self.debug, self.crawled_ids)
+        logger.info('Crawling complete')
+        api_send_complete(self.target, self.start_time, self.debug, self.crawled_ids)
 
     def close(self):
         self.webdriver.quit()

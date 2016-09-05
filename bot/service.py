@@ -20,7 +20,7 @@ class Service(object):
         while 1:
             sleep(self.poll_seconds)
             try:
-                resp = api_request('job')
+                resp = api_request('job', {})
                 logger.setLevel(logging.getLevelName(resp['log_level']))
                 if resp['found']:
                     env = {
@@ -30,19 +30,19 @@ class Service(object):
                         'LOAD_IMAGES': resp['load_images'],
                         'USERPASS': resp['userpass'],
                     }
-                    self.action(resp['action'], env)
+                    self.action(resp['target'], env)
             except Exception as err:
                 logger.error('Service error: %r', err)
                 if self.debug:
                     raise
 
     @staticmethod
-    def action(action, env={}):
-        assert action in ('news', 'tips'), 'Invalid action "%s"' % action
-        Spider = dict(news=NewsSpider, tips=TipsSpider)[action]
-        merged_env = os.environ.copy()
-        merged_env.update(env)
-        spider = Spider(merged_env)
+    def action(target, env={}):
+        assert target in ('news', 'tips'), 'Invalid target "%s"' % target
+        Spider = dict(news=NewsSpider, tips=TipsSpider)[target]
+        final_env = os.environ.copy()
+        final_env.update(env)
+        spider = Spider(final_env)
         try:
             spider.run()
             spider.end()

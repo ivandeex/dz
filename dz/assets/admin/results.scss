@@ -1,13 +1,13 @@
 
 body {
   &.model-tip {
-    .field-col_tip {
+    .field-content_cut {
       min-width: 240px;
     }
   }
 
   &.model-news {
-    .field-col_content {
+    .field-content_cut {
       min-width: 240px;
     }
 
@@ -37,8 +37,7 @@ body {
     }
   }
 
-  td.field-url,
-  td.field-details_url {
+  td.field-link {
     font-size: 70%;
   }
 }

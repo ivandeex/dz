@@ -1,0 +1,34 @@
+{% load static i18n %}
+<html>
+<head>
+    <title>{{ news.title }}</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'dz-news-content/base.css' %}" rel="stylesheet">
+    <link href="{% static 'dz-news-content/custom.css' %}" rel="stylesheet">
+</head>
+<body>
+  <div class="news-block nlsn_content">
+    <button class="news-close" onclick="window.close()">{% trans 'close' %}</button>
+    <h2 class="news-title">{{ news.title }}</h2>
+    <h2 class="news-subtitle">{{ news.parties }}</h2>
+      <div class="news-meta">
+        <table>
+          <tr><td class="news-key">{% trans 'URL' %}:</td>       <td class="news-val news-link">{{ news.link }}</td></tr>
+          <tr><td class="news-key">{% trans 'Sport' %}:</td>     <td class="news-val">{{ news.sport }}</td></tr>
+          <tr><td class="news-key">{% trans 'League' %}:</td>    <td class="news-val">{{ news.league }}</td></tr>
+          <tr><td class="news-key">{% trans 'Published' %}:</td> <td class="news-val">{{ news.published }}</td></tr>
+          <tr><td class="news-key">{% trans 'Updated' %}:</td>   <td class="news-val">{{ news.updated }}</td></tr>
+          <tr><td class="news-key">{% trans 'Fetched' %}:</td>   <td class="news-val">{{ news.crawled }}</td></tr>
+          <tr><td class="news-key">{% trans 'Parties' %}:</td>   <td class="news-val">{{ news.parties }}</td></tr>
+        </table>
+      </div>
+    <h3 class="news-preamble" itemprop="headline">{{ news.preamble }}</h3>
+    <div class="news-content">{{ news.content | safe }}</div>
+  </div>
+  <div class="news-subtable">
+  {{ news.subtable | safe }}
+  </div>
+</body>
+</html>

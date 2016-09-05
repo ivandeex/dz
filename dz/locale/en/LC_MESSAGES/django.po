@@ -49,7 +49,7 @@ msgid "news title"
 msgstr "title"
 
 #: models.py:27 models.py:71
-msgid "participants"
+msgid "parties"
 msgstr ""
 
 #: models.py:28
@@ -57,7 +57,7 @@ msgid "sport"
 msgstr ""
 
 #: models.py:29 models.py:72
-msgid "liga"
+msgid "league"
 msgstr ""
 
 #. Translators: Published (Objavleno)
@@ -92,12 +92,10 @@ msgid "news subtable"
 msgstr "subtable"
 
 #: models.py:45
-msgid "short news content"
-msgstr "content (short)"
+msgid "news cut"
+msgstr "description"
 
 #: models.py:54
-#, fuzzy
-#| msgid "newss"
 msgid "news"
 msgstr "news"
 
@@ -120,12 +118,12 @@ msgstr ""
 
 #. Translators: Coeff. (Koeficijent)
 #: models.py:78
-msgid "tip coefficient"
-msgstr "coeff."
+msgid "tip rate"
+msgstr "rate"
 
 #: models.py:79
-msgid "minimum tip coeff"
-msgstr "min. coeff."
+msgid "minimum tip date"
+msgstr "min. rate"
 
 #. Translators: Result (Rezultat)
 #: models.py:81
@@ -161,8 +159,8 @@ msgid "tip link"
 msgstr "link"
 
 #: models.py:107
-msgid "short tip"
-msgstr "tip"
+msgid "tip cut"
+msgstr "description"
 
 #: models.py:116
 #, fuzzy
@@ -193,7 +191,7 @@ msgstr "tips"
 #. Translators: Job Id
 #: models.py:136
 msgid "crawl id"
-msgstr "job id"
+msgstr "id"
 
 #: models.py:137
 msgid "crawl type"
@@ -216,37 +214,21 @@ msgid "ended at"
 msgstr ""
 
 #: models.py:142
-msgid "no. of news"
-msgstr ""
-
-#: models.py:143
-msgid "no. of tips"
+msgid "no. of items"
 msgstr ""
 
 #: models.py:144
 msgid "hostname"
 msgstr ""
 
-#: models.py:145
-msgid "ip address"
-msgstr "IP address"
-
 #. Translators: PID
 #: models.py:147
 msgid "crawler pid"
 msgstr "pid"
 
-#: models.py:153
-#, fuzzy
-#| msgid "crawl id"
-msgid "crawl"
-msgstr "job id"
-
 #: models.py:154
-#, fuzzy
-#| msgid "crawl id"
 msgid "crawls"
-msgstr "job id"
+msgstr "crawls"
 
 #: models.py:159
 msgid "dz user name"

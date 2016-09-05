@@ -25,11 +25,11 @@ msgstr "Все"
 
 #: admin.py:26 models.py:10
 msgid "Archived"
-msgstr "Архивные"
+msgstr "Архив"
 
 #: admin.py:27 models.py:11
 msgid "Fresh"
-msgstr "Свежие"
+msgstr "Новое"
 
 #: admin.py:174 admin.py:175
 msgid "D.Z."
@@ -48,13 +48,11 @@ msgid "news link"
 msgstr "ссылка"
 
 #: models.py:26
-#, fuzzy
-#| msgid "news id"
 msgid "news title"
-msgstr "№"
+msgstr "заголовок"
 
 #: models.py:27 models.py:71
-msgid "participants"
+msgid "parties"
 msgstr "участники"
 
 #: models.py:28
@@ -62,7 +60,7 @@ msgid "sport"
 msgstr "спорт"
 
 #: models.py:29 models.py:72
-msgid "liga"
+msgid "league"
 msgstr "лига"
 
 #. Translators: Published (Objavleno)
@@ -87,10 +85,8 @@ msgid "news preamble"
 msgstr "преамбула"
 
 #: models.py:35
-#, fuzzy
-#| msgid "short news content"
 msgid "full news content"
-msgstr "выдержка"
+msgstr "содержание"
 
 #: models.py:36
 msgid "news subtable"
@@ -98,7 +94,7 @@ msgstr "таблица данных"
 
 #: models.py:45
 msgid "short news content"
-msgstr "выдержка"
+msgstr "описание"
 
 #: models.py:54
 msgid "news"
@@ -123,12 +119,12 @@ msgstr "бетинг"
 
 #. Translators: Coeff. (Koeficijent)
 #: models.py:78
-msgid "tip coefficient"
-msgstr "коеф."
+msgid "tip rate"
+msgstr "коэф."
 
 #: models.py:79
-msgid "minimum tip coeff"
-msgstr "мин. коеф."
+msgid "minimum tip rate"
+msgstr "мин. коэф."
 
 #. Translators: Result (Rezultat)
 #: models.py:81
@@ -138,7 +134,7 @@ msgstr "результат"
 #. Translators: Earnings Due (Zarada)
 #: models.py:83
 msgid "earnings"
-msgstr "выплаты"
+msgstr "выплата"
 
 #. Translators: Spread (Is. Margina)
 #: models.py:85
@@ -157,15 +153,15 @@ msgstr "успешность"
 
 #: models.py:90
 msgid "tipster"
-msgstr "чья ставка"
+msgstr "наводчик"
 
 #: models.py:95
 msgid "tip link"
 msgstr "ссылка"
 
 #: models.py:107
-msgid "short tip"
-msgstr "ставка"
+msgid "tip cut"
+msgstr "описание"
 
 #: models.py:116
 msgid "tip"
@@ -214,28 +210,20 @@ msgstr "начато"
 
 #: models.py:141
 msgid "ended at"
-msgstr "окончено"
+msgstr "завершено"
 
 #: models.py:142
-msgid "no. of news"
-msgstr "к-во новостей"
-
-#: models.py:143
-msgid "no. of tips"
-msgstr "к-во ставок"
+msgid "no. of items"
+msgstr "сколько"
 
 #: models.py:144
 msgid "hostname"
 msgstr "хост"
 
-#: models.py:145
-msgid "ip address"
-msgstr "ip-адрес"
-
 #. Translators: PID
 #: models.py:147
 msgid "crawler pid"
-msgstr "ид. процесса"
+msgstr "№ процесса"
 
 #: models.py:153
 msgid "crawl"

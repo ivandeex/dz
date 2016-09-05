@@ -3,22 +3,15 @@ from django.contrib import admin
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from .common import DzModelAdmin
+from .crawl import CrawlAdmin
 from .news import NewsAdmin
 from .tip import TipAdmin
 from .. import models
 
 
-class CrawlAdmin(DzModelAdmin):
-    list_display = ['id', 'action', 'type', 'status', 'started', 'ended', 'count', 'host', 'pid']
-    list_filter = ['type', 'action', 'status', 'host']
-    date_hierarchy = 'started'
-    radio_fields = {'action': admin.HORIZONTAL, 'type': admin.HORIZONTAL}
-    ordering = ['-id']
-
-
 class ScheduleAdmin(DzModelAdmin):
-    list_display = ['time', 'action']
-    ordering = ['time', 'action']
+    list_display = ['time', 'target']
+    ordering = ['time', 'target']
 
 
 class UserAdmin(DzModelAdmin):

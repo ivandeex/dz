@@ -5,7 +5,7 @@ from .utils import logger, extract_datetime, first_text, randsleep, split_ranges
 
 
 class NewsSpider(BaseSpider):
-    action = 'news'
+    target = 'news'
 
     def __init__(self, env):
         self.seen_news = split_ranges(env.get('SEEN_NEWS', '').strip())
@@ -58,15 +58,15 @@ class NewsSpider(BaseSpider):
             return
 
         try:
-            pk = int(re.search(r'id_dogadjaj=(\d+)', url).group(1))
-            logger.debug('Exctracted pk %s from url %s', pk, url)
+            id = int(re.search(r'id_dogadjaj=(\d+)', url).group(1))
+            logger.debug('Exctracted id %s from url %s', id, url)
         except Exception:
             self.skipped_urls.add(url)
             self.to_crawl = max(1, self.to_crawl - 1)
             logger.warn('Skip invalid url %s', url)
             return
 
-        if pk in self.seen_news:
+        if id in self.seen_news:
             self.skipped_urls.add(url)
             self.to_crawl = max(1, self.to_crawl - 1)
             logger.info('News already seen %s', url)
@@ -79,13 +79,13 @@ class NewsSpider(BaseSpider):
         logger.debug('Sleep ~ %d sec before page', self.page_delay)
         randsleep(self.page_delay)
 
-        logger.debug('Scrape article with pk %s url %s', pk, url)
-        item = self.parse_news(url, pk)
+        logger.debug('Scrape article with id %s url %s', id, url)
+        item = self.parse_news(url, id)
         logger.info('Crawled news #%d of %d, %s',
                     len(self.crawled_ids) + 1, self.to_crawl, url)
         self.crawled_urls.add(url)
-        self.crawled_ids.add(pk)
-        api_send_item(self.action, self.start_time, self.debug, item)
+        self.crawled_ids.add(id)
+        api_send_item(self.target, self.start_time, self.debug, item)
 
         logger.debug('Click on the back button')
         self.webdriver.back()
@@ -96,16 +96,16 @@ class NewsSpider(BaseSpider):
         logger.debug('Sleep ~ %d sec after page', self.page_delay)
         randsleep(self.page_delay)
 
-    def parse_news(self, url, pk):
+    def parse_news(self, url, id):
         sel = self.page_sel()
         item = {}
 
-        item['url'] = url
-        item['pk'] = pk
+        item['link'] = url
+        item['id'] = id
 
-        item['section'] = first_text(sel, '.lnfl')
-        item['subsection'] = first_text(sel, '.lnfl.tename')
-        item['short_title'] = first_text(sel, '.nlsn_title_text')
+        item['sport'] = first_text(sel, '.lnfl')
+        item['league'] = first_text(sel, '.lnfl.tename')
+        item['parties'] = first_text(sel, '.nlsn_title_text')
         item['title'] = first_text(sel, '.nlsn_content > h2')
 
         item['updated'] = extract_datetime(first_text(sel, '.nls_subt_left'))

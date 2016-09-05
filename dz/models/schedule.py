@@ -10,7 +10,7 @@ from django.db.models import signals
 from django.dispatch import receiver
 from threading import RLock
 from datetime import timedelta
-from .common import ACTION_CHOICES
+from .common import TARGET_CHOICES
 
 logger = logging.getLogger(__name__)
 
@@ -25,31 +25,31 @@ class Schedule(models.Model):
     # time(18, 30): 'news'
 
     time = models.TimeField(_('start time'))
-    action = models.CharField(_('action'), max_length=6, choices=ACTION_CHOICES)
+    target = models.CharField(_('target'), max_length=6, choices=TARGET_CHOICES)
 
     class Meta:
         verbose_name = _('job')
         verbose_name_plural = _('schedule')
 
     def __str__(self):
-        return u'Schedule %s at %02d:%02d' % (self.action, self.time.hour, self.time.minute)
+        return u'Schedule %s at %02d:%02d' % (self.target, self.time.hour, self.time.minute)
 
     _cache_lock = RLock()
     _cache_date = None
-    _cache_schedule = {}  # key: datetime, value: action (or None if fired)
+    _cache_schedule = {}  # key: datetime, value: target (or None if fired)
 
     @classmethod
     def get_next_job(cls, consume):
         with cls._cache_lock:
             schedule = cls.get_schedule()
-            active_times = list(time for time, action in schedule.items() if 'done' not in action)
+            active_times = list(time for time, target in schedule.items() if target[0] != '-')
             if active_times:
                 time = min(active_times)
                 if time <= timezone.now() or not consume:
-                    action = schedule[time]
+                    target = schedule[time]
                     if consume:
-                        schedule[time] += '.done'
-                    return time, action
+                        schedule[time] = '-' + schedule[time]
+                    return time, target
         return None, None
 
     @classmethod
@@ -83,20 +83,20 @@ class Schedule(models.Model):
                 now -= timedelta(minutes=5)
 
             # add new jobs to cached schedule
-            for job in cls.objects.all().order_by('time', 'action'):
+            for job in cls.objects.all().order_by('time', 'target'):
                 time = now.replace(hour=job.time.hour, minute=job.time.minute)
                 if time >= now:
                     valid_times.add(time)
                     if time not in schedule:
-                        schedule[time] = job.action
+                        schedule[time] = job.target
 
             # remove deleted jobs from schedule
             for time in schedule.keys():
                 if time not in valid_times:
                     del schedule[time]
 
-        printed_items = ['%02d:%02d->%s' % (time.hour, time.minute, action)
-                         for time, action in sorted(schedule.items())]
+        printed_items = ['%02d:%02d->%s' % (time.hour, time.minute, target)
+                         for time, target in sorted(schedule.items())]
         logger.info('New schedule: %s', ', '.join(printed_items))
 
 
