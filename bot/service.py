@@ -30,7 +30,7 @@ class Service(object):
                         'LOAD_IMAGES': resp['load_images'],
                         'USERPASS': resp['userpass'],
                     }
-                    return self.action(resp['action'], env)
+                    self.action(resp['action'], env)
             except Exception as err:
                 logger.error('Service error: %r', err)
                 if self.debug:

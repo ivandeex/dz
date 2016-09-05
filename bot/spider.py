@@ -10,7 +10,7 @@ from selenium.webdriver.support import expected_conditions
 from .utils import logger, randsleep, poll_sleep
 from .api import api_send_ended, dt2json
 
-DEFAULT_PAGE_DELAY = 10
+DEFAULT_PAGE_DELAY = 50
 
 
 class BaseSpider(object):

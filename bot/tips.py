@@ -66,4 +66,7 @@ class TipsSpider(BaseSpider):
             item[dst] = d.get(src, '')
 
         item['published'] = extract_datetime(item['published'])
+
+        # if publish date not found, default to update date
+        item['published'] = item['published'] or item['updated']
         return item

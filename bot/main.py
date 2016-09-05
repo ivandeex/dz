@@ -17,15 +17,16 @@ def main():
 
     action = getopt('action')
     service = getopt('service')
+    debug = getopt('debug', 'DEBUG')
 
-    setup_logging(service)
+    setup_logging(service, debug)
 
     getopt('server', 'WEB_SERVER')
     getopt('secret', 'SECRET_KEY')
     getopt('pollsec', 'POLL_SECONDS')
+    getopt('delay', 'PAGE_DELAY')
     getopt('userpass', 'USERPASS')
     getopt('images', 'LOAD_IMAGES')
-    getopt('debug', 'DEBUG')
 
     if service:
         Service().run()

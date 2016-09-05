@@ -31,7 +31,7 @@ def get_project_dir():
     return os.path.join(os.path.expanduser('~'), '.vanko')
 
 
-def setup_logging(service):
+def setup_logging(service, debug):
     if service:
         log_dir = os.path.join(get_project_dir(), 'logs')
         if not os.path.exists(log_dir):
@@ -39,9 +39,10 @@ def setup_logging(service):
         log_path = os.path.join(log_dir, 'dvoznak.log')
         log_file = open(log_path, mode='w', buffering=1)
 
-        os.dup2(log_file.fileno(), sys.stderr.fileno())
-        os.dup2(log_file.fileno(), sys.stdout.fileno())
-        sys.stdout = UnbufferedStreamWrapper(sys.stdout)
+        if not debug:
+            os.dup2(log_file.fileno(), sys.stderr.fileno())
+            os.dup2(log_file.fileno(), sys.stdout.fileno())
+            sys.stdout = UnbufferedStreamWrapper(sys.stdout)
 
         stream = logging.StreamHandler(stream=log_file)
     else:
