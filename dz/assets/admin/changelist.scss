@@ -1,6 +1,25 @@
+$header-line-height: 40px;
+$header-vert-padding: 10px;
+$breadcrumbs-line-height: 19px;
+$breadcrumbs-vert-padding: 10px;
+$content-vert-padding: 10px;
+$content-h1-line-height: 27px;
+$content-h1-vert-padding: 10px;
+$xfull-line-height: 27px;
+$actions-line-height: 26px;
+$actions-vert-padding: 10px;
+$results-top-margin: 5px;
+$paginator-line-height: 22px;
+$paginator-vert-padding: 10px;
+$paginator-border-height: 1px;
+
+
+.object-tools {
+  margin-right: 20px;
+}
 
 #content {
-  padding: 10px 20px;
+  padding: $content-vert-padding 20px;
 }
 
 #footer {
@@ -66,18 +85,21 @@
   }
 }
 
+
+$_page-top-height: $header-line-height + $header-vert-padding * 2 + $breadcrumbs-line-height + $breadcrumbs-vert-padding * 2 + $content-vert-padding;
+$_content-top-height: $content-h1-line-height + $content-h1-vert-padding * 2 + $xfull-line-height + $actions-line-height + $actions-vert-padding * 2;
+$_content-bottom-height: $paginator-line-height + ($paginator-vert-padding + $paginator-border-height) * 2 + $content-vert-padding; 
+
+$all-but-results-height: $_page-top-height + $_content-top-height + $results-top-margin + $_content-bottom-height;
+
 #changelist-form {
   .results {
     min-width: 680px;
     min-height: 340px;
     overflow: auto;
-    margin-top: 5px;
+    margin-top: $results-top-margin;
 
     width: 100%;
-    height: calc(100vh - 250px);
+    height: calc(100vh - #{$all-but-results-height});
   }
-}
-
-.object-tools {
-  margin-right: 20px;
 }
