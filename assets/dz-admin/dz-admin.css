@@ -20,12 +20,15 @@
     display: inline-block;
     list-style-type: none; }
   .dz-lang-selector .dz-lang-btn {
-    padding: 1px 5px;
-    margin: 0 2px; }
+    /* override styles from admin/base.css */
+    margin: 0 2px !important;
+    padding: 1px 5px !important;
+    /* override base.css styles, .delete-confirmation form input[type="submit"] */
+    background: #79aec8 !important; }
     .dz-lang-selector .dz-lang-btn:hover {
       text-decoration: underline; }
     .dz-lang-selector .dz-lang-btn.dz-lang-current {
-      color: #f5dd5d; }
+      color: #f5dd5d !important; }
       .dz-lang-selector .dz-lang-btn.dz-lang-current:hover {
         text-decoration: none; }
 .object-tools {
