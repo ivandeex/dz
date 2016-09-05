@@ -50,7 +50,7 @@ class Crawl(models.Model):
             return 'updated'
         except Crawl.DoesNotExist:
             Crawl.objects.create(action=action, status='waiting', started=now, type='manual')
-            return 'added'
+            return 'submitted'
 
     @classmethod
     def get_manual_crawl(cls):

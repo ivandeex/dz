@@ -41,7 +41,8 @@ def parse_request(request, command):
     assert request.method == 'POST', 'Invalid request type'
     assert request.content_type == 'application/json', 'Invalid content type'
 
-    req = json_decode(request.body.decode(request.encoding or settings.DEFAULT_CHARSET))
+    unicode_body = request.body.decode(request.encoding or settings.DEFAULT_CHARSET)
+    req = json_decode(unicode_body)
 
     if settings.DEBUG_API:
         req_cut = req
