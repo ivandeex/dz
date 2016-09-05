@@ -1,20 +1,18 @@
 
-.news-close + * {
-    clear: both;
-}
-
 .news-close {
-    float: right;
+    position: fixed;
+    top: 4px;
+    right: 5px;
     font-size: 13px;
     font-weight: bold;
-    margin: 4px 5px 1px;
     padding: 1px 2px;
     border-radius: 4px;
     border: 2px solid #bb4b00;
     background: #ffd8bd;
     color: #bb4b00;
-    box-shadow: 2px 2px 5px #999;
-    transition: all linear 0.1s;
+    box-shadow: 2px 2px 5px #000;
+    opacity: 0.4;
+    transition: all linear 0.2s;
 }
 
 .news-close:hover {
@@ -22,6 +20,7 @@
     background: #f3d9c3;
     color: #98121d;
     box-shadow: 3px 3px 5px #666;
+    opacity: 1.0;
 }
 
 .news-meta {
