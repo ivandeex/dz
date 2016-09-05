@@ -60,7 +60,6 @@ WEBPACK_LOADER = {
 LOCALE_PATHS = []
 
 USE_I18N = True
-USE_L10N = False
 LANGUAGE_CODE = 'en'
 LANGUAGE_COOKIE_NAME = 'lang'
 LANGUAGES = [
@@ -69,9 +68,12 @@ LANGUAGES = [
     ('ru', u'Русский'),
 ]
 
+USE_L10N = False
 USE_TZ = True
 TIME_ZONE = 'Europe/Ljubljana'
 DATETIME_FORMAT = 'Y-m-d H:i:s'
+TIME_FORMAT = 'H:i'
+TIME_INPUT_FORMATS = ['%H:%M']
 
 
 DEBUG_SESSIONS = bool(int(getenv('DEBUG_SESSIONS', False)))
