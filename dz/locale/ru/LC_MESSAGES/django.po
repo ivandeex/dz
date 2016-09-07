@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-07 21:34+0200\n"
+"POT-Creation-Date: 2016-09-07 22:20+0200\n"
 "PO-Revision-Date: 2016-09-01A 12:00+0300\n"
 "Last-Translator: ivandeex <ivandeex@gmail.com>\n"
 "Language-Team: ivandeex <ivandeex@gmail.com>\n"
@@ -290,12 +290,12 @@ msgstr "заклад"
 
 #. Translators: Coeff. (Koeficijent)
 #: dz/models/tip.py:17
-msgid "tip rate (column)"
-msgstr "коэффициент"
+msgid "tip odds (column)"
+msgstr "шансы"
 
 #: dz/models/tip.py:18
-msgid "minimum tip rate (column)"
-msgstr "мин. коэф."
+msgid "minimum tip odds (column)"
+msgstr "мин. шансы"
 
 #. Translators: Result (Rezultat)
 #: dz/models/tip.py:20

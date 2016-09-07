@@ -8,8 +8,8 @@ from .api import api_send_item
 DATA_MAP = {
     'result': 'rezultat',
     'tipster': 'tipster',
-    'rate': 'koeficijent',
-    'minrate': 'min. koef.',
+    'odds': 'koeficijent',
+    'min_odds': 'min. koef.',
     'stake': 'ulog',
     'earnings': 'zarada',
     'spread': 'is. margina',

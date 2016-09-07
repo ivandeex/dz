@@ -19,7 +19,7 @@ class TipAdmin(DzCrawlModelAdmin):
     resource_class = TipExportResource
 
     list_display = ['id', 'published', 'league', 'parties', 'content_cut',
-                    'result', 'tipster', 'rate', 'minrate',
+                    'result', 'tipster', 'odds', 'min_odds',
                     'stake', 'earnings', 'spread', 'betting', 'success_str',
                     'updated', 'crawled', 'link', 'archived_str']
     if settings.NARROW_GRIDS:
