@@ -47,12 +47,12 @@ class NewsAdmin(DzCrawlModelAdmin):
         tpl = TemplateResponse(self._request, 'admin/dz/news_content_cut.html',
                                context=dict(news=obj, opts=self.opts))
         return tpl.rendered_content
-    content_cut.short_description = _('news cut')
+    content_cut.short_description = _('news cut (column)')
     content_cut.admin_order_field = 'preamble'
 
     def archived_str(self, obj):
         return _('Archived') if obj.archived else _('Fresh')
-    archived_str.short_description = _('archived')
+    archived_str.short_description = _('archived (column)')
     archived_str.admin_order_field = 'archived'
 
     def get_urls(self):

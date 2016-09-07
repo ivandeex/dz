@@ -215,7 +215,7 @@ def api_crawl_complete(request):
             pid=req['pid'],
         )
         crawl.count = len(ids)
-        crawl.status = 'finished'
+        crawl.status = 'complete'
         crawl.ended = timezone.now()
         crawl.save()
 

@@ -24,12 +24,12 @@ class Schedule(models.Model):
     # time(10, 00): 'news'
     # time(18, 30): 'news'
 
-    time = models.TimeField(_('start time'))
-    target = models.CharField(_('target'), max_length=6, choices=TARGET_CHOICES)
+    time = models.TimeField(_('start time (column)'))
+    target = models.CharField(_('target (column)'), max_length=6, choices=TARGET_CHOICES)
 
     class Meta:
-        verbose_name = _('job')
-        verbose_name_plural = _('schedule')
+        verbose_name = _('schedule item (table)')
+        verbose_name_plural = _('schedule (table)')
 
     def __str__(self):
         return u'Schedule %s at %02d:%02d' % (self.target, self.time.hour, self.time.minute)

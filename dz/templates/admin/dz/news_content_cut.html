@@ -3,6 +3,6 @@
 {% if news.content_cut %}
 <div class="dz-body">
   <span>{{ news.content_cut | striptags }}</span>
-  <a href="{% url opts|admin_urlname:'news_content' id=news.id %}" title="{% trans 'Show details' %}" id="{% blocktrans %}News {{news.id}}{% endblocktrans %}" onclick="return showRelatedObjectLookupPopup(this);">({% trans 'more...' %})</a>
+  <a href="{% url opts|admin_urlname:'news_content' id=news.id %}" title="{% trans 'Show details' %}" id="{% blocktrans with id=news.id %}News {{id}}{% endblocktrans %}" onclick="return showRelatedObjectLookupPopup(this);">({% trans 'more...' %})</a>
 </div>
 {% endif %}

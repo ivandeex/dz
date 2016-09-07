@@ -47,12 +47,12 @@ class TipAdmin(DzCrawlModelAdmin):
         tpl = TemplateResponse(self._request, 'admin/dz/tip_content_cut.html',
                                context=dict(tip=obj, opts=self.opts))
         return tpl.rendered_content
-    content_cut.short_description = _('tip cut')
+    content_cut.short_description = _('tip cut (column)')
     content_cut.admin_order_field = 'title'
 
     def archived_str(self, obj):
         return _('Archived') if obj.archived else _('Fresh')
-    archived_str.short_description = _('archived')
+    archived_str.short_description = _('archived (column)')
     archived_str.admin_order_field = 'archived'
 
     def get_urls(self):

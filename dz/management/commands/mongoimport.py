@@ -62,6 +62,8 @@ class Command(BaseCommand):
         ordering = [('pk', 1)]
         self.mongodb.dvoznak_crawls.create_index(ordering)
         for item in self.mongodb.dvoznak_crawls.find(sort=ordering):
+            if item['status'] == 'finished':
+                item['status'] = 'complete'
             models.Crawl.objects.create(
                 id=item['pk'],
                 target=item['action'],

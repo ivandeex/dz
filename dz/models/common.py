@@ -5,8 +5,8 @@ from django.db.models import Case, When, Value
 
 
 TARGET_CHOICES = [
-    ('news', _('news crawl')),
-    ('tips', _('tips crawl')),
+    ('news', _('news (crawl target)')),
+    ('tips', _('tips (crawl target)')),
 ]
 
 CharField.register_lookup(Length, 'length')

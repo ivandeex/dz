@@ -1,298 +1,453 @@
-# DZ translations
+# DZ translation strings.
+# Copyright (C) 2016, ivandeex
+# This file is distributed under the same license as the DZ package.
+# ivandeex <ivandeex@gmail.com>, 2016.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-10 15:56+0300\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: vanko\n"
-"Language-Team: vanko\n"
-"Language: sl\n"
+"POT-Creation-Date: 2016-09-07 17:48+0200\n"
+"PO-Revision-Date: 2016-09-01A 12:00+0300\n"
+"Last-Translator: ivandeex <ivandeex@gmail.com>\n"
+"Language-Team: ivandeex <ivandeex@gmail.com>\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n"
 "%100==4 ? 2 : 3);\n"
 
-#: admin.py:20
-msgid "archive filter"
-msgstr "svežina"
-
-#: admin.py:25
-msgid "All"
-msgstr "Vse"
-
-#: admin.py:26 models.py:10
-msgid "Archived"
-msgstr "Arhivsko"
-
-#: admin.py:27 models.py:11
-msgid "Fresh"
-msgstr "Novo"
-
-#: admin.py:174 admin.py:175
+#: dz/admin/__init__.py:28 dz/admin/__init__.py:29
 msgid "D.Z."
 msgstr "D.Z."
 
-#: admin.py:176
+#: dz/admin/__init__.py:30
 msgid "Index:"
-msgstr "Početna:"
+msgstr "Indeks:"
 
-#: models.py:24
-msgid "news id"
-msgstr "broj"
+#: dz/admin/common.py:18
+msgid "archive (filter)"
+msgstr "svežina"
 
-#: models.py:25
-msgid "news link"
-msgstr "vezu"
+#: dz/admin/common.py:23
+msgid "All"
+msgstr "Vse"
 
-#: models.py:26
-msgid "news title"
-msgstr "naslov"
+#: dz/admin/common.py:24 dz/admin/news.py:54 dz/admin/tip.py:54
+msgid "Archived"
+msgstr "Arhivsko"
 
-#: models.py:27 models.py:71
-msgid "parties"
-msgstr "udeleženci"
+#: dz/admin/common.py:25 dz/admin/news.py:54 dz/admin/tip.py:54
+msgid "Fresh"
+msgstr "Novo"
 
-#: models.py:28
-msgid "sport"
-msgstr "sportski"
+#. Translators: status (from models.Crawl) is one of: refused, updated, submitted
+#: dz/admin/common.py:100
+#, python-format
+msgid "Crawling %s!"
+msgstr ""
 
-#: models.py:29 models.py:72
-msgid "league"
-msgstr "liga"
+#. Translators: force translation of all forms of the python-format above
+#: dz/admin/common.py:103
+msgid "Crawling refused!"
+msgstr "Posodobitev zavrnila!"
 
-#. Translators: Published (Objavleno)
-#: models.py:30 models.py:92
-msgid "published"
-msgstr "objavleno"
+#: dz/admin/common.py:104
+msgid "Crawling updated!"
+msgstr "Čas posodobljeni"
 
-#: models.py:31 models.py:93
-msgid "updated"
-msgstr "posodobljena"
+#: dz/admin/common.py:105
+msgid "Crawling submitted!"
+msgstr "Akcija začela"
 
-#: models.py:32 models.py:94
-msgid "fetched"
-msgstr "osveži na"
+#. Translators: don't translate this, use translation from Django
+#: dz/admin/crawl.py:10
+msgid "Yes"
+msgstr ""
 
-#: models.py:33 models.py:96
-msgid "archived"
-msgstr "arhivsko"
+#. Translators: don't translate this, use translation from Django
+#: dz/admin/crawl.py:12
+msgid "No"
+msgstr ""
 
-#: models.py:34
-msgid "news preamble"
-msgstr "preamble"
+#: dz/admin/crawl.py:17 dz/admin/crawl.py:35
+msgid "manual crawl"
+msgstr "ročno"
 
-#: models.py:35
-msgid "full news content"
-msgstr "sadrz^aj"
+#: dz/admin/crawl.py:19 dz/admin/crawl.py:35
+msgid "auto crawl"
+msgstr "na urniku"
 
-#: models.py:36
-msgid "news subtable"
-msgstr "subtable"
+#: dz/admin/crawl.py:36 dz/models/crawl.py:20
+msgid "crawl type (column)"
+msgstr "dodajanje metoda"
 
-#: models.py:45
-msgid "short news content"
-msgstr "kratak sadržaj"
+#. Translators: Crawl status can be: waiting, started, running, complete
+#: dz/admin/crawl.py:41
+#, python-format
+msgid "%s (crawl status)"
+msgstr ""
 
-#: models.py:54
-msgid "news"
-msgstr "najava"
+#: dz/admin/crawl.py:43
+msgid "waiting (crawl status)"
+msgstr "čakanje"
 
-#: models.py:55
-msgid "newss"
-msgstr "najave"
+#: dz/admin/crawl.py:44
+msgid "started (crawl status)"
+msgstr "začel"
 
-#: models.py:70
-msgid "tip id"
-msgstr "broj"
+#: dz/admin/crawl.py:45
+msgid "running (crawl status)"
+msgstr "deluje"
 
-#: models.py:73
-msgid "tip title"
-msgstr "naslov"
+#: dz/admin/crawl.py:46
+msgid "complete (crawl status)"
+msgstr "končan"
 
-#. Translators: Betting (Kladionica)
-#: models.py:76
-msgid "betting"
-msgstr "kladionica"
+#: dz/admin/crawl.py:47 dz/models/crawl.py:21
+msgid "crawl status (column)"
+msgstr "stanje"
 
-#. Translators: Coeff. (Koeficijent)
-#: models.py:78
-msgid "tip rate"
-msgstr "koeficijent"
-
-#: models.py:79
-msgid "minimum tip rate"
-msgstr "min. koef."
-
-#. Translators: Result (Rezultat)
-#: models.py:81
-msgid "tip result"
-msgstr "rezultat"
-
-#. Translators: Earnings Due (Zarada)
-#: models.py:83
-msgid "earnings"
-msgstr "zarada"
-
-#. Translators: Spread (Is. Margina)
-#: models.py:85
-msgid "spread"
-msgstr "is. margina"
-
-#. Translators: Stake (Ulog)
-#: models.py:87
-msgid "stake"
-msgstr "ulog"
-
-#. Translators: Success (Uspje\u0161nost)
-#: models.py:89
-msgid "tip success"
-msgstr "uspješnost"
-
-#: models.py:90
-msgid "tipster"
-msgstr "tipster"
-
-#: models.py:95
-msgid "tip link"
-msgstr "vezu"
-
-#: models.py:107
-msgid "tip cut"
+#: dz/admin/news.py:50
+msgid "news cut (column)"
 msgstr "opis"
 
-#: models.py:116
-msgid "tip"
-msgstr "prognoz"
+#: dz/admin/news.py:55 dz/admin/tip.py:55 dz/models/news.py:19
+#: dz/models/tip.py:35
+msgid "archived (column)"
+msgstr "arhivsko"
 
-#: models.py:117
-msgid "tips"
-msgstr "prognoze"
+#: dz/admin/tip.py:50
+msgid "tip cut (column)"
+msgstr "opis"
 
-#: models.py:126
-msgid "manual crawl"
-msgstr "navodilo"
-
-#: models.py:127
-msgid "auto crawl"
-msgstr "samodejno"
-
-#: models.py:131
-msgid "news crawl"
+#: dz/models/common.py:8
+msgid "news (crawl target)"
 msgstr "najave"
 
-#: models.py:132
-msgid "tips crawl"
+#: dz/models/common.py:9
+msgid "tips (crawl target)"
 msgstr "prognoze"
 
 #. Translators: Job Id
-#: models.py:136
-msgid "crawl id"
-msgstr "id"
+#: dz/models/crawl.py:17
+msgid "crawl id (column)"
+msgstr "broj"
 
-#: models.py:137
-msgid "crawl type"
-msgstr "tip"
-
-#: models.py:138
-msgid "crawl target"
+#: dz/models/crawl.py:18
+msgid "crawl target (column)"
 msgstr "kaj"
 
-#: models.py:139
-msgid "crawl status"
-msgstr "stanje"
-
-#: models.py:140
-msgid "started at"
+#: dz/models/crawl.py:22
+msgid "started at (column)"
 msgstr "začel v"
 
-#: models.py:141
-msgid "ended at"
+#: dz/models/crawl.py:23
+msgid "ended at (column)"
 msgstr "končalo na"
 
-#: models.py:143
-msgid "no. of items"
+#: dz/models/crawl.py:24
+msgid "no. of items (column)"
 msgstr "količina"
 
-#: models.py:144
-msgid "hostname"
-msgstr "kompjuter"
+#: dz/models/crawl.py:25
+msgid "hostname (column)"
+msgstr "ime računalnika"
 
 #. Translators: PID
-#: models.py:147
-msgid "crawler pid"
-msgstr "postopek id"
+#: dz/models/crawl.py:27
+msgid "crawler pid (column)"
+msgstr "id procesa"
 
-#: models.py:153
-msgid "crawl"
-msgstr ""
+#: dz/models/crawl.py:30
+msgid "crawl (table)"
+msgstr "zbiranje"
 
-#: models.py:154
-msgid "crawls"
-msgstr ""
+#: dz/models/crawl.py:31
+msgid "crawls (table)"
+msgstr "zbiranja"
 
-#: models.py:159
+#: dz/models/news.py:10
+msgid "news id (column)"
+msgstr "broj"
+
+#: dz/models/news.py:11
+msgid "news link (column)"
+msgstr "veza"
+
+#: dz/models/news.py:12
+msgid "news title (column)"
+msgstr "naslov"
+
+#: dz/models/news.py:13
+msgid "sport (column)"
+msgstr "šport"
+
+#: dz/models/news.py:14
+msgid "league (column)"
+msgstr "liga"
+
+#: dz/models/news.py:15
+msgid "parties (column)"
+msgstr "udeleženci"
+
+#. Translators: Published (Objavleno)
+#: dz/models/news.py:16 dz/models/tip.py:31
+msgid "published (column)"
+msgstr "objavleno na"
+
+#: dz/models/news.py:17 dz/models/tip.py:32
+msgid "updated (column)"
+msgstr "posodobitev na"
+
+#: dz/models/news.py:18 dz/models/tip.py:33
+msgid "fetched (column)"
+msgstr "osveži na"
+
+#: dz/models/news.py:22
+msgid "news preamble (column)"
+msgstr "preambula"
+
+#: dz/models/news.py:23
+msgid "full news content (column)"
+msgstr "sadržaj"
+
+#: dz/models/news.py:24
+msgid "news subtable (column)"
+msgstr "podatkovna tabela"
+
+#: dz/models/news.py:27
+msgid "news (table)"
+msgstr "najava"
+
+#: dz/models/news.py:28
+msgid "many news (table)"
+msgstr "najave"
+
+#: dz/models/news.py:33
+msgid "Can crawl news"
+msgstr "Lahko začnete najave puščati"
+
+#: dz/models/news.py:34
+msgid "Can only view news"
+msgstr "Ne more spremeniti najave"
+
+#: dz/models/schedule.py:27
+msgid "start time (column)"
+msgstr "začetni čas"
+
+#: dz/models/schedule.py:28
+msgid "target (column)"
+msgstr "kaj"
+
+#: dz/models/schedule.py:31
+msgid "schedule item (table)"
+msgstr "delo"
+
+#: dz/models/schedule.py:32
+msgid "schedule (table)"
+msgstr "urnik"
+
+#: dz/models/tip.py:10
+msgid "tip id (column)"
+msgstr "broj"
+
+#: dz/models/tip.py:11
+msgid "tip league (column)"
+msgstr "liga"
+
+#: dz/models/tip.py:12
+msgid "tip parties (column)"
+msgstr "udeleženci"
+
+#: dz/models/tip.py:13
+msgid "tip title (column)"
+msgstr "naslov"
+
+#. Translators: Betting (Kladionica)
+#: dz/models/tip.py:15
+msgid "betting (column)"
+msgstr "kladionica"
+
+#. Translators: Coeff. (Koeficijent)
+#: dz/models/tip.py:17
+msgid "tip rate (column)"
+msgstr "koeficijent"
+
+#: dz/models/tip.py:18
+msgid "minimum tip rate (column)"
+msgstr "min. koef."
+
+#. Translators: Result (Rezultat)
+#: dz/models/tip.py:20
+msgid "tip result (column)"
+msgstr "rezultat"
+
+#. Translators: Earnings Due (Zarada)
+#: dz/models/tip.py:22
+msgid "earnings (column)"
+msgstr "zarada"
+
+#. Translators: Spread (Is. Margina)
+#: dz/models/tip.py:24
+msgid "spread (column)"
+msgstr "is. margina"
+
+#. Translators: Stake (Ulog)
+#: dz/models/tip.py:26
+msgid "stake (column)"
+msgstr "ulog"
+
+#. Translators: Success (Uspje\u0161nost)
+#: dz/models/tip.py:28
+msgid "tip success (column)"
+msgstr "uspješnost"
+
+#: dz/models/tip.py:29
+msgid "tipster (column)"
+msgstr "tipster"
+
+#: dz/models/tip.py:34
+msgid "tip link (column)"
+msgstr "veza"
+
+#: dz/models/tip.py:44
+msgid "tip (table)"
+msgstr "prognoza"
+
+#: dz/models/tip.py:45
+msgid "tips (table)"
+msgstr "prognoze"
+
+#: dz/models/tip.py:50
+msgid "Can crawl tips"
+msgstr "Lahko začnete prognoze puščati"
+
+#: dz/models/tip.py:51
+msgid "Can only view tips"
+msgstr "Ne more spremeniti prognoze"
+
+#: dz/models/user.py:17
 msgid "dz user name"
 msgstr "uporabniško ime"
 
-#: models.py:160
+#: dz/models/user.py:18
 msgid "dz user password"
 msgstr "lozinka"
 
-#: models.py:161
+#: dz/models/user.py:19
 msgid "is dz administrator"
 msgstr "je mogoče upravljati?"
 
-#: models.py:167
+#: dz/models/user.py:25
 msgid "dz user"
 msgstr "uporabnik"
 
-#: models.py:168
+#: dz/models/user.py:26
 msgid "dz users"
 msgstr "uporabniki"
 
-#: templates/admin/base_site.html:4
+#: dz/templates/admin/base_site.html:5
 msgid "Django site admin"
-msgstr ""
+msgstr "Uprava stran"
 
-#: templates/admin/base_site.html:7
-#, fuzzy
-#| msgid "is dz administrator"
+#: dz/templates/admin/base_site.html:8
 msgid "Django administration"
-msgstr "je mogoče upravljati?"
+msgstr "Uprava stran"
 
-#: templates/admin/dz/change_list.html:5
+#: dz/templates/admin/dz/change_list.html:5
 msgid "Log out"
-msgstr ""
+msgstr "Izpisati"
 
-#: templates/admin/dz/change_list.html:15
+#: dz/templates/admin/dz/change_list.html:15
 #, python-format
 msgid "Crawl %(target)s"
 msgstr "Puščati %(target)s"
 
-#: templates/admin/dz/change_list.html:18
+#: dz/templates/admin/dz/change_list.html:18
 msgid "Export"
 msgstr "Izvoz Excelja"
 
-#: templates/admin/dz/list_filter.html:2
+#: dz/templates/admin/dz/change_list.html:30
+msgid "Filter"
+msgstr "Filter"
+
+#: dz/templates/admin/dz/list_filter.html:2
 #, python-format
 msgid " By %(filter_title)s "
 msgstr " Filter po: %(filter_title)s "
 
-#: templates/dz/welcome.html:6
+#: dz/templates/admin/dz/news_content_cut.html:6
+#: dz/templates/admin/dz/tip_content_cut.html:6
+msgid "Show details"
+msgstr "Pokaži podrobnosti"
+
+#: dz/templates/admin/dz/news_content_cut.html:6
+#, python-format
+msgid "News %(id)s"
+msgstr "Najava %(id)s"
+
+#: dz/templates/admin/dz/news_content_cut.html:6
+#: dz/templates/admin/dz/tip_content_cut.html:6
+msgid "more..."
+msgstr "več...."
+
+#: dz/templates/admin/dz/news_content_popup.html:13
+msgid "close"
+msgstr "zapreti"
+
+#: dz/templates/admin/dz/news_content_popup.html:18
+msgid "URL"
+msgstr "Povezava"
+
+#: dz/templates/admin/dz/news_content_popup.html:19
+msgid "Sport"
+msgstr "Šport"
+
+#: dz/templates/admin/dz/news_content_popup.html:20
+msgid "League"
+msgstr "Liga"
+
+#: dz/templates/admin/dz/news_content_popup.html:21
+msgid "Published"
+msgstr "Objavleno"
+
+#: dz/templates/admin/dz/news_content_popup.html:22
+msgid "Updated"
+msgstr "Posodobljena"
+
+#: dz/templates/admin/dz/news_content_popup.html:23
+msgid "Fetched"
+msgstr "Osveži na"
+
+#: dz/templates/admin/dz/news_content_popup.html:24
+msgid "Parties"
+msgstr "Udeleženci"
+
+#: dz/templates/admin/dz/tip_content_cut.html:6
+#: dz/templates/admin/dz/tip_content_popup.html:4
+#, python-format
+msgid "Tip #%(id)s"
+msgstr "Prognoza %(id)s"
+
+#: dz/templates/admin/dz/tip_content_popup.html:12
+msgid "Close"
+msgstr "Zapreti"
+
+#: dz/templates/dz/welcome.html:6
 msgctxt "welcome"
 msgid "Welcome"
-msgstr "Willkommen"
+msgstr "Dobrodošli"
 
-#: templates/dz/welcome.html:10
+#: dz/templates/dz/welcome.html:10
 #, python-format
 msgctxt "welcome"
 msgid "Hello %(csv_usernames)s!"
-msgstr "Guten Tag %(csv_usernames)s!"
+msgstr "Zdravo %(csv_usernames)s!"
 
-#: templates/dz/welcome.html:11
+#: dz/templates/dz/welcome.html:11
 #, python-format
 msgctxt "welcome"
 msgid "Welcome to %(server_name)s!"
-msgstr "Willkommen an %(server_name)s!"
+msgstr "Dobrodošli v %(server_name)s!"

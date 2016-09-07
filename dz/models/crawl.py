@@ -14,21 +14,21 @@ logger = logging.getLogger(__name__)
 @python_2_unicode_compatible
 class Crawl(models.Model):
     # Translators: Job Id
-    id = models.AutoField(_('crawl id'), primary_key=True)
-    target = models.CharField(_('crawl target'), max_length=6,
+    id = models.AutoField(_('crawl id (column)'), primary_key=True)
+    target = models.CharField(_('crawl target (column)'), max_length=6,
                               choices=TARGET_CHOICES, db_index=True)
-    manual = models.BooleanField(_('crawl type'), db_index=True)
-    status = models.CharField(_('crawl status'), max_length=10)
-    started = models.DateTimeField(_('started at'), null=True)
-    ended = models.DateTimeField(_('ended at'), null=True)
-    count = models.SmallIntegerField(_('no. of items'), default=0)
-    host = models.CharField(_('hostname'), max_length=24, db_index=True)
+    manual = models.BooleanField(_('crawl type (column)'), db_index=True)
+    status = models.CharField(_('crawl status (column)'), max_length=10)
+    started = models.DateTimeField(_('started at (column)'), null=True)
+    ended = models.DateTimeField(_('ended at (column)'), null=True)
+    count = models.SmallIntegerField(_('no. of items (column)'), default=0)
+    host = models.CharField(_('hostname (column)'), max_length=24, db_index=True)
     # Translators: PID
-    pid = models.CharField(_('crawler pid'), max_length=6)
+    pid = models.CharField(_('crawler pid (column)'), max_length=6)
 
     class Meta:
-        verbose_name = _('crawl')
-        verbose_name_plural = _('crawls')
+        verbose_name = _('crawl (table)')
+        verbose_name_plural = _('crawls (table)')
 
     def __str__(self):
         return u'Crawl {} at {}'.format(self.target, self.started)

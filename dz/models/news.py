@@ -7,25 +7,25 @@ from .common import CutStr
 
 @python_2_unicode_compatible
 class News(models.Model):
-    id = models.IntegerField(_('news id'), db_column='pk', primary_key=True)
-    link = models.URLField(_('news link'))
-    title = models.CharField(_('news title'), max_length=150)
-    sport = models.CharField(_('sport'), max_length=20, db_index=True)
-    league = models.CharField(_('league'), max_length=80, db_index=True)
-    parties = models.CharField(_('parties'), max_length=80)
-    published = models.DateTimeField(_('published'))
-    updated = models.DateTimeField(_('updated'), db_index=True)
-    crawled = models.DateTimeField(_('fetched'))
-    archived = models.BooleanField(_('archived'))
+    id = models.IntegerField(_('news id (column)'), db_column='pk', primary_key=True)
+    link = models.URLField(_('news link (column)'))
+    title = models.CharField(_('news title (column)'), max_length=150)
+    sport = models.CharField(_('sport (column)'), max_length=20, db_index=True)
+    league = models.CharField(_('league (column)'), max_length=80, db_index=True)
+    parties = models.CharField(_('parties (column)'), max_length=80)
+    published = models.DateTimeField(_('published (column)'))
+    updated = models.DateTimeField(_('updated (column)'), db_index=True)
+    crawled = models.DateTimeField(_('fetched (column)'))
+    archived = models.BooleanField(_('archived (column)'))
 
     # large text fields
-    preamble = models.CharField(_('news preamble'), max_length=500, null=True)
-    content = models.TextField(_('full news content'))
-    subtable = models.TextField(_('news subtable'))
+    preamble = models.CharField(_('news preamble (column)'), max_length=500, null=True)
+    content = models.TextField(_('full news content (column)'))
+    subtable = models.TextField(_('news subtable (column)'))
 
     class Meta:
-        verbose_name = _('news')
-        verbose_name_plural = _('newss')
+        verbose_name = _('news (table)')
+        verbose_name_plural = _('many news (table)')
         index_together = [
             ['published', 'archived']
         ]

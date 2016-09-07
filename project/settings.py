@@ -57,8 +57,6 @@ WEBPACK_LOADER = {
 }
 
 
-LOCALE_PATHS = []
-
 USE_I18N = True
 LANGUAGE_CODE = 'en'
 LANGUAGE_COOKIE_NAME = 'lang'
@@ -67,10 +65,12 @@ LANGUAGES = [
     ('sl', u'Slovenščina'),
     ('ru', u'Русский'),
 ]
+LOCALE_PATHS = []
 
-USE_L10N = False
 USE_TZ = True
 TIME_ZONE = 'Europe/Ljubljana'
+
+USE_L10N = False
 DATETIME_FORMAT = 'Y-m-d H:i:s'
 TIME_FORMAT = 'H:i'
 TIME_INPUT_FORMATS = ['%H:%M']
@@ -111,6 +111,12 @@ MIDDLEWARE = [
 
 if _django_version < 110:
     MIDDLEWARE_CLASSES = MIDDLEWARE
+
+
+if DEBUG and USE_I18N:
+    INSTALLED_APPS += ['rosetta']
+    # rosetta does not look into locale directories of installed apps
+    LOCALE_PATHS += [os.path.join(BASE_DIR, 'dz', 'locale')]
 
 
 DEBUG_TOOLBAR_ENABLED = bool(int(getenv('DEBUG_TOOLBAR', True)))

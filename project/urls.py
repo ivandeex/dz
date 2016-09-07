@@ -22,6 +22,9 @@ urlpatterns_i18n += urlpatterns_setlang
 urlpatterns += i18n_patterns(*urlpatterns_i18n)
 urlpatterns += urlpatterns_i18n   # fallback to default language for urls without langugage code
 
+if settings.DEBUG and settings.USE_I18N:
+    urlpatterns += [url(r'^rosetta/', include('rosetta.urls'))]
+
 if settings.DEBUG and settings.DEBUG_TOOLBAR_ENABLED:
     import debug_toolbar
     urlpatterns += [url(r'^__debug__/', include(debug_toolbar.urls))]
