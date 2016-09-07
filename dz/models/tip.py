@@ -38,7 +38,7 @@ class Tip(models.Model):
     text = models.TextField('tip text (column)', null=True)
 
     def __str__(self):
-        return u'{} ({})'.format(self.tip, self.id)
+        return u'{} ({})'.format(self.title, self.id)
 
     class Meta:
         verbose_name = _('tip (table)')

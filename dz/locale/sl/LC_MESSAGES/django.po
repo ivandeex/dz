@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-07 17:48+0200\n"
+"POT-Creation-Date: 2016-09-07 21:34+0200\n"
 "PO-Revision-Date: 2016-09-01A 12:00+0300\n"
 "Last-Translator: ivandeex <ivandeex@gmail.com>\n"
 "Language-Team: ivandeex <ivandeex@gmail.com>\n"
@@ -34,11 +34,11 @@ msgstr "svežina"
 msgid "All"
 msgstr "Vse"
 
-#: dz/admin/common.py:24 dz/admin/news.py:54 dz/admin/tip.py:54
+#: dz/admin/common.py:24 dz/admin/news.py:54 dz/admin/tip.py:65
 msgid "Archived"
 msgstr "Arhivsko"
 
-#: dz/admin/common.py:25 dz/admin/news.py:54 dz/admin/tip.py:54
+#: dz/admin/common.py:25 dz/admin/news.py:54 dz/admin/tip.py:65
 msgid "Fresh"
 msgstr "Novo"
 
@@ -113,7 +113,7 @@ msgstr "stanje"
 msgid "news cut (column)"
 msgstr "opis"
 
-#: dz/admin/news.py:55 dz/admin/tip.py:55 dz/models/news.py:19
+#: dz/admin/news.py:55 dz/admin/tip.py:66 dz/models/news.py:19
 #: dz/models/tip.py:35
 msgid "archived (column)"
 msgstr "arhivsko"
@@ -121,6 +121,23 @@ msgstr "arhivsko"
 #: dz/admin/tip.py:50
 msgid "tip cut (column)"
 msgstr "opis"
+
+#: dz/admin/tip.py:54
+msgid "(success) unknown"
+msgstr "nepoznata"
+
+#: dz/admin/tip.py:55
+msgid "(success) hit"
+msgstr "pogođena"
+
+#: dz/admin/tip.py:56
+msgid "(success) miss"
+msgstr "promašena"
+
+#. Translators: Success (Uspje\u0161nost)
+#: dz/admin/tip.py:61 dz/models/tip.py:28
+msgid "tip success (column)"
+msgstr "uspješnost"
 
 #: dz/models/common.py:8
 msgid "news (crawl target)"
@@ -298,11 +315,6 @@ msgstr "is. margina"
 #: dz/models/tip.py:26
 msgid "stake (column)"
 msgstr "ulog"
-
-#. Translators: Success (Uspje\u0161nost)
-#: dz/models/tip.py:28
-msgid "tip success (column)"
-msgstr "uspješnost"
 
 #: dz/models/tip.py:29
 msgid "tipster (column)"

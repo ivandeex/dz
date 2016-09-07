@@ -20,7 +20,7 @@ class TipAdmin(DzCrawlModelAdmin):
 
     list_display = ['id', 'published', 'league', 'parties', 'content_cut',
                     'result', 'tipster', 'rate', 'minrate',
-                    'stake', 'earnings', 'spread', 'betting', 'success',
+                    'stake', 'earnings', 'spread', 'betting', 'success_str',
                     'updated', 'crawled', 'link', 'archived_str']
     if settings.NARROW_GRIDS:
         list_display = ['id', 'published', 'place', 'title', 'content_cut',
@@ -49,6 +49,17 @@ class TipAdmin(DzCrawlModelAdmin):
         return tpl.rendered_content
     content_cut.short_description = _('tip cut (column)')
     content_cut.admin_order_field = 'title'
+
+    SUCCESS_CODE_MAP = {
+        'unknown': _('(success) unknown'),
+        'hit': _('(success) hit'),
+        'miss': _('(success) miss'),
+    }
+
+    def success_str(self, obj):
+        return self.SUCCESS_CODE_MAP.get(obj.success, obj.success)
+    success_str.short_description = _('tip success (column)')
+    success_str.admin_order_field = 'success'
 
     def archived_str(self, obj):
         return _('Archived') if obj.archived else _('Fresh')

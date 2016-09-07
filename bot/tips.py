@@ -18,6 +18,12 @@ DATA_MAP = {
     'published': 'objavljeno',
 }
 
+SUCCESS_BG_IMAGE_MAP = {
+    'question': 'unknown',
+    'check': 'hit',
+    'cross': 'miss',
+}
+
 
 class TipsSpider(BaseSpider):
     target = 'tips'
@@ -25,13 +31,18 @@ class TipsSpider(BaseSpider):
     def run(self):
         self.login()
         self.click_menu('Prognoze')
-        for sel in self.wait_for_css('.tiprog_list_block'):
-            item = self.parse_tip(sel)
+
+        tip_css = '.tiprog_list_block'
+        tip_selectors = self.wait_for_css(tip_css)
+        tip_elements = self.webdriver.find_elements_by_css_selector(tip_css)
+
+        for tip_sel, tip_elem in zip(tip_selectors, tip_elements):
+            item = self.parse_tip(tip_sel, tip_elem)
             if item:
                 self.crawled_ids.add(item['id'])
                 api_send_item(self.target, self.start_time, self.debug, item)
 
-    def parse_tip(self, sel):
+    def parse_tip(self, sel, elem):
         item = {}
         rel_url = sel.css('.tpl_right > h3 > a::attr(href)').extract_first()
         link = urljoin(self.webdriver.current_url, rel_url)
@@ -39,7 +50,7 @@ class TipsSpider(BaseSpider):
         try:
             id = int(re.search(r'id_dogadjaj=(\d+)', link).group(1))
         except Exception:
-            logger.info('Skip tip %s', link)
+            logger.info('Skip incomplete tip %s', link)
             return
         item['id'] = id
         item['link'] = link
@@ -54,13 +65,29 @@ class TipsSpider(BaseSpider):
         item['text'] = u' '.join(p.strip() for p in all_p if p.strip())
 
         d = {}
-        for row in sel.css('.tipoprog_table_small tr'):
-            td = row.css('td ::text').extract()
+        table_css = '.tipoprog_table_small tr'
+        row_selectors = sel.css(table_css)
+        row_elements = elem.find_elements_by_css_selector(table_css)
+
+        for row_sel, row_elem in zip(row_selectors, row_elements):
+            td = row_sel.css('td ::text').extract()
             td.extend(['', ''])
             label = td[0].rstrip(': ').lower()
-            d[label] = td[1].strip()
-            if label == 'kladionica' and not d[label]:
-                d[label] = row.css('td a::attr(title)').extract_first() or ''
+            value = td[1].strip()
+
+            if not value and label == 'kladionica':
+                value = row_sel.css('td a::attr(title)').extract_first() or ''
+
+            if not value and label == u'uspje\u0161nost':
+                td2_span = row_elem.find_elements_by_xpath('td[2]/span')
+                if td2_span:
+                    bg_image = td2_span[0].value_of_css_property('background-image') or ''
+                    match = re.search(r'^url\(.*/([^.]+)\.(png|gif|jpg)\)$', bg_image.strip())
+                    if match:
+                        value = match.group(1).strip().lower()
+                        value = SUCCESS_BG_IMAGE_MAP.get(value, '')
+
+            d[label] = value
 
         for dst, src in DATA_MAP.items():
             item[dst] = d.get(src, '')

@@ -45,6 +45,7 @@ def api_request(command, params):
 
     url = urljoin(web_server, command)
     resp = requests.post(url, json=req)
+    assert resp.status_code == 200, 'Invalid response status %d' % resp.status_code
     resp = resp.json()
 
     diff = (json2dt(resp['time']) - datetime.utcnow()).total_seconds()
