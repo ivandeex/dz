@@ -67,14 +67,6 @@ LANGUAGES = [
 ]
 LOCALE_PATHS = []
 
-USE_TZ = True
-TIME_ZONE = 'Europe/Ljubljana'
-
-USE_L10N = False
-DATETIME_FORMAT = 'Y-m-d H:i:s'
-TIME_FORMAT = 'H:i'
-TIME_INPUT_FORMATS = ['%H:%M']
-
 
 DEBUG_SESSIONS = bool(int(getenv('DEBUG_SESSIONS', False)))
 if DEBUG_SESSIONS:
@@ -212,15 +204,25 @@ LOGGING = {
     },
 }
 
+# Time zone
+USE_TZ = True
+TIME_ZONE = 'CET'
+
+USE_L10N = False
+DATETIME_FORMAT = 'Y-m-d H:i'
+TIME_FORMAT = 'H:i'
+TIME_INPUT_FORMATS = ['%H:%M']
+
+
 # Migration from MongoDB
 MONGODB_URL = getenv('MONGODB_URL', '')
 
-# Custom DZ settings
 
-NARROW_GRIDS = bool(int(getenv('NARROW_GRIDS', False)))
-SPIDER_SECRET_KEY = getenv('SPIDER_SECRET_KEY', 'please change me')
+# Custom DZ settings
 SPIDER_TIME_ZONE = getenv('SPIDER_TIME_ZONE', TIME_ZONE)
+SPIDER_SECRET_KEY = getenv('SPIDER_SECRET_KEY', 'please change me')
 SPIDER_PAGE_DELAY = int(getenv('SPIDER_PAGE_DELAY', 50))
 SPIDER_LOAD_IMAGES = bool(int(getenv('SPIDER_LOAD_IMAGES', True)))
 SPIDER_USERPASS = getenv('SPIDER_USERPASS', '')
 SPIDER_LOG_LEVEL = getenv('SPIDER_LOG_LEVEL', 'DEBUG' if DEBUG else 'INFO')
+NARROW_GRIDS = bool(int(getenv('NARROW_GRIDS', False)))

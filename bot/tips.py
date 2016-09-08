@@ -40,7 +40,7 @@ class TipsSpider(BaseSpider):
             item = self.parse_tip(tip_sel, tip_elem)
             if item:
                 self.crawled_ids.add(item['id'])
-                api_send_item(self.target, self.start_time, self.debug, item)
+                api_send_item(self.target, self.start_utc, self.debug, item)
 
     def parse_tip(self, sel, elem):
         item = {}

@@ -40,15 +40,20 @@ class Crawl(models.Model):
 
     @classmethod
     def add_manual_crawl(cls, target):
-        now = timezone.now().replace(microsecond=0)
-        auto_time, auto_target = Schedule.get_next_job(consume=False)
-        if auto_target == target and abs((auto_time - now).total_seconds()) < 60:
+        # round time up to next full minute because server-bot api doesn't support seconds
+        now_utc = timezone.now().replace(microsecond=0).astimezone(timezone.utc)
+        now_utc = (now_utc + timezone.timedelta(seconds=59)).replace(second=0)
+
+        auto_utc, auto_target = Schedule.get_next_job(consume=False)
+        if auto_target == target and abs((auto_utc - now_utc).total_seconds()) < 120:
             return 'refused'
+
+        objs = cls.objects
         try:
-            Crawl.objects.get(target=target, status='waiting', manual=True).update(started=now)
+            objs.get(target=target, status='waiting', manual=True).update(started=now_utc)
             return 'updated'
-        except Crawl.DoesNotExist:
-            Crawl.objects.create(target=target, status='waiting', started=now, manual=True)
+        except cls.DoesNotExist:
+            objs.create(target=target, status='waiting', started=now_utc, manual=True)
             return 'submitted'
 
     @classmethod
@@ -57,10 +62,9 @@ class Crawl(models.Model):
 
     @classmethod
     def get_auto_crawl(cls, consume=True):
-        time, target = Schedule.get_next_job(consume)
-        if consume and time and target:
-            logger.info('Schedule auto crawl %s at %02d:%02d',
-                        target, time.hour, time.minute)
-            crawl = cls.objects.create(target=target, status='waiting',
-                                       started=time, manual=False)
+        utc, target = Schedule.get_next_job(consume)
+        if consume and utc and target:
+            objs = cls.objects
+            crawl = objs.create(target=target, status='waiting', started=utc, manual=False)
+            logger.info('Schedule %s crawl at %02d:%02d (UTC)', target, utc.hour, utc.minute)
             return crawl

@@ -1,14 +1,13 @@
 import os
 import tempfile
 from time import time
-from datetime import datetime
 from parsel import Selector
 from selenium.webdriver import PhantomJS, DesiredCapabilities
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 from .utils import logger, randsleep, poll_sleep
-from .api import api_send_complete, dt2json
+from .api import api_send_complete, naive2api
 
 DEFAULT_PAGE_DELAY = 50
 
@@ -20,7 +19,7 @@ class BaseSpider(object):
     target = None
 
     def __init__(self, env):
-        self.start_time = env.get('START_TIME', dt2json(datetime.utcnow()))
+        self.start_utc = env.get('START_UTC', naive2api())
         self.page_delay = int(env.get('PAGE_DELAY', DEFAULT_PAGE_DELAY))
         self.load_images = bool(int(env.get('LOAD_IMAGES', True)))
         self.debug = bool(int(env.get('DEBUG', False)))
@@ -42,7 +41,7 @@ class BaseSpider(object):
 
     def end(self):
         logger.info('Crawling complete')
-        api_send_complete(self.target, self.start_time, self.debug, self.crawled_ids)
+        api_send_complete(self.target, self.start_utc, self.debug, self.crawled_ids)
 
     def close(self):
         self.webdriver.quit()

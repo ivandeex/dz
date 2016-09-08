@@ -3,6 +3,7 @@ from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
 from django.conf.urls import url
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from import_export.admin import ExportMixin
 from import_export.formats import base_formats
@@ -75,6 +76,7 @@ class DzModelAdmin(admin.ModelAdmin):
                 'title': _(self.opts.verbose_name_plural.title()),  # override title
                 'can_crawl': self.user_can_crawl(request.user),
                 'can_export': self.can_export,
+                'server_time': timezone.now(),
             })
         return tpl_resp
 

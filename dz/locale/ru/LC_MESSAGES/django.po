@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-08 02:20+0200\n"
+"POT-Creation-Date: 2016-09-08 04:27+0200\n"
 "PO-Revision-Date: 2016-09-01A 12:00+0300\n"
 "Last-Translator: ivandeex <ivandeex@gmail.com>\n"
 "Language-Team: ivandeex <ivandeex@gmail.com>\n"
@@ -27,38 +27,38 @@ msgstr "D.Z."
 msgid "Index:"
 msgstr "Индекс:"
 
-#: dz/admin/common.py:18
+#: dz/admin/common.py:19
 msgid "archive (filter)"
 msgstr "архив"
 
-#: dz/admin/common.py:23
+#: dz/admin/common.py:24
 msgid "All"
 msgstr "Всё"
 
-#: dz/admin/common.py:24 dz/admin/news.py:54 dz/admin/tip.py:65
+#: dz/admin/common.py:25 dz/admin/news.py:54 dz/admin/tip.py:65
 msgid "Archived"
 msgstr "Из архива"
 
-#: dz/admin/common.py:25 dz/admin/news.py:54 dz/admin/tip.py:65
+#: dz/admin/common.py:26 dz/admin/news.py:54 dz/admin/tip.py:65
 msgid "Fresh"
 msgstr "Текущее"
 
 #. Translators: status (from models.Crawl) is one of: refused, updated, submitted
-#: dz/admin/common.py:100
+#: dz/admin/common.py:102
 #, python-format
 msgid "Crawling %s!"
 msgstr ""
 
 #. Translators: force translation of all forms of the python-format above
-#: dz/admin/common.py:103
+#: dz/admin/common.py:105
 msgid "Crawling refused!"
 msgstr "Ошибка обновления!"
 
-#: dz/admin/common.py:104
+#: dz/admin/common.py:106
 msgid "Crawling updated!"
 msgstr "Время обновления изменено!"
 
-#: dz/admin/common.py:105
+#: dz/admin/common.py:107
 msgid "Crawling submitted!"
 msgstr "Обновление скоро начнется!"
 
@@ -255,19 +255,19 @@ msgstr "Может обновлять новости"
 msgid "Can only view news"
 msgstr "Не может корректировать новости"
 
-#: dz/models/schedule.py:27
+#: dz/models/schedule.py:19
 msgid "start time (column)"
 msgstr "время начала"
 
-#: dz/models/schedule.py:28
+#: dz/models/schedule.py:20
 msgid "target (column)"
 msgstr "что обновлять"
 
-#: dz/models/schedule.py:31
+#: dz/models/schedule.py:23
 msgid "schedule item (table)"
 msgstr "пункт расписания"
 
-#: dz/models/schedule.py:32
+#: dz/models/schedule.py:24
 msgid "schedule (table)"
 msgstr "расписание"
 
@@ -373,20 +373,28 @@ msgstr "Администрирование сайта"
 msgid "Django administration"
 msgstr "Интерфейс администратора"
 
-#: dz/templates/admin/dz/change_list.html:5
+#: dz/templates/admin/dz/change_list.html:7
+msgid "Home"
+msgstr "Главная"
+
+#: dz/templates/admin/dz/change_list.html:10
+msgid "Server time"
+msgstr "Текущее время"
+
+#: dz/templates/admin/dz/change_list.html:16
 msgid "Log out"
 msgstr "Выйти"
 
-#: dz/templates/admin/dz/change_list.html:15
+#: dz/templates/admin/dz/change_list.html:26
 #, python-format
 msgid "Crawl %(target)s"
 msgstr "Обновить %(target)s"
 
-#: dz/templates/admin/dz/change_list.html:18
+#: dz/templates/admin/dz/change_list.html:29
 msgid "Export"
 msgstr "Экспорт"
 
-#: dz/templates/admin/dz/change_list.html:30
+#: dz/templates/admin/dz/change_list.html:41
 msgid "Filter"
 msgstr "Фильтры"
 

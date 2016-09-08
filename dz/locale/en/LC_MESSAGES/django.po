@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-08 02:20+0200\n"
+"POT-Creation-Date: 2016-09-08 04:27+0200\n"
 "PO-Revision-Date: 2016-09-01A 12:00+0300\n"
 "Last-Translator: ivandeex <ivandeex@gmail.com>\n"
 "Language-Team: ivandeex <ivandeex@gmail.com>\n"
@@ -25,39 +25,39 @@ msgid "Index:"
 msgstr "Index:"
 
 # Context: admin filter name
-#: dz/admin/common.py:18
+#: dz/admin/common.py:19
 msgid "archive (filter)"
 msgstr "archived/current"
 
-#: dz/admin/common.py:23
+#: dz/admin/common.py:24
 msgid "All"
 msgstr "All"
 
-#: dz/admin/common.py:24 dz/admin/news.py:54 dz/admin/tip.py:65
+#: dz/admin/common.py:25 dz/admin/news.py:54 dz/admin/tip.py:65
 msgid "Archived"
 msgstr "Archived"
 
-#: dz/admin/common.py:25 dz/admin/news.py:54 dz/admin/tip.py:65
+#: dz/admin/common.py:26 dz/admin/news.py:54 dz/admin/tip.py:65
 msgid "Fresh"
 msgstr "Current"
 
 # # dz/admin/common.py:100
 #. Translators: status (from models.Crawl) is one of: refused, updated, submitted
-#: dz/admin/common.py:100
+#: dz/admin/common.py:102
 #, python-format
 msgid "Crawling %s!"
 msgstr ""
 
 #. Translators: force translation of all forms of the python-format above
-#: dz/admin/common.py:103
+#: dz/admin/common.py:105
 msgid "Crawling refused!"
 msgstr "Crawling refused!"
 
-#: dz/admin/common.py:104
+#: dz/admin/common.py:106
 msgid "Crawling updated!"
 msgstr "Crawling updated!"
 
-#: dz/admin/common.py:105
+#: dz/admin/common.py:107
 msgid "Crawling submitted!"
 msgstr "Crawling submitted!"
 
@@ -255,19 +255,19 @@ msgstr "Can crawl news"
 msgid "Can only view news"
 msgstr "Cannot change news"
 
-#: dz/models/schedule.py:27
+#: dz/models/schedule.py:19
 msgid "start time (column)"
 msgstr "to start at"
 
-#: dz/models/schedule.py:28
+#: dz/models/schedule.py:20
 msgid "target (column)"
 msgstr "what to crawl"
 
-#: dz/models/schedule.py:31
+#: dz/models/schedule.py:23
 msgid "schedule item (table)"
 msgstr "job"
 
-#: dz/models/schedule.py:32
+#: dz/models/schedule.py:24
 msgid "schedule (table)"
 msgstr "schedule"
 
@@ -373,20 +373,28 @@ msgstr "Site admin"
 msgid "Django administration"
 msgstr "Administration"
 
-#: dz/templates/admin/dz/change_list.html:5
+#: dz/templates/admin/dz/change_list.html:7
+msgid "Home"
+msgstr ""
+
+#: dz/templates/admin/dz/change_list.html:10
+msgid "Server time"
+msgstr "Current time"
+
+#: dz/templates/admin/dz/change_list.html:16
 msgid "Log out"
 msgstr "Log out"
 
-#: dz/templates/admin/dz/change_list.html:15
+#: dz/templates/admin/dz/change_list.html:26
 #, python-format
 msgid "Crawl %(target)s"
 msgstr "Crawl %(target)s"
 
-#: dz/templates/admin/dz/change_list.html:18
+#: dz/templates/admin/dz/change_list.html:29
 msgid "Export"
 msgstr "Export"
 
-#: dz/templates/admin/dz/change_list.html:30
+#: dz/templates/admin/dz/change_list.html:41
 msgid "Filter"
 msgstr "Filter"
 

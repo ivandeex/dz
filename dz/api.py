@@ -21,20 +21,27 @@ except ImportError:
     json_decode = json.loads
 
 
+MAX_TIME_DIFF = 900
+
 logger = logging.getLogger(__name__)
 
 
-def datetime2json(dt):
-    if timezone.is_naive(dt):
-        dt = timezone.make_aware(dt)
+def time2api(dt):
+    assert not timezone.is_naive(dt), 'Invalid naive time'
     naive_utc = dt.astimezone(timezone.utc).replace(tzinfo=None)
-    return str(naive_utc)
+    return naive_utc.strftime('%Y-%m-%d,%H:%M')
 
 
-def json2datetime(time_str, utc=False):
-    dt = timezone.datetime.strptime(time_str, '%Y-%m-%d %H:%M:%S')
-    tzinfo = pytz.UTC if utc else pytz.timezone(settings.SPIDER_TIME_ZONE)
-    return dt.replace(tzinfo=tzinfo)
+def api2time(time_str, tzname=None):
+    dt = timezone.datetime.strptime(time_str, '%Y-%m-%d,%H:%M')
+    if tzname == 'UTC':
+        return dt.replace(tzinfo=timezone.utc)
+    if not tzname:
+        tzname = settings.SPIDER_TIME_ZONE
+    # Important! Use pytz.tzinfo.localize instead of datetime.astimezone!
+    dt = pytz.timezone(tzname).localize(dt)
+    # Always return UTC
+    return dt.astimezone(timezone.utc)
 
 
 def parse_request(request, command):
@@ -54,9 +61,9 @@ def parse_request(request, command):
                     data_cut[key] = value[:200] + ' .....'
         logger.debug('request "%s": %s', command, req_cut)
 
-    req_utc = json2datetime(req['time'], utc=True).replace(tzinfo=None)
+    req_utc = api2time(req['time'], 'UTC').replace(tzinfo=None)
     diff = (datetime.utcnow() - req_utc).total_seconds()
-    assert abs(diff) < 600, 'Invalid request time stamp'
+    assert abs(diff) < MAX_TIME_DIFF, 'Invalid request time stamp'
 
     assert re.match(r'^\d\d\d$', req['rand']), 'Invalid request rand'
 
@@ -71,7 +78,7 @@ def parse_request(request, command):
 
 
 def make_response(**resp):
-    resp['time'] = datetime2json(timezone.now().replace(microsecond=0))
+    resp['time'] = time2api(timezone.now().replace(microsecond=0))
     resp['rand'] = str(random.randint(100, 999))
 
     source = '%s|%s' % (resp['time'], resp['rand'])
@@ -145,7 +152,7 @@ def api_crawl_job(request):
 
             resp['found'] = True
             resp['target'] = crawl.target
-            resp['start_time'] = datetime2json(crawl.started)
+            resp['start_utc'] = time2api(crawl.started)
             resp['seen_news'] = seen_news
             resp['page_delay'] = settings.SPIDER_PAGE_DELAY
         return make_response(**resp)
@@ -164,9 +171,9 @@ def api_crawl_item(request):
         Model = get_model(req['target'])
 
         data = req['data']
-        data['crawled'] = json2datetime(data['crawled'], utc=True)
-        data['updated'] = json2datetime(data['updated'], utc=False)
-        data['published'] = json2datetime(data['published'], utc=False)
+        data['crawled'] = api2time(data.pop('crawled_utc'), 'UTC')
+        data['updated'] = api2time(data['updated'])
+        data['published'] = api2time(data['published'])
 
         id = int(data['id'])
         try:
@@ -179,7 +186,7 @@ def api_crawl_item(request):
         item.save()
 
         crawl, created = models.Crawl.objects.get_or_create(
-            started=json2datetime(req['start_time'], utc=True),
+            started=api2time(req['start_utc'], 'UTC'),
             target=req['target'],
             host=req['host'],
             pid=req['pid'],
@@ -210,7 +217,7 @@ def api_crawl_complete(request):
 
         crawl, created = models.Crawl.objects.get_or_create(
             target=req['target'],
-            started=json2datetime(req['start_time'], utc=True),
+            started=api2time(req['start_utc'], 'UTC'),
             host=req['host'],
             pid=req['pid'],
         )

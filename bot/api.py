@@ -20,14 +20,17 @@ except ImportError:
 
 DEFAULT_WEB_SERVER = 'http://dz.com/dz/api/crawl/'
 DEFAULT_SECRET_KEY = 'please change me'
+MAX_TIME_DIFF = 900
 
 
-def dt2json(dt):
-    return str(dt.replace(microsecond=0))
+def naive2api(dt=None):
+    if dt is None:
+        dt = datetime.utcnow()
+    return dt.replace(microsecond=0).strftime('%Y-%m-%d,%H:%M')
 
 
-def json2dt(dt_str):
-    return datetime.strptime(dt_str, '%Y-%m-%d %H:%M:%S')
+def api2naive(dt_str):
+    return datetime.strptime(dt_str, '%Y-%m-%d,%H:%M')
 
 
 def api_request(command, params):
@@ -35,7 +38,7 @@ def api_request(command, params):
     secret_key = os.environ.get('SECRET_KEY', DEFAULT_SECRET_KEY)
 
     req = params.copy()
-    req['time'] = dt2json(datetime.utcnow())
+    req['time'] = naive2api(datetime.utcnow())
     req['rand'] = str(random.randint(100, 999))
     req['host'] = socket.gethostname()
     req['pid'] = str(os.getpid())
@@ -48,8 +51,8 @@ def api_request(command, params):
     assert resp.status_code == 200, 'Invalid response status %d' % resp.status_code
     resp = resp.json()
 
-    diff = (json2dt(resp['time']) - datetime.utcnow()).total_seconds()
-    assert abs(diff) < 600, 'Invalid response time stamp'
+    diff = (api2naive(resp['time']) - datetime.utcnow()).total_seconds()
+    assert abs(diff) < MAX_TIME_DIFF, 'Invalid response time stamp'
 
     assert re.match(r'^\d\d\d$', req['rand']), 'Invalid response rand'
 
@@ -60,14 +63,14 @@ def api_request(command, params):
     return resp
 
 
-def api_send_item(target, start_time, debug, item):
+def api_send_item(target, start_utc, debug, item):
     try:
         data = item.copy()
-        data['crawled'] = dt2json(datetime.utcnow())
-        data['updated'] = dt2json(data['updated'])
-        data['published'] = dt2json(data['published'])
+        data['crawled_utc'] = naive2api()
+        data['updated'] = naive2api(data['updated'])
+        data['published'] = naive2api(data['published'])
 
-        resp = api_request('item', dict(target=target, start_time=start_time, data=data))
+        resp = api_request('item', dict(target=target, start_utc=start_utc, data=data))
         if not resp['ok']:
             logger.info('Server returned "item" failure: %s', resp['error'])
     except Exception as err:
@@ -76,10 +79,10 @@ def api_send_item(target, start_time, debug, item):
             raise
 
 
-def api_send_complete(target, start_time, debug, ids):
+def api_send_complete(target, start_utc, debug, ids):
     try:
         str_ids = merge_ranges(sorted(ids))
-        resp = api_request('complete', dict(target=target, start_time=start_time, ids=str_ids))
+        resp = api_request('complete', dict(target=target, start_utc=start_utc, ids=str_ids))
         if not resp['ok']:
             logger.info('Server returned "complete" failure: %s', resp['error'])
     except Exception as err:

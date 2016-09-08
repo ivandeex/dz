@@ -24,7 +24,7 @@ class Service(object):
                 logger.setLevel(logging.getLevelName(resp['log_level']))
                 if resp['found']:
                     env = {
-                        'START_TIME': resp['start_time'],
+                        'START_UTC': resp['start_utc'],
                         'SEEN_NEWS': resp['seen_news'],
                         'PAGE_DELAY': resp['page_delay'],
                         'LOAD_IMAGES': resp['load_images'],

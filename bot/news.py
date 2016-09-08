@@ -85,7 +85,7 @@ class NewsSpider(BaseSpider):
                     len(self.crawled_ids) + 1, self.to_crawl, url)
         self.crawled_urls.add(url)
         self.crawled_ids.add(id)
-        api_send_item(self.target, self.start_time, self.debug, item)
+        api_send_item(self.target, self.start_utc, self.debug, item)
 
         logger.debug('Click on the back button')
         self.webdriver.back()

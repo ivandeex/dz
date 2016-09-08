@@ -1,3 +1,5 @@
+import pytz
+from datetime import datetime, time
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.utils import timezone
@@ -8,19 +10,26 @@ from dz import models
 class Command(BaseCommand):
     help = 'Migrates MongoDB data to Django database'
 
-    @staticmethod
-    def convert_datetime(dt):
+    DEFAULT_SCHEDULE = [
+        (time(11, 02), 'tips'),
+        (time(11, 46), 'tips'),
+        (time(12, 02), 'tips'),
+        (time(10, 00), 'news'),
+        (time(18, 30), 'news'),
+    ]
+
+    def convert_time(self, dt):
         if dt:
-            if isinstance(dt, basestring):
+            if not isinstance(dt, datetime):
                 dt = timezone.datetime.strptime(dt, '%Y-%m-%d %H:%M:%S')
             if not timezone.is_aware(dt):
-                dt = timezone.make_aware(dt)
-            return dt
+                dt = self.default_tz.localize(dt)
+            return dt.astimezone(timezone.utc)
 
     def add_arguments(self, parser):
         parser.add_argument(
             '--table', '-t', dest='table', help='Table(s) to import',
-            default='all', choices=['all', 'users', 'crawls', 'tips', 'news']
+            default='all', choices=['all', 'schedule', 'users', 'crawls', 'tips', 'news']
         )
 
         parser.add_argument(
@@ -28,8 +37,14 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        table = options['table']
+        self.default_tz = pytz.timezone(settings.SPIDER_TIME_ZONE)
         self.mongodb = MongoClient(options['mongourl']).get_default_database()
+
+        table = options['table']
+
+        if table in ('schedule', 'all'):
+            count = self.import_schedule()
+            print '%d schedule jobs imported' % count
         if table in ('users', 'all'):
             count = self.import_users()
             print '%d users imported' % count
@@ -42,11 +57,20 @@ class Command(BaseCommand):
         if table in ('news', 'all'):
             count = self.import_news()
             print '%d news imported' % count
+
         self.mongodb.client.close()
+
+    def import_schedule(self):
+        models.Schedule._verbose_update = False
+        models.Schedule.objects.all().delete()
+        for time_i, target_i in self.DEFAULT_SCHEDULE:
+            models.Schedule.objects.create(time=time_i, target=target_i)
+        return len(self.DEFAULT_SCHEDULE)
 
     def import_users(self):
         models.User.objects.all().delete()
         count = 0
+
         for item in self.mongodb.dvoznak_users.find(sort=[('username', 1)]):
             models.User.objects.create(
                 username=item['username'],
@@ -59,6 +83,7 @@ class Command(BaseCommand):
     def import_crawls(self):
         models.Crawl.objects.all().delete()
         count = 0
+
         ordering = [('pk', 1)]
         self.mongodb.dvoznak_crawls.create_index(ordering)
         for item in self.mongodb.dvoznak_crawls.find(sort=ordering):
@@ -69,8 +94,8 @@ class Command(BaseCommand):
                 target=item['action'],
                 manual=item['type'] == 'manual',
                 status=item['status'],
-                started=self.convert_datetime(item['started']),
-                ended=self.convert_datetime(item.get('ended')),
+                started=self.convert_time(item['started']),
+                ended=self.convert_time(item.get('ended')),
                 count=item['news'] if item['action'] == 'news' else item['tips'],
                 host=item['host'],
                 # ignored: item['ipaddr']
@@ -81,10 +106,15 @@ class Command(BaseCommand):
 
     def import_tips(self):
         models.Tip.objects.all().delete()
+        count = 0
+
         ordering = [('published', 1), ('crawled', 1)]
         self.mongodb.dvoznak_tips.create_index(ordering)
-        count = 0
         for item in self.mongodb.dvoznak_tips.find(sort=ordering):
+            published = self.convert_time(item['published'])
+            updated = self.convert_time(item['updated'])
+            crawled = self.convert_time(item['crawled'])
+
             models.Tip.objects.create(
                 id=item['pk'],
                 league=item['place'],
@@ -100,9 +130,9 @@ class Command(BaseCommand):
                 stake=item['stake'],
                 success=item['success'],
                 tipster=item['tipster'],
-                published=self.convert_datetime(item['published']),
-                updated=self.convert_datetime(item['updated']),
-                crawled=self.convert_datetime(item['crawled']),
+                published=published or updated,
+                updated=updated,
+                crawled=crawled,
                 link=item['details_url'],
                 archived=item['archived'] != 'fresh',
             )
@@ -111,14 +141,18 @@ class Command(BaseCommand):
 
     def import_news(self):
         models.News.objects.all().delete()
+        count = 0
+
         ordering = [('published', 1), ('crawled', 1)]
         self.mongodb.dvoznak_news.create_index(ordering)
-        count = 0
         for item in self.mongodb.dvoznak_news.find(sort=ordering):
-            if 'published' not in item:
-                item['published'] = item['updated']
             item.setdefault('preamble', '')
             item.setdefault('content', '')
+
+            published = self.convert_time(item.get('published'))
+            updated = self.convert_time(item['updated'])
+            crawled = self.convert_time(item['crawled'])
+
             models.News.objects.create(
                 id=item['pk'],
                 link=item['url'],
@@ -126,9 +160,9 @@ class Command(BaseCommand):
                 sport=item['section'],
                 league=item['subsection'],
                 parties=item['short_title'],
-                published=self.convert_datetime(item['published']),
-                updated=self.convert_datetime(item['updated']),
-                crawled=self.convert_datetime(item['crawled']),
+                published=published or updated,
+                updated=updated,
+                crawled=crawled,
                 archived=item['archived'] != 'fresh',
                 preamble=item['preamble'],
                 content=item['content'],
