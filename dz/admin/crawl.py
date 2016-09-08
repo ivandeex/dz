@@ -14,9 +14,9 @@ class DzCrawlTypeFilter(admin.BooleanFieldListFilter):
         for choice in super(DzCrawlTypeFilter, self).choices(changelist):
             text = force_text(choice['display'])
             if text == text_yes:
-                choice['display'] = force_text(_('manual crawl')).title()
+                choice['display'] = force_text(_('manual (crawl type)')).title()
             elif text == text_no:
-                choice['display'] = force_text(_('auto crawl')).title()
+                choice['display'] = force_text(_('scheduled (crawl type)')).title()
             yield choice
 
 
@@ -32,7 +32,12 @@ class CrawlAdmin(DzModelAdmin):
     ordering = ['-id']
 
     def type_str(self, obj):
-        return _('manual crawl') if obj.manual else _('auto crawl')
+        if obj.manual is None:
+            return _('orphan (crawl type)')
+        elif obj.manual:
+            return _('manual (crawl type)')
+        else:
+            return _('scheduled (crawl type)')
     type_str.short_description = _('crawl type (column)')
     type_str.admin_order_field = 'manual'
 

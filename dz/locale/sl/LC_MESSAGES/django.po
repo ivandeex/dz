@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-07 22:20+0200\n"
+"POT-Creation-Date: 2016-09-08 02:20+0200\n"
 "PO-Revision-Date: 2016-09-01A 12:00+0300\n"
 "Last-Translator: ivandeex <ivandeex@gmail.com>\n"
 "Language-Team: ivandeex <ivandeex@gmail.com>\n"
@@ -71,41 +71,45 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: dz/admin/crawl.py:17 dz/admin/crawl.py:35
-msgid "manual crawl"
+#: dz/admin/crawl.py:17 dz/admin/crawl.py:38
+msgid "manual (crawl type)"
 msgstr "ročno"
 
-#: dz/admin/crawl.py:19 dz/admin/crawl.py:35
-msgid "auto crawl"
-msgstr "na urniku"
+#: dz/admin/crawl.py:19 dz/admin/crawl.py:40
+msgid "scheduled (crawl type)"
+msgstr "urnik"
 
-#: dz/admin/crawl.py:36 dz/models/crawl.py:20
+#: dz/admin/crawl.py:36
+msgid "orphan (crawl type)"
+msgstr "nepoznata"
+
+#: dz/admin/crawl.py:41 dz/models/crawl.py:20
 msgid "crawl type (column)"
 msgstr "dodajanje metoda"
 
 #. Translators: Crawl status can be: waiting, started, running, complete
-#: dz/admin/crawl.py:41
+#: dz/admin/crawl.py:46
 #, python-format
 msgid "%s (crawl status)"
 msgstr ""
 
-#: dz/admin/crawl.py:43
+#: dz/admin/crawl.py:48
 msgid "waiting (crawl status)"
 msgstr "čakanje"
 
-#: dz/admin/crawl.py:44
+#: dz/admin/crawl.py:49
 msgid "started (crawl status)"
 msgstr "začel"
 
-#: dz/admin/crawl.py:45
+#: dz/admin/crawl.py:50
 msgid "running (crawl status)"
 msgstr "deluje"
 
-#: dz/admin/crawl.py:46
+#: dz/admin/crawl.py:51
 msgid "complete (crawl status)"
 msgstr "končan"
 
-#: dz/admin/crawl.py:47 dz/models/crawl.py:21
+#: dz/admin/crawl.py:52 dz/models/crawl.py:21
 msgid "crawl status (column)"
 msgstr "stanje"
 

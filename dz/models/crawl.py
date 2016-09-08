@@ -17,7 +17,7 @@ class Crawl(models.Model):
     id = models.AutoField(_('crawl id (column)'), primary_key=True)
     target = models.CharField(_('crawl target (column)'), max_length=6,
                               choices=TARGET_CHOICES, db_index=True)
-    manual = models.BooleanField(_('crawl type (column)'), db_index=True)
+    manual = models.NullBooleanField(_('crawl type (column)'), db_index=True)
     status = models.CharField(_('crawl status (column)'), max_length=10)
     started = models.DateTimeField(_('started at (column)'), null=True)
     ended = models.DateTimeField(_('ended at (column)'), null=True)
