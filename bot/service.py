@@ -45,6 +45,5 @@ class Service(object):
         spider = Spider(final_env)
         try:
             spider.run()
-            spider.end()
         finally:
             spider.close()

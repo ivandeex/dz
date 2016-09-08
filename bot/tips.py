@@ -37,10 +37,9 @@ class TipsSpider(BaseSpider):
         tip_elements = self.webdriver.find_elements_by_css_selector(tip_css)
 
         for tip_sel, tip_elem in zip(tip_selectors, tip_elements):
-            item = self.parse_tip(tip_sel, tip_elem)
-            if item:
-                self.crawled_ids.add(item['id'])
-                api_send_item(self.target, self.start_utc, self.debug, item)
+            self.parse_tip(tip_sel, tip_elem)
+
+        self.end()
 
     def parse_tip(self, sel, elem):
         item = {}
@@ -94,6 +93,8 @@ class TipsSpider(BaseSpider):
 
         item['published'] = extract_datetime(item['published'])
 
-        # if publish date not found, default to update date
+        # if publish date is not found, default to update date
         item['published'] = item['published'] or item['updated']
-        return item
+
+        self.crawled_ids.add(id)
+        api_send_item(self.target, self.start_utc, self.debug, item)

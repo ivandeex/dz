@@ -27,6 +27,7 @@ def main():
     getopt('delay', 'PAGE_DELAY')
     getopt('userpass', 'USERPASS')
     getopt('images', 'LOAD_IMAGES')
+    getopt('newsid', 'NEWS_ID')
 
     if service:
         Service().run()
