@@ -97,7 +97,17 @@ class NewsSpider(BaseSpider):
         item['published'] = extract_datetime(first_text(sel, '.najva-meta-published > span'))
 
         item['preamble'] = first_text(sel, '.nlsn_content > h3')
-        item['content'] = '\n'.join(p.strip() for p in sel.css('.nlsn_content > p').extract())
+
+        text = []
+        content_node = sel.css('.nlsn_content')
+        xpath = './node()[name()="p" or name()="b" or self::text()]'
+        for para in content_node.xpath(xpath).extract():
+            para = para.strip()
+            if para and para != u'<p></p>':
+                if not para.startswith(u'<p>'):
+                    para = u'<p>' + para + u'</p>'
+                text.append(para)
+        item['content'] = u'\n'.join(text)
 
         table1 = '\n'.join(html.strip() for html in sel.css('.nlsn_table_wrap').extract())
         xpath = '//div[@id="nls_najava"]/following-sibling::*[name()="ul" or name()="div"]'
