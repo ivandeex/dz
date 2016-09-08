@@ -28,7 +28,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--table', '-t', dest='table', help='Table(s) to import',
+            '--table', '-t', dest='table', help='Table to import',
             default='all', choices=['all', 'schedule', 'users', 'crawls', 'tips', 'news']
         )
 
@@ -158,7 +158,7 @@ class Command(BaseCommand):
                 link=item['url'],
                 title=item['title'],
                 sport=item['section'],
-                league=item['subsection'],
+                league=item['subsection'].partition(',')[0],
                 parties=item['short_title'],
                 published=published or updated,
                 updated=updated,

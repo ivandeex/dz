@@ -89,7 +89,7 @@ class NewsSpider(BaseSpider):
         item = dict(link=url, id=id)
 
         item['sport'] = first_text(sel, '.lnfl')
-        item['league'] = first_text(sel, '.lnfl.tename')
+        item['league'] = first_text(sel, '.lnfl.tename').partition(',')[0]
         item['parties'] = first_text(sel, '.nlsn_title_text')
         item['title'] = first_text(sel, '.nlsn_content > h2')
 
