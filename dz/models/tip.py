@@ -49,6 +49,7 @@ class Tip(models.Model):
         permissions = [
             ('crawl_tips', _('Can crawl tips')),
             ('view_tips', _('Can only view tips')),
+            ('follow_tips', _('Can click on tip links')),
         ]
 
     class Manager(models.Manager):

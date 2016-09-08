@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-08 13:11+0200\n"
+"POT-Creation-Date: 2016-09-08 14:44+0200\n"
 "PO-Revision-Date: 2016-09-01A 12:00+0300\n"
 "Last-Translator: ivandeex <ivandeex@gmail.com>\n"
 "Language-Team: ivandeex <ivandeex@gmail.com>\n"
@@ -33,31 +33,31 @@ msgstr "archived/current"
 msgid "All"
 msgstr "All"
 
-#: dz/admin/common.py:25 dz/admin/news.py:54 dz/admin/tip.py:65
+#: dz/admin/common.py:25 dz/admin/news.py:60 dz/admin/tip.py:71
 msgid "Archived"
 msgstr "Archived"
 
-#: dz/admin/common.py:26 dz/admin/news.py:54 dz/admin/tip.py:65
+#: dz/admin/common.py:26 dz/admin/news.py:60 dz/admin/tip.py:71
 msgid "Fresh"
 msgstr "Current"
 
 # # dz/admin/common.py:100
 #. Translators: status (from models.Crawl) is one of: refused, updated, submitted
-#: dz/admin/common.py:102
+#: dz/admin/common.py:106
 #, python-format
 msgid "Crawling %s!"
 msgstr ""
 
 #. Translators: force translation of all forms of the python-format above
-#: dz/admin/common.py:105
+#: dz/admin/common.py:109
 msgid "Crawling refused!"
 msgstr "Crawling refused!"
 
-#: dz/admin/common.py:106
+#: dz/admin/common.py:110
 msgid "Crawling updated!"
 msgstr "Crawling updated!"
 
-#: dz/admin/common.py:107
+#: dz/admin/common.py:111
 msgid "Crawling submitted!"
 msgstr "Crawling submitted!"
 
@@ -87,62 +87,44 @@ msgstr "unknown"
 msgid "crawl type (str column)"
 msgstr "start method"
 
-#. Translators: Crawl status can be: waiting, started, running, complete
-#: dz/admin/crawl.py:46
-#, python-format
-msgid "%s (crawl status)"
-msgstr ""
-
-#: dz/admin/crawl.py:48
-msgid "waiting (crawl status)"
-msgstr "waiting"
-
-#: dz/admin/crawl.py:49
-msgid "started (crawl status)"
-msgstr "started"
-
-#: dz/admin/crawl.py:50
-msgid "running (crawl status)"
-msgstr "running"
-
-#: dz/admin/crawl.py:51
-msgid "complete (crawl status)"
-msgstr "complete"
-
-#: dz/admin/crawl.py:52 dz/models/crawl.py:21
-msgid "crawl status (column)"
-msgstr "status"
-
-#: dz/admin/news.py:50
+#: dz/admin/news.py:56
 msgid "news cut (column)"
 msgstr "description"
 
 # Context: admin filter name
-#: dz/admin/news.py:55 dz/admin/tip.py:66 dz/models/news.py:19
+#: dz/admin/news.py:61 dz/admin/tip.py:72 dz/models/news.py:19
 #: dz/models/tip.py:35
 msgid "archived (column)"
 msgstr "archived or current?"
 
-#: dz/admin/tip.py:50
+#: dz/admin/news.py:72 dz/models/news.py:11
+msgid "news link (column)"
+msgstr "link"
+
+#: dz/admin/tip.py:56
 msgid "tip cut (column)"
 msgstr "description"
 
-#: dz/admin/tip.py:54
+#: dz/admin/tip.py:60
 msgid "(success) unknown"
 msgstr "unknown"
 
-#: dz/admin/tip.py:55
+#: dz/admin/tip.py:61
 msgid "(success) hit"
 msgstr "hit"
 
-#: dz/admin/tip.py:56
+#: dz/admin/tip.py:62
 msgid "(success) miss"
 msgstr "miss"
 
 #. Translators: Success (Uspje\u0161nost)
-#: dz/admin/tip.py:61 dz/models/tip.py:28
+#: dz/admin/tip.py:67 dz/models/tip.py:28
 msgid "tip success (column)"
 msgstr "success"
+
+#: dz/admin/tip.py:83 dz/models/tip.py:34
+msgid "tip link (column)"
+msgstr "link"
 
 #: dz/models/common.py:8
 msgid "news (crawl target)"
@@ -152,55 +134,71 @@ msgstr "news"
 msgid "tips (crawl target)"
 msgstr "tips"
 
-#. Translators: Job Id
 #: dz/models/crawl.py:17
+msgid "waiting (crawl status)"
+msgstr "waiting"
+
+#: dz/models/crawl.py:18
+msgid "started (crawl status)"
+msgstr "started"
+
+#: dz/models/crawl.py:19
+msgid "running (crawl status)"
+msgstr "running"
+
+#: dz/models/crawl.py:20
+msgid "complete (crawl status)"
+msgstr "complete"
+
+#. Translators: Job Id
+#: dz/models/crawl.py:24
 msgid "crawl id (column)"
 msgstr "id"
 
-#: dz/models/crawl.py:18
+#: dz/models/crawl.py:25
 msgid "crawl target (column)"
 msgstr "subject"
 
-#: dz/models/crawl.py:20
+#: dz/models/crawl.py:27
 msgid "crawl type (bool column)"
 msgstr "manual start"
 
-#: dz/models/crawl.py:22
+#: dz/models/crawl.py:28
+msgid "crawl status (column)"
+msgstr "status"
+
+#: dz/models/crawl.py:30
 msgid "started at (column)"
 msgstr "started at"
 
-#: dz/models/crawl.py:23
+#: dz/models/crawl.py:31
 msgid "ended at (column)"
 msgstr "ended at"
 
-#: dz/models/crawl.py:24
+#: dz/models/crawl.py:32
 msgid "no. of items (column)"
 msgstr "# of items"
 
-#: dz/models/crawl.py:25
+#: dz/models/crawl.py:33
 msgid "hostname (column)"
 msgstr "host name"
 
 #. Translators: PID
-#: dz/models/crawl.py:27
+#: dz/models/crawl.py:35
 msgid "crawler pid (column)"
 msgstr "process #"
 
-#: dz/models/crawl.py:30
+#: dz/models/crawl.py:38
 msgid "crawl (table)"
 msgstr "crawl"
 
-#: dz/models/crawl.py:31
+#: dz/models/crawl.py:39
 msgid "crawls (table)"
 msgstr "crawls"
 
 #: dz/models/news.py:10
 msgid "news id (column)"
 msgstr "id"
-
-#: dz/models/news.py:11
-msgid "news link (column)"
-msgstr "link"
 
 #: dz/models/news.py:12
 msgid "news title (column)"
@@ -258,6 +256,10 @@ msgstr "Can crawl news"
 #: dz/models/news.py:34
 msgid "Can only view news"
 msgstr "Cannot change news"
+
+#: dz/models/news.py:35
+msgid "Can click on news links"
+msgstr "Can click on news links"
 
 #: dz/models/schedule.py:19
 msgid "start time (column)"
@@ -329,10 +331,6 @@ msgstr "stake"
 msgid "tipster (column)"
 msgstr "tipster"
 
-#: dz/models/tip.py:34
-msgid "tip link (column)"
-msgstr "link"
-
 #: dz/models/tip.py:44
 msgid "tip (table)"
 msgstr "tip"
@@ -349,6 +347,10 @@ msgstr "Can crawl tips"
 msgid "Can only view tips"
 msgstr "Cannot change tips"
 
+#: dz/models/tip.py:52
+msgid "Can click on tip links"
+msgstr "Can click on tip links"
+
 #: dz/models/user.py:17
 msgid "dz user name"
 msgstr "user name"
@@ -361,25 +363,29 @@ msgstr "password"
 msgid "is dz administrator"
 msgstr "can administer?"
 
-#: dz/models/user.py:25
+#: dz/models/user.py:20
+msgid "can follow dz links"
+msgstr "can follow links?"
+
+#: dz/models/user.py:26
 msgid "dz user"
 msgstr "user"
 
-#: dz/models/user.py:26
+#: dz/models/user.py:27
 msgid "dz users"
 msgstr "users"
 
-#: dz/templates/admin/base_site.html:5
+#: dz/templates/admin/base_site.html:12
 msgid "Django site admin"
 msgstr "Site admin"
 
-#: dz/templates/admin/base_site.html:8
+#: dz/templates/admin/base_site.html:15
 msgid "Django administration"
 msgstr "Administration"
 
 #: dz/templates/admin/dz/change_list.html:7
 msgid "Home"
-msgstr ""
+msgstr "Home"
 
 #: dz/templates/admin/dz/change_list.html:10
 msgid "Server time"
@@ -422,35 +428,35 @@ msgstr "News %(id)s"
 msgid "more..."
 msgstr "more..."
 
-#: dz/templates/admin/dz/news_content_popup.html:13
+#: dz/templates/admin/dz/news_content_popup.html:16
 msgid "close"
 msgstr "close"
 
-#: dz/templates/admin/dz/news_content_popup.html:18
+#: dz/templates/admin/dz/news_content_popup.html:21
 msgid "URL"
 msgstr "URL"
 
-#: dz/templates/admin/dz/news_content_popup.html:19
+#: dz/templates/admin/dz/news_content_popup.html:22
 msgid "Sport"
 msgstr "Sport"
 
-#: dz/templates/admin/dz/news_content_popup.html:20
+#: dz/templates/admin/dz/news_content_popup.html:23
 msgid "League"
 msgstr "League"
 
-#: dz/templates/admin/dz/news_content_popup.html:21
+#: dz/templates/admin/dz/news_content_popup.html:24
 msgid "Published"
 msgstr "Published"
 
-#: dz/templates/admin/dz/news_content_popup.html:22
+#: dz/templates/admin/dz/news_content_popup.html:25
 msgid "Updated"
 msgstr "Updated"
 
-#: dz/templates/admin/dz/news_content_popup.html:23
+#: dz/templates/admin/dz/news_content_popup.html:26
 msgid "Fetched"
 msgstr "Fetched"
 
-#: dz/templates/admin/dz/news_content_popup.html:24
+#: dz/templates/admin/dz/news_content_popup.html:27
 msgid "Parties"
 msgstr "Parties"
 

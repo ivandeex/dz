@@ -17,6 +17,7 @@ class User(models.Model):
     username = models.CharField(_('dz user name'), max_length=20, unique=True, db_index=True)
     password = models.CharField(_('dz user password'), max_length=64)
     is_admin = models.BooleanField(_('is dz administrator'))
+    can_follow = models.BooleanField(_('can follow dz links'), default=False)
 
     def __str__(self):
         return self.username
@@ -33,6 +34,12 @@ class User(models.Model):
 @receiver(signals.pre_save, sender=User)
 def _pre_save_dz_user(sender, **kwargs):
     dz_user = kwargs['instance']
+
+    # only admin can click on links
+    if not dz_user.is_admin:
+        dz_user.can_follow = False
+
+    # create linked django user
     if dz_user.user_id is None:
         AuthUser = get_user_model()
         auth_user, is_new = AuthUser.objects.get_or_create(username=dz_user.username)
@@ -44,6 +51,8 @@ def _pre_save_dz_user(sender, **kwargs):
 @receiver(signals.post_save, sender=User)
 def _post_save_dz_user(sender, **kwargs):
     dz_user = kwargs['instance']
+
+    # update linked django user
     auth_user = dz_user.user
     auth_user.username = auth_user.first_name = dz_user.username
     auth_user.email = '%s@example.com' % dz_user.username
@@ -53,16 +62,19 @@ def _post_save_dz_user(sender, **kwargs):
     if not dz_user.is_super:
         auth_user.set_password(dz_user.password)
 
+    # assign appropriate permissions to django user
     auth_perms = auth_user.user_permissions
     perms_mgr = Permission.objects
     app_label = 'dz'
     all_dz_perms = perms_mgr.filter(content_type__app_label=app_label)
 
     if dz_user.is_admin:
-        skip_perm_codes = ('add_crawl', 'add_news', 'add_tip', 'view_news', 'view_tips')
+        skip_perm_codes = ['add_crawl', 'add_news', 'add_tip', 'view_news', 'view_tips']
+        if not dz_user.can_follow:
+            skip_perm_codes += ['follow_news', 'follow_tips']
         auth_perms.set(all_dz_perms.filter(~Q(codename__in=skip_perm_codes)))
     else:
-        view_perm_codes = ('change_news', 'change_tip', 'view_news', 'view_tips')
+        view_perm_codes = ['change_news', 'change_tip', 'view_news', 'view_tips']
         auth_perms.set(all_dz_perms.filter(codename__in=view_perm_codes))
 
     auth_user.save()

@@ -2,6 +2,13 @@
 {% load admin_static i18n %}
 {% load render_bundle from webpack_loader %}
 
+{% block blockbots %}
+{{ block.super }}
+{% if can_follow_links %}
+<meta name="referrer" content="no-referrer" />
+{% endif %}
+{% endblock %}
+
 {% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
 {% block branding %}

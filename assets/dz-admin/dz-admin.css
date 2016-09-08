@@ -114,7 +114,7 @@ body.model-news .field-title {
     white-space: normal; }
   #result_list tr:hover {
     background-color: #f4f8ff; }
-  #result_list td.field-link {
+  #result_list td.field-link_str {
     font-size: 70%; }
 
 .dz_pre {

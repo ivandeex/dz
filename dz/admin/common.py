@@ -53,6 +53,9 @@ class DzModelAdmin(admin.ModelAdmin):
     def user_can_crawl(self, auth_user):
         return False
 
+    def user_can_follow_links(self, auth_user):
+        return False
+
     def get_list_display_links(self, request, list_display):
         if self.user_is_readonly(request.user):
             return None
@@ -76,7 +79,12 @@ class DzModelAdmin(admin.ModelAdmin):
                 'title': _(self.opts.verbose_name_plural.title()),  # override title
                 'can_crawl': self.user_can_crawl(request.user),
                 'can_export': self.can_export,
+                'can_follow_links': self.user_can_follow_links(request.user),
                 'server_time': timezone.now(),
+                # Language selector will use HTTP_REFERRER or "redirect_to" to determine
+                # the URL to internationalize. We might disable HTTP_REFERRED for selected
+                # users, so we set the fallback here.
+                'redirect_to': request.get_full_path(),
             })
         return tpl_resp
 

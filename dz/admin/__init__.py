@@ -15,8 +15,8 @@ class ScheduleAdmin(DzModelAdmin):
 
 
 class UserAdmin(DzModelAdmin):
-    fields = ['username', 'password', 'is_admin']
-    list_display = ['username', 'is_admin']
+    fields = ['username', 'password', 'is_admin', 'can_follow']
+    list_display = ['username', 'is_admin', 'can_follow']
     list_filter = ['is_admin']
     ordering = ['username']
 

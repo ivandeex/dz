@@ -32,6 +32,7 @@ class News(models.Model):
         permissions = [
             ('crawl_news', _('Can crawl news')),
             ('view_news', _('Can only view news')),
+            ('follow_news', _('Can click on news links')),
         ]
 
     class Manager(models.Manager):
