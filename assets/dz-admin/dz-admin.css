@@ -1,16 +1,21 @@
 .dz-top-nav {
-  float: left;
   margin: 0;
-  padding: 0;
-  padding-left: calc(40% - 200px); }
+  overflow: hidden;
+  padding: 0; }
+  @media (min-width: 1050px) {
+    .dz-top-nav {
+      padding-left: calc(50% - 440px); } }
   .dz-top-nav li {
     display: inline-block;
     list-style-type: none;
-    margin: 0 5px;
-    padding: 0 5px;
     font-size: 14px;
     text-transform: uppercase;
-    text-shadow: 1px 1px #333; }
+    text-shadow: 2px 2px #000;
+    margin: 0 3px;
+    padding: 0 4px; }
+    @media (max-width: 1000px) {
+      .dz-top-nav li {
+        padding: 0; } }
 
 .dz-lang-selector {
   float: right;

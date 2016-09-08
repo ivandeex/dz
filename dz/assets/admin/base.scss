@@ -1,18 +1,25 @@
 
 .dz-top-nav {
-  float: left;
   margin: 0;
+  overflow: hidden;
+
   padding: 0;
-  padding-left: calc(40% - 200px);
+  @media (min-width: 1050px) {
+    padding-left: calc(50% - 440px);
+  }
 
   li {
     display: inline-block;
     list-style-type: none;
-    margin: 0 5px;
-    padding: 0 5px;
     font-size: 14px;
     text-transform: uppercase;
-    text-shadow: 1px 1px #333;
+    text-shadow: 2px 2px #000;
+
+    margin: 0 3px;
+    padding: 0 4px;
+    @media (max-width: 1000px) {
+      padding: 0;
+    }
   }
 }
 
