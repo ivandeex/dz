@@ -9,10 +9,8 @@ class NewsSpider(BaseSpider):
 
     def __init__(self, env):
         self.seen_news = split_ranges(env.get('SEEN_NEWS', '').strip())
-        self.skipped_urls = set()
-        self.crawled_urls = set()
-        self.num_info = True
-        self.to_crawl = 0
+        self.done_urls = set()
+        self.todo = None
         self.err_count = 0
         self.looping = True
         super(NewsSpider, self).__init__(env)
@@ -22,7 +20,7 @@ class NewsSpider(BaseSpider):
         self.click_menu('Najave')
         while self.looping:
             try:
-                self.next_news()
+                self.crawl_next_news()
             except Exception as err:
                 logger.error('Browser issue %r', err)
                 if self.debug:
@@ -32,76 +30,55 @@ class NewsSpider(BaseSpider):
                     break
                 randsleep(5)
 
-    def next_news(self):
-        logger.debug('Requesting all news links')
-        xpath = '//*[contains(@class,"rswcl_najava")]//h3/a'
-        news_links = self.webdriver.find_elements_by_xpath(xpath)
+    def crawl_next_news(self):
+        news_links = self.webdriver.find_elements_by_css_selector('.rswcl_najava h3 > a')
+        if self.todo is None:
+            self.todo = len(news_links)
+            logger.info('Will crawl at most %d news', self.todo)
 
-        if self.num_info:
-            self.num_info = False
-            self.to_crawl = len(news_links)
-            logger.info('To crawl at most %d news', self.to_crawl)
-
+        id = None
         for link in news_links:
             url = link.get_attribute('href')
-            if url in self.skipped_urls:
-                logger.debug('Skipped url %s', url)
+            if url in self.done_urls:
                 continue
-            if url in self.crawled_urls:
-                logger.debug('Already crawled url %s', url)
+            self.done_urls.add(url)
+
+            try:
+                id = int(re.search(r'id_dogadjaj=(\d+)', url).group(1))
+            except Exception:
+                self.todo = max(self.todo - 1, 1)
+                logger.warn('Invalid news url %s', url)
                 continue
-            logger.debug('Select url %s', url)
-            break
-        else:
-            logger.debug('No more urls to try')
+
+            if id not in self.seen_news:
+                break
+            # skip this url but mark as fresh
+            self.crawled_ids.add(id)
+            self.todo = max(1, self.todo - 1)
+            logger.info('News already crawled %s', url)
+
+        if id is None:
             self.looping = False
             return
 
-        try:
-            id = int(re.search(r'id_dogadjaj=(\d+)', url).group(1))
-            logger.debug('Exctracted id %s from url %s', id, url)
-        except Exception:
-            self.skipped_urls.add(url)
-            self.to_crawl = max(1, self.to_crawl - 1)
-            logger.warn('Skip invalid url %s', url)
-            return
-
-        if id in self.seen_news:
-            self.skipped_urls.add(url)
-            self.to_crawl = max(1, self.to_crawl - 1)
-            logger.info('News already seen %s', url)
-            return
-
-        logger.debug('Clicking on link %s', url)
+        logger.debug('Crawl news %d from %s', id, url)
         link.click()
-        logger.debug('Waiting for ajax')
         self.wait_for_ajax()
-        logger.debug('Sleep ~ %d sec before page', self.page_delay)
-        randsleep(self.page_delay)
+        randsleep(5)
 
-        logger.debug('Scrape article with id %s url %s', id, url)
         item = self.parse_news(url, id)
-        logger.info('Crawled news #%d of %d, %s',
-                    len(self.crawled_ids) + 1, self.to_crawl, url)
-        self.crawled_urls.add(url)
+        logger.info('Crawled news #%d of %d, %s', len(self.crawled_ids) + 1, self.todo, url)
         self.crawled_ids.add(id)
         api_send_item(self.target, self.start_utc, self.debug, item)
 
-        logger.debug('Click on the back button')
+        logger.debug('Go back and sleep ~ %d sec', self.page_delay)
         self.webdriver.back()
-
-        logger.debug('Wait for ajax')
         self.wait_for_ajax()
-
-        logger.debug('Sleep ~ %d sec after page', self.page_delay)
         randsleep(self.page_delay)
 
     def parse_news(self, url, id):
         sel = self.page_sel()
-        item = {}
-
-        item['link'] = url
-        item['id'] = id
+        item = dict(link=url, id=id)
 
         item['sport'] = first_text(sel, '.lnfl')
         item['league'] = first_text(sel, '.lnfl.tename')
@@ -112,11 +89,11 @@ class NewsSpider(BaseSpider):
         item['published'] = extract_datetime(first_text(sel, '.najva-meta-published > span'))
 
         item['preamble'] = first_text(sel, '.nlsn_content > h3')
-        item['content'] = '\n'.join(x.strip() for x in sel.css('.nlsn_content > p').extract())
+        item['content'] = '\n'.join(p.strip() for p in sel.css('.nlsn_content > p').extract())
 
-        subtable1 = '\n'.join(x.strip() for x in sel.css('.nlsn_table_wrap').extract())
-        subtable2_xp = '//div[@id="nls_najava"]/following-sibling::*[name()="ul" or name()="div"]'
-        subtable2 = '\n'.join(x.strip() for x in sel.xpath(subtable2_xp).extract())
-        item['subtable'] = u'%s\n<div class="subtable2">\n%s\n</div>' % (subtable1, subtable2)
+        table1 = '\n'.join(html.strip() for html in sel.css('.nlsn_table_wrap').extract())
+        xpath = '//div[@id="nls_najava"]/following-sibling::*[name()="ul" or name()="div"]'
+        table2 = '\n'.join(html.strip() for html in sel.xpath(xpath).extract())
+        item['subtable'] = u'%s\n<div class="subtable2">\n%s\n</div>' % (table1, table2)
 
         return item

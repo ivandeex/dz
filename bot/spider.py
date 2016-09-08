@@ -55,7 +55,7 @@ class BaseSpider(object):
         randsleep(2)
 
         if not (self.username and self.password):
-            logger.info('Working without login (browser)')
+            logger.info('Working without login')
             return
 
         page_sel = self.page_sel()
@@ -77,15 +77,13 @@ class BaseSpider(object):
         self.click('Prijava', by=By.NAME)
         randsleep(4)
 
-        logger.info('Logged in as %s (browser)', self.username)
+        logger.info('Logged in as %s', self.username)
 
     def click_menu(self, menu):
         logger.debug('Clicking on %s menu', menu)
         xpath = '//ul[@id="mainmenu"]/li/a[contains(.,"%s")]' % menu
         el = self.webdriver.find_element_by_xpath(xpath)
         el.click()
-
-        logger.debug('Waiting for menu ajax to finish')
         self.wait_for_ajax()
         randsleep(4)
 

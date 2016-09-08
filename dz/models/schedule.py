@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 @python_2_unicode_compatible
 class Schedule(models.Model):
-    time = models.TimeField(_('start time (column)'))
+    time = models.TimeField(_('start time (column)'), unique=True)
     target = models.CharField(_('target (column)'), max_length=6, choices=TARGET_CHOICES)
 
     class Meta:
@@ -24,7 +24,7 @@ class Schedule(models.Model):
         verbose_name_plural = _('schedule (table)')
 
     def __str__(self):
-        return u'Schedule %s at %02d:%02d' % (self.target, self.time.hour, self.time.minute)
+        return u'%s @ %02d:%02d' % (self.target, self.time.hour, self.time.minute)
 
     _verbose_update = True
     _cache_lock = RLock()
@@ -74,12 +74,12 @@ class Schedule(models.Model):
         with cls._cache_lock:
             schedule = cls._cache_schedule
 
-            # add only future jobs or jobs within 5 minutes in the past
+            # add only future jobs or jobs within 2 minutes in the past
             now = cls.get_local_time()
-            if now.hour == 0 and now.minute <= 5:
+            if now.hour == 0 and now.minute <= 2:
                 now = now.replace(minute=0)
             else:
-                now -= timezone.timedelta(minutes=5)
+                now -= timezone.timedelta(minutes=2)
 
             # add new jobs to cached schedule
             valid_utc = set()

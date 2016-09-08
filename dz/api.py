@@ -185,7 +185,8 @@ def api_crawl_item(request):
         item.archived = False
         item.save()
 
-        crawl, created = models.Crawl.objects.get_or_create(
+        running_crawls = models.Crawl.objects.filter(status__in=['started', 'running'])
+        crawl, created = running_crawls.get_or_create(
             started=api2time(req['start_utc'], 'UTC'),
             target=req['target'],
             host=req['host'],
@@ -212,10 +213,14 @@ def api_crawl_complete(request):
 
         Model = get_model(req['target'])
         ids = split_ranges(req['ids'])
+
+        # just crawled items become fresh
         Model.objects.filter(id__in=ids).update(archived=False)
+        # the remainder becomes archived
         Model.objects.filter(~Q(id__in=ids)).update(archived=True)
 
-        crawl, created = models.Crawl.objects.get_or_create(
+        running_crawls = models.Crawl.objects.filter(status__in=['started', 'running'])
+        crawl, created = running_crawls.get_or_create(
             target=req['target'],
             started=api2time(req['start_utc'], 'UTC'),
             host=req['host'],

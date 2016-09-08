@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 import logging
 from django.db import models
-from django.db.models import Max
+from django.db.models import Q, Max
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
@@ -13,12 +13,20 @@ logger = logging.getLogger(__name__)
 
 @python_2_unicode_compatible
 class Crawl(models.Model):
+    STATUS_CHOICES = [
+        ('waiting', _('waiting (crawl status)')),
+        ('started', _('started (crawl status)')),
+        ('running', _('running (crawl status)')),
+        ('complete', _('complete (crawl status)')),
+    ]
+
     # Translators: Job Id
     id = models.AutoField(_('crawl id (column)'), primary_key=True)
     target = models.CharField(_('crawl target (column)'), max_length=6,
                               choices=TARGET_CHOICES, db_index=True)
-    manual = models.NullBooleanField(_('crawl type (column)'), db_index=True)
-    status = models.CharField(_('crawl status (column)'), max_length=10)
+    manual = models.NullBooleanField(_('crawl type (bool column)'), db_index=True)
+    status = models.CharField(_('crawl status (column)'), max_length=10,
+                              choices=STATUS_CHOICES, db_index=True, null=True)
     started = models.DateTimeField(_('started at (column)'), null=True)
     ended = models.DateTimeField(_('ended at (column)'), null=True)
     count = models.SmallIntegerField(_('no. of items (column)'), default=0)
@@ -31,7 +39,8 @@ class Crawl(models.Model):
         verbose_name_plural = _('crawls (table)')
 
     def __str__(self):
-        return u'Crawl {} at {}'.format(self.target, self.started)
+        start_time = self.started.astimezone(timezone.utc).strftime('%Y-%m-%d %H:%m')
+        return u'{} @ {}'.format(self.target, start_time)
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -44,11 +53,17 @@ class Crawl(models.Model):
         now_utc = timezone.now().replace(microsecond=0).astimezone(timezone.utc)
         now_utc = (now_utc + timezone.timedelta(seconds=59)).replace(second=0)
 
+        # check that auto job with same time does not exist
         auto_utc, auto_target = Schedule.get_next_job(consume=False)
-        if auto_target == target and abs((auto_utc - now_utc).total_seconds()) < 120:
+        if auto_target == target and abs((auto_utc - now_utc).total_seconds()) <= 120:
             return 'refused'
 
+        # check that active (non-waiting) manual job with same time does not exist
         objs = cls.objects
+        if objs.filter(started=now_utc).filter(~Q(status='waiting')).count():
+            return 'refused'
+
+        # update time of existing waiting job or create a new job
         try:
             objs.get(target=target, status='waiting', manual=True).update(started=now_utc)
             return 'updated'

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-08 04:27+0200\n"
+"POT-Creation-Date: 2016-09-08 13:11+0200\n"
 "PO-Revision-Date: 2016-09-01A 12:00+0300\n"
 "Last-Translator: ivandeex <ivandeex@gmail.com>\n"
 "Language-Team: ivandeex <ivandeex@gmail.com>\n"
@@ -83,8 +83,8 @@ msgstr "scheduled"
 msgid "orphan (crawl type)"
 msgstr "unknown"
 
-#: dz/admin/crawl.py:41 dz/models/crawl.py:20
-msgid "crawl type (column)"
+#: dz/admin/crawl.py:41
+msgid "crawl type (str column)"
 msgstr "start method"
 
 #. Translators: Crawl status can be: waiting, started, running, complete
@@ -160,6 +160,10 @@ msgstr "id"
 #: dz/models/crawl.py:18
 msgid "crawl target (column)"
 msgstr "subject"
+
+#: dz/models/crawl.py:20
+msgid "crawl type (bool column)"
+msgstr "manual start"
 
 #: dz/models/crawl.py:22
 msgid "started at (column)"
