@@ -6,6 +6,4 @@ cd ..
 python manage.py makemigrations --noinput --exit && python manage.py migrate --noinput
 python manage.py compilemessages
 npm run assets
-# post-processing disabled because whitenoise tries to load
-# images included by css and fails on dz-base.css.
-python manage.py collectstatic --no-input --no-post-process
+python manage.py collectstatic --no-input

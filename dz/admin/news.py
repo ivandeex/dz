@@ -1,6 +1,7 @@
 from __future__ import unicode_literals, absolute_import
+import re
 from django.template.response import TemplateResponse
-from django.http import HttpResponseNotFound
+from django.http.response import HttpResponseNotFound, HttpResponsePermanentRedirect
 from django.conf.urls import url
 from django.conf import settings
 from django.utils.html import format_html
@@ -76,8 +77,14 @@ class NewsAdmin(DzCrawlModelAdmin):
         news_content_url = url(
             r'^(?P<id>\d+)/news-content/$',
             self.admin_site.admin_view(self.news_content_view),
-            name='%s_%s_news_content' % (self.opts.app_label, self.opts.model_name))
-        return [news_content_url] + super(NewsAdmin, self).get_urls()
+            name='%s_%s_news_content' % (self.opts.app_label, self.opts.model_name)
+        )
+        data_table_img_url = url(
+            r'^\d+/news-content/img/(?P<path>.*)$',
+            self.data_table_img_view
+        )
+        orig_urls = super(NewsAdmin, self).get_urls()
+        return [news_content_url, data_table_img_url] + orig_urls
 
     def news_content_view(self, request, id):
         news = self.get_object(request, id)
@@ -89,3 +96,8 @@ class NewsAdmin(DzCrawlModelAdmin):
             return TemplateResponse(request, 'admin/dz/news_content_popup.html', context)
         else:
             return HttpResponseNotFound()
+
+    def data_table_img_view(self, request, path):
+        path = re.sub('/change/$', '', path)
+        new_path = settings.STATIC_URL + 'dz-news-content/img/' + path
+        return HttpResponsePermanentRedirect(new_path)
