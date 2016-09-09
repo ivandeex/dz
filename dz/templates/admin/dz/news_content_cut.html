@@ -1,8 +1,8 @@
-{% load i18n admin_urls %}
-<div class="dz-pre">{{ news.preamble_cut | striptags }}</div>
+{% load i18n admin_urls dz_extras %}
+<div class="dz-pre">{{ news.preamble_cut | striptags | strip_cut_tags }}</div>
 {% if news.content_cut %}
 <div class="dz-body">
-  <span>{{ news.content_cut | striptags }}</span>
+  <span>{{ news.content_cut | striptags | strip_cut_tags }}</span>
   <a href="{% url opts|admin_urlname:'news_content' id=news.id %}" title="{% trans 'Show details' %}" id="{% blocktrans with id=news.id %}News {{id}}{% endblocktrans %}" onclick="return showRelatedObjectLookupPopup(this);">({% trans 'more...' %})</a>
 </div>
 {% endif %}
