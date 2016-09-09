@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import re
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
@@ -53,3 +54,12 @@ class News(models.Model):
     @classmethod
     def get_seen_ids(cls):
         return cls.objects.distinct('id').order_by('id').values_list('id', flat=True)
+
+    def save(self, *args, **kwargs):
+        # Do not let user click on external links in content or data table.
+        def deactivate_links(html):
+            return re.sub(r'(<a|&lt;a)\s([^>]*?)\bhref="([^#][^"]+)"(.*?)>',
+                          r'\1 \2href="##\3"\4>', html)
+        self.content = deactivate_links(self.content)
+        self.subtable = deactivate_links(self.subtable)
+        return super(News, self).save(*args, **kwargs)

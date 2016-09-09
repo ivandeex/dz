@@ -1,3 +1,4 @@
+import sys
 import pytz
 from datetime import datetime, time
 from django.core.management.base import BaseCommand
@@ -146,6 +147,9 @@ class Command(BaseCommand):
         ordering = [('published', 1), ('crawled', 1)]
         self.mongodb.dvoznak_news.create_index(ordering)
         for item in self.mongodb.dvoznak_news.find(sort=ordering):
+            if count % 100 == 0:
+                print >>sys.stderr, '%d.. ' % count,
+
             item.setdefault('preamble', '')
             item.setdefault('content', '')
 
@@ -169,4 +173,7 @@ class Command(BaseCommand):
                 subtable=item['subtable'],
             )
             count += 1
+
+        if count:
+            print >>sys.stderr, ''
         return count
