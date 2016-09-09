@@ -30,8 +30,8 @@ ALLOWED_HOSTS = getenv('ALLOWED_HOSTS', 'localhost').split(',')
 
 DATABASES = {'default': dj_database_url.config(conn_max_age=600)}
 
-ROOT_URLCONF = 'project.urls'
-WSGI_APPLICATION = 'project.wsgi.application'
+ROOT_URLCONF = 'web.urls'
+WSGI_APPLICATION = 'web.wsgi.application'
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'dist', 'static')
@@ -128,7 +128,7 @@ if DEBUG and DEBUG_TOOLBAR_ENABLED:
         class Django110DebugToolbarMiddleware(MiddlewareMixin, DebugToolbarMiddleware):
             pass
 
-        MIDDLEWARE.insert(0, 'project.settings.Django110DebugToolbarMiddleware')
+        MIDDLEWARE.insert(0, 'web.settings.Django110DebugToolbarMiddleware')
 
 
 TEMPLATES = [

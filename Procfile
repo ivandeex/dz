@@ -1,4 +1,4 @@
-web: gunicorn -w 2 -b :$PORT -e DEBUG=0 --log-file - project.wsgi:application
+web: gunicorn -w 2 -b :$PORT -e DEBUG=0 --log-file - web.wsgi:application
 debug: DEBUG=1 python manage.py runserver 0.0.0.0:$WEB_PORT
 hotserver: npm run hotserver
 watch: npm run watch
