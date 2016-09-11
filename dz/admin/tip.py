@@ -21,7 +21,7 @@ class TipAdmin(DzCrawlModelAdmin):
 
     list_display = ['id', 'published', 'league', 'parties', 'content_cut',
                     'result', 'tipster', 'odds', 'min_odds',
-                    'stake', 'earnings', 'spread', 'betting', 'success_str',
+                    'stake', 'earnings', 'spread', 'bookmaker', 'success_str',
                     'updated', 'crawled', 'link_str', 'archived_str']
     if settings.NARROW_GRIDS:
         list_display = ['id', 'published', 'place', 'title', 'content_cut',

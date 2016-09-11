@@ -13,7 +13,7 @@ DATA_MAP = {
     'stake': 'ulog',
     'earnings': 'zarada',
     'spread': 'is. margina',
-    'betting': 'kladionica',
+    'bookmaker': 'kladionica',
     'success': u'uspje\u0161nost',
     'published': 'objavljeno',
 }

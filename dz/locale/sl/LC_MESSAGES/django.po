@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-08 14:44+0200\n"
+"POT-Creation-Date: 2016-09-11 23:47+0200\n"
 "PO-Revision-Date: 2016-09-01A 12:00+0300\n"
 "Last-Translator: ivandeex <ivandeex@gmail.com>\n"
 "Language-Team: ivandeex <ivandeex@gmail.com>\n"
@@ -34,11 +34,11 @@ msgstr "svežina"
 msgid "All"
 msgstr "Vse"
 
-#: dz/admin/common.py:25 dz/admin/news.py:60 dz/admin/tip.py:71
+#: dz/admin/common.py:25 dz/admin/news.py:61 dz/admin/tip.py:71
 msgid "Archived"
 msgstr "Arhivsko"
 
-#: dz/admin/common.py:26 dz/admin/news.py:60 dz/admin/tip.py:71
+#: dz/admin/common.py:26 dz/admin/news.py:61 dz/admin/tip.py:71
 msgid "Fresh"
 msgstr "Novo"
 
@@ -87,16 +87,16 @@ msgstr "nepoznata"
 msgid "crawl type (str column)"
 msgstr "dodajanje metoda"
 
-#: dz/admin/news.py:56
+#: dz/admin/news.py:57
 msgid "news cut (column)"
 msgstr "opis"
 
-#: dz/admin/news.py:61 dz/admin/tip.py:72 dz/models/news.py:19
+#: dz/admin/news.py:62 dz/admin/tip.py:72 dz/models/news.py:20
 #: dz/models/tip.py:35
 msgid "archived (column)"
 msgstr "arhivsko"
 
-#: dz/admin/news.py:72 dz/models/news.py:11
+#: dz/admin/news.py:73 dz/models/news.py:12
 msgid "news link (column)"
 msgstr "veza"
 
@@ -195,68 +195,68 @@ msgstr "zbiranje"
 msgid "crawls (table)"
 msgstr "zbiranja"
 
-#: dz/models/news.py:10
+#: dz/models/news.py:11
 msgid "news id (column)"
 msgstr "broj"
 
-#: dz/models/news.py:12
+#: dz/models/news.py:13
 msgid "news title (column)"
 msgstr "naslov"
 
-#: dz/models/news.py:13
+#: dz/models/news.py:14
 msgid "sport (column)"
 msgstr "šport"
 
-#: dz/models/news.py:14
+#: dz/models/news.py:15
 msgid "league (column)"
 msgstr "liga"
 
-#: dz/models/news.py:15
+#: dz/models/news.py:16
 msgid "parties (column)"
 msgstr "udeleženci"
 
 #. Translators: Published (Objavleno)
-#: dz/models/news.py:16 dz/models/tip.py:31
+#: dz/models/news.py:17 dz/models/tip.py:31
 msgid "published (column)"
 msgstr "objavleno na"
 
-#: dz/models/news.py:17 dz/models/tip.py:32
+#: dz/models/news.py:18 dz/models/tip.py:32
 msgid "updated (column)"
 msgstr "posodobitev na"
 
-#: dz/models/news.py:18 dz/models/tip.py:33
+#: dz/models/news.py:19 dz/models/tip.py:33
 msgid "fetched (column)"
 msgstr "osveži na"
 
-#: dz/models/news.py:22
+#: dz/models/news.py:23
 msgid "news preamble (column)"
 msgstr "preambula"
 
-#: dz/models/news.py:23
+#: dz/models/news.py:24
 msgid "full news content (column)"
 msgstr "sadržaj"
 
-#: dz/models/news.py:24
+#: dz/models/news.py:25
 msgid "news subtable (column)"
 msgstr "podatkovna tabela"
 
-#: dz/models/news.py:27
+#: dz/models/news.py:28
 msgid "news (table)"
 msgstr "najava"
 
-#: dz/models/news.py:28
+#: dz/models/news.py:29
 msgid "many news (table)"
 msgstr "najave"
 
-#: dz/models/news.py:33
+#: dz/models/news.py:34
 msgid "Can crawl news"
 msgstr "Lahko začnete najave puščati"
 
-#: dz/models/news.py:34
+#: dz/models/news.py:35
 msgid "Can only view news"
 msgstr "Ne more spremeniti najave"
 
-#: dz/models/news.py:35
+#: dz/models/news.py:36
 msgid "Can click on news links"
 msgstr "Lahko s klikom na najave povezave"
 
@@ -292,9 +292,9 @@ msgstr "udeleženci"
 msgid "tip title (column)"
 msgstr "naslov"
 
-#. Translators: Betting (Kladionica)
+#. Translators: Bookmaker (Kladionica)
 #: dz/models/tip.py:15
-msgid "betting (column)"
+msgid "tip bookmaker (column)"
 msgstr "kladionica"
 
 #. Translators: Coeff. (Koeficijent)

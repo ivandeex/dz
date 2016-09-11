@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-08 14:44+0200\n"
+"POT-Creation-Date: 2016-09-11 23:47+0200\n"
 "PO-Revision-Date: 2016-09-01A 12:00+0300\n"
 "Last-Translator: ivandeex <ivandeex@gmail.com>\n"
 "Language-Team: ivandeex <ivandeex@gmail.com>\n"
@@ -33,11 +33,11 @@ msgstr "archived/current"
 msgid "All"
 msgstr "All"
 
-#: dz/admin/common.py:25 dz/admin/news.py:60 dz/admin/tip.py:71
+#: dz/admin/common.py:25 dz/admin/news.py:61 dz/admin/tip.py:71
 msgid "Archived"
 msgstr "Archived"
 
-#: dz/admin/common.py:26 dz/admin/news.py:60 dz/admin/tip.py:71
+#: dz/admin/common.py:26 dz/admin/news.py:61 dz/admin/tip.py:71
 msgid "Fresh"
 msgstr "Current"
 
@@ -87,17 +87,17 @@ msgstr "unknown"
 msgid "crawl type (str column)"
 msgstr "start method"
 
-#: dz/admin/news.py:56
+#: dz/admin/news.py:57
 msgid "news cut (column)"
 msgstr "description"
 
 # Context: admin filter name
-#: dz/admin/news.py:61 dz/admin/tip.py:72 dz/models/news.py:19
+#: dz/admin/news.py:62 dz/admin/tip.py:72 dz/models/news.py:20
 #: dz/models/tip.py:35
 msgid "archived (column)"
 msgstr "archived or current?"
 
-#: dz/admin/news.py:72 dz/models/news.py:11
+#: dz/admin/news.py:73 dz/models/news.py:12
 msgid "news link (column)"
 msgstr "link"
 
@@ -196,68 +196,68 @@ msgstr "crawl"
 msgid "crawls (table)"
 msgstr "crawls"
 
-#: dz/models/news.py:10
+#: dz/models/news.py:11
 msgid "news id (column)"
 msgstr "id"
 
-#: dz/models/news.py:12
+#: dz/models/news.py:13
 msgid "news title (column)"
 msgstr "title"
 
-#: dz/models/news.py:13
+#: dz/models/news.py:14
 msgid "sport (column)"
 msgstr "sport"
 
-#: dz/models/news.py:14
+#: dz/models/news.py:15
 msgid "league (column)"
 msgstr "league"
 
-#: dz/models/news.py:15
+#: dz/models/news.py:16
 msgid "parties (column)"
 msgstr "parties"
 
 #. Translators: Published (Objavleno)
-#: dz/models/news.py:16 dz/models/tip.py:31
+#: dz/models/news.py:17 dz/models/tip.py:31
 msgid "published (column)"
 msgstr "published at"
 
-#: dz/models/news.py:17 dz/models/tip.py:32
+#: dz/models/news.py:18 dz/models/tip.py:32
 msgid "updated (column)"
 msgstr "updated at"
 
-#: dz/models/news.py:18 dz/models/tip.py:33
+#: dz/models/news.py:19 dz/models/tip.py:33
 msgid "fetched (column)"
 msgstr "crawled at"
 
-#: dz/models/news.py:22
+#: dz/models/news.py:23
 msgid "news preamble (column)"
 msgstr "preamble"
 
-#: dz/models/news.py:23
+#: dz/models/news.py:24
 msgid "full news content (column)"
 msgstr "full content"
 
-#: dz/models/news.py:24
+#: dz/models/news.py:25
 msgid "news subtable (column)"
 msgstr "data table"
 
-#: dz/models/news.py:27
+#: dz/models/news.py:28
 msgid "news (table)"
 msgstr "news"
 
-#: dz/models/news.py:28
+#: dz/models/news.py:29
 msgid "many news (table)"
 msgstr "news"
 
-#: dz/models/news.py:33
+#: dz/models/news.py:34
 msgid "Can crawl news"
 msgstr "Can crawl news"
 
-#: dz/models/news.py:34
+#: dz/models/news.py:35
 msgid "Can only view news"
 msgstr "Cannot change news"
 
-#: dz/models/news.py:35
+#: dz/models/news.py:36
 msgid "Can click on news links"
 msgstr "Can click on news links"
 
@@ -293,10 +293,10 @@ msgstr "parties"
 msgid "tip title (column)"
 msgstr "title"
 
-#. Translators: Betting (Kladionica)
+#. Translators: Bookmaker (Kladionica)
 #: dz/models/tip.py:15
-msgid "betting (column)"
-msgstr "betting"
+msgid "tip bookmaker (column)"
+msgstr "bookmaker"
 
 #. Translators: Coeff. (Koeficijent)
 #: dz/models/tip.py:17
