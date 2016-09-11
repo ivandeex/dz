@@ -11,4 +11,5 @@
 /dist/
 /ansible/secret.yml
 /node_modules/
-/webpack/stats.hotserver.json
+/stats-devel.json
+/assets/devel/

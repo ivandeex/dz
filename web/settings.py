@@ -42,17 +42,11 @@ STATICFILES_DIRS = [
 ]
 
 
-_webpack_stats_static = os.path.join(BASE_DIR, 'webpack/stats.json')
-_webpack_stats_hotserver = os.path.join(BASE_DIR, 'webpack/stats.hotserver.json')
-if DEBUG and os.path.exists(_webpack_stats_hotserver):
-    _webpack_stats_file = _webpack_stats_hotserver
-else:
-    _webpack_stats_file = _webpack_stats_static
-
+WEBPACK_SUBDIR = 'devel' if DEBUG else 'prod'
 WEBPACK_LOADER = {
     'DEFAULT': {
-        'BUNDLE_DIR_NAME': '/',
-        'STATS_FILE': _webpack_stats_file
+        'BUNDLE_DIR_NAME': '/' + WEBPACK_SUBDIR,
+        'STATS_FILE': os.path.join(BASE_DIR, 'stats-%s.json' % WEBPACK_SUBDIR)
     }
 }
 

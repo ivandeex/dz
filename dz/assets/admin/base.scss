@@ -42,11 +42,11 @@
   }
 
   .dz-lang-btn {
-    /* override styles from admin/base.css */
+    // override styles from admin/base.css
     margin: 0 2px !important;
     padding: 1px 5px !important;
 
-    /* override base.css styles, .delete-confirmation form input[type="submit"] */
+    // override base.css styles, .delete-confirmation form input[type="submit"]
     background: #79aec8 !important;
 
     &:hover {

@@ -98,6 +98,6 @@ class NewsAdmin(DzCrawlModelAdmin):
             return HttpResponseNotFound()
 
     def data_table_img_view(self, request, path):
-        path = re.sub('/change/$', '', path)
-        new_path = settings.STATIC_URL + 'dz-news-content/img/' + path
+        path = re.sub('/change/$', '', path).replace('kladionice/', 'bookmaker-')
+        new_path = settings.STATIC_URL + settings.WEBPACK_SUBDIR + '/' + path
         return HttpResponsePermanentRedirect(new_path)

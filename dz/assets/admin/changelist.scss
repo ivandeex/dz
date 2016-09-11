@@ -65,7 +65,10 @@ $paginator-border-height: 1px;
         margin: 0;
       }
 
-      input[type="submit"],
+      input[type='submit'] {
+        display: none;
+      }
+
       .small.quiet {
         display: none;
       }
@@ -88,7 +91,7 @@ $paginator-border-height: 1px;
 
 $_page-top-height: $header-line-height + $header-vert-padding * 2 + $breadcrumbs-line-height + $breadcrumbs-vert-padding * 2 + $content-vert-padding;
 $_content-top-height: $content-h1-line-height + $content-h1-vert-padding * 2 + $xfull-line-height + $actions-line-height + $actions-vert-padding * 2;
-$_content-bottom-height: $paginator-line-height + ($paginator-vert-padding + $paginator-border-height) * 2 + $content-vert-padding; 
+$_content-bottom-height: $paginator-line-height + ($paginator-vert-padding + $paginator-border-height) * 2 + $content-vert-padding;
 
 $all-but-results-height: $_page-top-height + $_content-top-height + $results-top-margin + $_content-bottom-height;
 

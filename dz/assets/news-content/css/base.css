@@ -4488,7 +4488,7 @@ ul.nsl_sub_tabs li a:hover {
     color:#e06900;
 }   
 html ul.nsl_sub_tabs li.active, html ul.nsl_sub_tabs li.active a:hover {
-    background:url(../img/icons/nls_bg_arrow.png) no-repeat bottom center;
+    background:url_DISABLE(../img/icons/nls_bg_arrow.png) no-repeat bottom center;
 }
 html ul.nsl_sub_tabs li.active a  {
     color:#e06900;
