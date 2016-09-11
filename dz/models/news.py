@@ -56,10 +56,26 @@ class News(models.Model):
         return cls.objects.distinct('id').order_by('id').values_list('id', flat=True)
 
     def save(self, *args, **kwargs):
-        # Do not let user click on external links in content or data table.
+
+        # do not let user click on external links in content or data table
         def deactivate_links(html):
             return re.sub(r'(<a|&lt;a)\s([^>]*?)\bhref="([^#][^"]+)"(.*?)>',
-                          r'\1 \2href="##\3"\4>', html)
+                          r'\1 \2href="##\3"\4>',
+                          html)
+
+        def fix_bookmaker_img(html):
+            return re.sub(r'<img\s([^>]*?)\bsrc="img/kladionice/([^/"]+)"(.*?)>',
+                          r'<img \1src="img/bookmaker-\2"\3>',
+                          html)
+
+        # deactivate external links in content and data
         self.content = deactivate_links(self.content)
         self.subtable = deactivate_links(self.subtable)
+
+        # correct path of bookmaker images
+        self.subtable = fix_bookmaker_img(self.subtable)
+
+        # remove comma part from league strings
+        self.league = self.league.partition(',')[0]
+
         return super(News, self).save(*args, **kwargs)

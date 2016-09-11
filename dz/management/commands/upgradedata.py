@@ -10,7 +10,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             '--target', '-t', dest='target', help='Target to upgrade',
-            default='all', choices=['all', 'users', 'league', 'nolinks']
+            default='all', choices=['all', 'users', 'news']
         )
 
     def handle(self, *args, **options):
@@ -18,10 +18,8 @@ class Command(BaseCommand):
 
         if target in ('all', 'users'):
             self.upgrade_users()
-        if target in ('all', 'league'):
-            self.upgrade_league()
-        if target in ('all', 'nolinks'):
-            self.deactivate_news_links()
+        if target in ('all', 'news'):
+            self.upgrade_news()
 
         print 'OK'
 
@@ -30,30 +28,30 @@ class Command(BaseCommand):
         for user in models.User.objects.all():
             user.save()
 
-    def upgrade_league(self):
-        print 'remove comma from league...'
-        count = 0
-        for news in models.News.objects.filter(league__contains=',').only('id', 'league'):
-            news.league = news.league.partition(',')[0]
-            news.save()
-            count += 1
-        if count:
-            print '%d commas removed' % count
-
-    def deactivate_news_links(self):
-        print 'hide links in news...'
-        count = 0
+    def upgrade_news(self):
+        print 'upgrading news...'
         news_mgr = models.News.objects
-        # This is regular expression from News.save().deactivate_links(),
-        # but with \b removed, because postgres does not understand it;
+        count = 0
+
+        # These regular expressions are taken from News.save()
+        # with \b removed, because postgres does not understand it;
         # the ending part is unimportant and also removed.
-        regex = r'(<a|&lt;a)\s([^>]*?)href="([^#][^"]+)"'
-        workset = news_mgr.filter(Q(content__regex=regex) | Q(subtable__regex=regex))
-        for news in workset.only('content', 'subtable'):
+        link_regex = r'(<a|&lt;a)\s[^>]*?href="[^#][^"]+"'
+        bookmaker_img_regex = r'<img\s[^>]*?src="img/kladionice/[^/"]+"'
+
+        work_set = news_mgr.filter(
+            Q(content__regex=link_regex) |
+            Q(subtable__regex=link_regex) |
+            Q(subtable__regex=bookmaker_img_regex) |
+            Q(league__contains=',')
+        )
+
+        # keep memory low: create list of ids, then load items one-by-one
+        for pk in sorted(work_set.values_list('pk', flat=True)):
             if count % 100 == 0:
                 print >>sys.stderr, '%d.. ' % count,
-            # hiding is performed by overridden save() method
-            news.save()
+            news_mgr.get(pk=pk).save()  # upgrade is performed by overridden save()
             count += 1
+
         if count:
-            print '\n%d links deactivated' % count
+            print '\n%d news upgraded' % count

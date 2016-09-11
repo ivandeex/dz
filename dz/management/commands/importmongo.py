@@ -44,20 +44,15 @@ class Command(BaseCommand):
         table = options['table']
 
         if table in ('schedule', 'all'):
-            count = self.import_schedule()
-            print '%d schedule jobs imported' % count
+            self.import_schedule()
         if table in ('users', 'all'):
-            count = self.import_users()
-            print '%d users imported' % count
+            self.import_users()
         if table in ('crawls', 'all'):
-            count = self.import_crawls()
-            print '%d crawls imported' % count
+            self.import_crawls()
         if table in ('tips', 'all'):
-            count = self.import_tips()
-            print '%d tips imported' % count
+            self.import_tips()
         if table in ('news', 'all'):
-            count = self.import_news()
-            print '%d news imported' % count
+            self.import_news()
 
         self.mongodb.client.close()
 
@@ -66,12 +61,11 @@ class Command(BaseCommand):
         models.Schedule.objects.all().delete()
         for time_i, target_i in self.DEFAULT_SCHEDULE:
             models.Schedule.objects.create(time=time_i, target=target_i)
-        return len(self.DEFAULT_SCHEDULE)
+        print '%d schedule jobs imported' % len(self.DEFAULT_SCHEDULE)
 
     def import_users(self):
         models.User.objects.all().delete()
         count = 0
-
         for item in self.mongodb.dvoznak_users.find(sort=[('username', 1)]):
             models.User.objects.create(
                 username=item['username'],
@@ -79,7 +73,7 @@ class Command(BaseCommand):
                 is_admin=item['is_admin'],
             )
             count += 1
-        return count
+        print '%d users imported' % count
 
     def import_crawls(self):
         models.Crawl.objects.all().delete()
@@ -103,7 +97,7 @@ class Command(BaseCommand):
                 pid=item['pid'],
             )
             count += 1
-        return count
+        print '%d crawls imported' % count
 
     def import_tips(self):
         models.Tip.objects.all().delete()
@@ -122,7 +116,7 @@ class Command(BaseCommand):
                 parties=item['title'],
                 title=item['tip'],
                 text=item.get('text'),
-                betting=item['betting'],
+                bookmaker=item['betting'],
                 odds=item['coeff'],
                 min_odds=item['min_coeff'],
                 result=item['result'],
@@ -138,9 +132,10 @@ class Command(BaseCommand):
                 archived=item['archived'] != 'fresh',
             )
             count += 1
-        return count
+        print '%d tips imported' % count
 
     def import_news(self):
+        print 'imporing news...'
         models.News.objects.all().delete()
         count = 0
 
@@ -162,7 +157,7 @@ class Command(BaseCommand):
                 link=item['url'],
                 title=item['title'],
                 sport=item['section'],
-                league=item['subsection'].partition(',')[0],
+                league=item['subsection'],
                 parties=item['short_title'],
                 published=published or updated,
                 updated=updated,
@@ -176,4 +171,4 @@ class Command(BaseCommand):
 
         if count:
             print >>sys.stderr, ''
-        return count
+        print '%d news imported' % count
