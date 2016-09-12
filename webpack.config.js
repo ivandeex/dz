@@ -12,8 +12,7 @@ const dev_host = process.env.DEV_HOST || 'localhost',
       is_production = process.env.NODE_ENV === 'production',
       is_dev_server = require.main.filename.indexOf('webpack-dev-server') !== -1;
 
-const base_path = __dirname,
-      bundle_dir = is_production ? 'prod' : 'devel';
+const bundle_dir = is_production ? 'prod' : 'devel';
 
 let config = {
   entry: {
@@ -22,9 +21,20 @@ let config = {
   },
 
   output: {
-    path: path.join(base_path, `assets/${bundle_dir}`),
+    path: `${__dirname}/assets/${bundle_dir}`,
     filename: '[name].js',
-    publicPath: `/static/${bundle_dir}/`
+    publicPath: is_dev_server ? `http://${dev_host}:${dev_port}/`: `/static/${bundle_dir}/`
+  },
+
+  devServer: {
+    proxy: {
+      '/static/*': {
+        target: `http://${dev_host}:${web_port}/`
+      }
+    },
+    host: dev_host,
+    port: dev_port,
+    inline: true
   },
 
   devtool: is_production ? null : 'cheap-inline-module-source-map',
@@ -46,7 +56,7 @@ let config = {
       },
       {
         include: /\/img\/bookmakers\//,
-        loader: 'file?name=bookmaker-[name].[ext]',
+        loader: 'file?name=bookmaker-[name].[ext]'
       },
       {
         test: /\.(png|gif)$/,
@@ -64,30 +74,15 @@ let config = {
       }
     },
     new DjangoBundleTracker({  // must be the first
-      path: base_path,
+      path: __dirname,
       filename: is_production ? 'stats-prod.json': 'stats-devel.json'
     }),
     new ExtractTextPlugin(
       '[name].css',
       {allChunks: true}
     )
-  ],
-
-  devServer: {
-    proxy: {
-      '/static/*': {
-        target: `http://${dev_host}:${web_port}/`
-      }
-    },
-    host: dev_host,
-    port: dev_port,
-    inline: true
-  }
+  ]
 };
-
-if (is_dev_server) {
-  config.output.publicPath = `http://${dev_host}:${dev_port}/`;
-}
 
 if (is_production) {
   config.plugins = config.plugins.concat([

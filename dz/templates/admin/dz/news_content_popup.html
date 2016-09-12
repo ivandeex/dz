@@ -33,6 +33,8 @@
   <div class="news-subtable">
   {{ news.subtable | safe }}
   </div>
+  {% if debug %}
   {% render_bundle 'dz-news-content' 'js' %}
+  {% endif %}
 </body>
 </html>

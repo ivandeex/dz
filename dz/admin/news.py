@@ -92,6 +92,7 @@ class NewsAdmin(DzCrawlModelAdmin):
             context = {
                 'news': news,
                 'can_follow_links': self.user_can_follow_links(request.user),
+                'debug': settings.DEBUG,
             }
             return TemplateResponse(request, 'admin/dz/news_content_popup.html', context)
         else:
