@@ -19,12 +19,12 @@ class TipExportResource(DzExportResource):
 class TipAdmin(DzCrawlModelAdmin):
     resource_class = TipExportResource
 
-    list_display = ['id', 'published', 'league', 'parties', 'content_cut',
+    list_display = ['id', 'published', 'league', 'parties', 'description_str',
                     'result', 'tipster', 'odds', 'min_odds',
                     'stake', 'earnings', 'spread', 'bookmaker', 'success_str',
                     'updated', 'crawled', 'link_str', 'archived_str']
     if settings.NARROW_GRIDS:
-        list_display = ['id', 'published', 'place', 'title', 'content_cut',
+        list_display = ['id', 'published', 'place', 'title', 'description_str',
                         'result', 'tipster', 'archived']
     list_filter = [('league', DzSelectFieldListFilter),
                    ('parties', DzSelectFieldListFilter),
@@ -36,25 +36,23 @@ class TipAdmin(DzCrawlModelAdmin):
     date_hierarchy = 'published'
     ordering = ['-published', '-id']
 
-    def user_is_readonly(self, auth_user):
-        return auth_user.has_perm('dz.view_tips')
-
-    def user_can_follow_links(self, auth_user):
-        if auth_user is None:
-            auth_user = self._request.user
-        return auth_user.has_perm('dz.follow_tips')
+    crawl_action = 'tips'
 
     def user_can_crawl(self, auth_user):
         return auth_user.has_perm('dz.crawl_tips')
 
-    crawl_action = 'tips'
+    def user_is_readonly(self, auth_user):
+        return auth_user.has_perm('dz.view_tips')
 
-    def content_cut(self, obj):
+    def user_can_follow_links(self, auth_user):
+        return (auth_user or self._request.user).has_perm('dz.follow_tips')
+
+    def description_str(self, obj):
         tpl = TemplateResponse(self._request, 'admin/dz/tip_content_cut.html',
                                context=dict(tip=obj, opts=self.opts))
         return tpl.rendered_content
-    content_cut.short_description = _('tip cut (column)')
-    content_cut.admin_order_field = 'title'
+    description_str.short_description = _('tip cut (column)')
+    description_str.admin_order_field = 'title'
 
     SUCCESS_CODE_MAP = {
         'unknown': _('(success) unknown'),

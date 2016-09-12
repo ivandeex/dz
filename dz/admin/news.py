@@ -14,17 +14,17 @@ from .. import models
 class NewsExportResource(DzExportResource):
     class Meta:
         model = models.News
-        exclude = ['preamble', 'content', 'subtable']
 
 
 class NewsAdmin(DzCrawlModelAdmin):
     resource_class = NewsExportResource
 
     list_display = ['id', 'published', 'sport', 'league',
-                    'parties', 'title', 'content_cut',
+                    'parties', 'title', 'description_str',
                     'updated', 'crawled', 'link_str', 'archived_str']
     if settings.NARROW_GRIDS:
-        list_display = ['id', 'published', 'sport', 'league', 'content_cut', 'archived_str']
+        list_display = ['id', 'published', 'sport', 'league',
+                        'description_str', 'archived_str']
 
     list_filter = [('sport', DzSelectFieldListFilter),
                    ('league', DzSelectFieldListFilter),
@@ -32,30 +32,29 @@ class NewsAdmin(DzCrawlModelAdmin):
                    'updated',
                    ]
 
-    search_fields = ['parties', 'title', 'preamble', 'content']
+    search_fields = ['parties', 'title',
+                     'newstext__preamble', 'newstext__content']
+
     date_hierarchy = 'published'
-    exclude = ['content', 'subtable']
     ordering = ['-published', '-id']
+
+    crawl_action = 'news'
+
+    def user_can_crawl(self, auth_user):
+        return auth_user.has_perm('dz.crawl_news')
 
     def user_is_readonly(self, auth_user):
         return auth_user.has_perm('dz.view_news')
 
     def user_can_follow_links(self, auth_user):
-        if auth_user is None:
-            auth_user = self._request.user
-        return auth_user.has_perm('dz.follow_news')
+        return (auth_user or self._request.user).has_perm('dz.follow_news')
 
-    def user_can_crawl(self, auth_user):
-        return auth_user.has_perm('dz.crawl_news')
-
-    crawl_action = 'news'
-
-    def content_cut(self, obj):
+    def description_str(self, obj):
         tpl = TemplateResponse(self._request, 'admin/dz/news_content_cut.html',
                                context=dict(news=obj, opts=self.opts))
         return tpl.rendered_content
-    content_cut.short_description = _('news cut (column)')
-    content_cut.admin_order_field = 'preamble'
+    description_str.short_description = _('news cut (column)')
+    description_str.admin_order_field = 'preamble'
 
     def archived_str(self, obj):
         return _('Archived') if obj.archived else _('Fresh')

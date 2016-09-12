@@ -238,7 +238,7 @@ msgid "full news content (column)"
 msgstr "full content"
 
 #: dz/models/news.py:25
-msgid "news subtable (column)"
+msgid "news datatable (column)"
 msgstr "data table"
 
 #: dz/models/news.py:28

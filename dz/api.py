@@ -166,24 +166,19 @@ def api_crawl_job(request):
 
 @csrf_exempt
 def api_crawl_item(request):
+    id = None
     try:
         req = parse_request(request, 'item')
         Model = get_model(req['target'])
 
         data = req['data']
+        id = data['id']
         data['crawled'] = api2time(data.pop('crawled_utc'), 'UTC')
         data['updated'] = api2time(data['updated'])
         data['published'] = api2time(data['published'])
+        data['archived'] = False
 
-        id = int(data['id'])
-        try:
-            item = Model.objects.get(id=id)
-        except Model.DoesNotExist:
-            item = Model(id=id)
-        for field, value in data.items():
-            setattr(item, field, value)
-        item.archived = False
-        item.save()
+        Model.from_json(data)
 
         running_crawls = models.Crawl.objects.filter(status__in=['started', 'running'])
         crawl, created = running_crawls.get_or_create(

@@ -27,11 +27,11 @@
           <tr><td class="news-key">{% trans 'Parties' %}:</td>   <td class="news-val">{{ news.parties }}</td></tr>
         </table>
       </div>
-    <h3 class="news-preamble" itemprop="headline">{{ news.preamble }}</h3>
-    <div class="news-content">{{ news.content | safe }}</div>
+    <h3 class="news-preamble" itemprop="headline">{{ news.newstext.preamble }}</h3>
+    <div class="news-content">{{ news.newstext.content | safe }}</div>
   </div>
-  <div class="news-subtable">
-  {{ news.subtable | safe }}
+  <div class="news-datatable">
+  {{ news.newstext.datatable | safe }}
   </div>
   {% if debug %}
   {% render_bundle 'dz-news-content' 'js' %}

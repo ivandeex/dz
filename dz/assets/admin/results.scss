@@ -1,13 +1,13 @@
 
 body {
   &.model-tip {
-    .field-content_cut {
+    .field-description_str {
       min-width: 240px;
     }
   }
 
   &.model-news {
-    .field-content_cut {
+    .field-description_str {
       min-width: 240px;
     }
 
@@ -42,19 +42,19 @@ body {
   }
 }
 
-.dz_pre {
+.dz-pre {
   font-style: italic;
   font-size: smaller;
   margin-bottom: 4px;
 }
 
-.dz_title {
+.dz-title {
   font-weight: bold;
   font-size: 90%;
   margin-bottom: 4px;
 }
 
-.dz_body {
+.dz-body {
   a,
   button.btn-link {
     font-weight: bold;

@@ -10,7 +10,7 @@ class Tip(models.Model):
     id = models.IntegerField(_('tip id (column)'), db_column='pk', primary_key=True)
     league = models.CharField(_('tip league (column)'), max_length=40, db_index=True)
     parties = models.CharField(_('tip parties (column)'), max_length=150, db_index=True)
-    title = models.CharField(_('tip title (column)'), max_length=60)
+    title = models.CharField(_('tip title (column)'), max_length=70)
     # Translators: Bookmaker (Kladionica)
     bookmaker = models.CharField(_('tip bookmaker (column)'), max_length=32)
     # Translators: Coeff. (Koeficijent)
@@ -52,12 +52,26 @@ class Tip(models.Model):
             ('follow_tips', _('Can click on tip links')),
         ]
 
-    class Manager(models.Manager):
+    @staticmethod
+    def from_json(data):
+        pk = data['id']
+        try:
+            tip = Tip.objects.get(pk=pk)
+        except Tip.DoesNotExist:
+            tip = Tip(pk=pk)
+
+        for field, value in data.items():
+            setattr(tip, field, value)
+
+        tip.save()
+        return tip
+
+    class DeferLargeFieldsManager(models.Manager):
         use_for_related_fields = True
 
         def get_queryset(self, *args, **kw):
-            qs = super(Tip.Manager, self).get_queryset(*args, **kw)
+            qs = super(Tip.DeferLargeFieldsManager, self).get_queryset(*args, **kw)
             qs = qs.defer('text').annotate(text_cut=CutStr('text', 80))
             return qs
 
-    objects = Manager()
+    objects = DeferLargeFieldsManager()

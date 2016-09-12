@@ -152,6 +152,8 @@ class Command(BaseCommand):
             updated = self.convert_time(item['updated'])
             crawled = self.convert_time(item['crawled'])
 
+            archived = item['archived'] != 'fresh'
+
             models.News.objects.create(
                 id=item['pk'],
                 link=item['url'],
@@ -162,11 +164,16 @@ class Command(BaseCommand):
                 published=published or updated,
                 updated=updated,
                 crawled=crawled,
-                archived=item['archived'] != 'fresh',
+                archived=archived,
+            )
+
+            models.NewsText.objects.create(
+                news_id=item['pk'],
                 preamble=item['preamble'],
                 content=item['content'],
-                subtable=item['subtable'],
+                datatable=item['subtable'],
             )
+
             count += 1
 
         if count:

@@ -47,10 +47,12 @@ class DzModelAdmin(admin.ModelAdmin):
     #     css = {'all': ['dz/admin/changelist.css', 'dz/admin/results.css']}
     #     js = ['dz/admin/filter.js']
 
-    def user_is_readonly(self, auth_user):
-        return False
+    crawl_action = None
 
     def user_can_crawl(self, auth_user):
+        return False
+
+    def user_is_readonly(self, auth_user):
         return False
 
     def user_can_follow_links(self, auth_user):
@@ -93,7 +95,6 @@ class DzCrawlModelAdmin(ExportMixin, DzModelAdmin):
     change_list_template = 'admin/dz/change_list.html'
     formats = [base_formats.XLSX]
     can_export = True
-    crawl_action = None
 
     def get_urls(self):
         urls = super(DzCrawlModelAdmin, self).get_urls()

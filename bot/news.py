@@ -96,7 +96,7 @@ class NewsSpider(BaseSpider):
         item['updated'] = extract_datetime(first_text(sel, '.nls_subt_left'))
         item['published'] = extract_datetime(first_text(sel, '.najva-meta-published > span'))
 
-        item['preamble'] = first_text(sel, '.nlsn_content > h3')
+        item['newstext.preamble'] = first_text(sel, '.nlsn_content > h3')
 
         text = []
         content_node = sel.css('.nlsn_content')
@@ -107,12 +107,12 @@ class NewsSpider(BaseSpider):
                 if not para.startswith(u'<p>'):
                     para = u'<p>' + para + u'</p>'
                 text.append(para)
-        item['content'] = u'\n'.join(text)
+        item['newstext.content'] = u'\n'.join(text)
 
         table1 = '\n'.join(html.strip() for html in sel.css('.nlsn_table_wrap').extract())
         xpath = '//div[@id="nls_najava"]/following-sibling::*[name()="ul" or name()="div"]'
         table2 = '\n'.join(html.strip() for html in sel.xpath(xpath).extract())
-        item['subtable'] = u'%s\n<div class="subtable2">\n%s\n</div>' % (table1, table2)
+        item['newstext.datatable'] = u'%s\n<div class="subtable2">\n%s\n</div>' % (table1, table2)
 
         self.crawled_ids.add(id)
         api_send_item(self.target, self.start_utc, self.debug, item)

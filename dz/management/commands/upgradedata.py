@@ -10,7 +10,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             '--target', '-t', dest='target', help='Target to upgrade',
-            default='all', choices=['all', 'users', 'news']
+            default='all', choices=['all', 'users', 'league', 'links']
         )
 
     def handle(self, *args, **options):
@@ -18,8 +18,10 @@ class Command(BaseCommand):
 
         if target in ('all', 'users'):
             self.upgrade_users()
-        if target in ('all', 'news'):
-            self.upgrade_news()
+        if target in ('all', 'league'):
+            self.upgrade_news_league()
+        if target in ('all', 'links'):
+            self.upgrade_news_links()
 
         print 'OK'
 
@@ -28,30 +30,40 @@ class Command(BaseCommand):
         for user in models.User.objects.all():
             user.save()
 
-    def upgrade_news(self):
-        print 'upgrading news...'
-        news_mgr = models.News.objects
+    def upgrade_news_league(self):
+        print 'upgrading news leagues...'
         count = 0
 
-        # These regular expressions are taken from News.save()
+        for news in models.News.objects.filter(league__contains=',').only('league'):
+            news.save()  # upgrade is performed by News.save()
+            count += 1
+
+        if count:
+            print '%d leagues upgraded' % count
+
+    def upgrade_news_links(self):
+        print 'upgrading news links...'
+        newstext_mgr = models.NewsText.objects
+        count = 0
+
+        # These regular expressions are taken from NewsText.save()
         # with \b removed, because postgres does not understand it;
         # the ending part is unimportant and also removed.
         link_regex = r'(<a|&lt;a)\s[^>]*?href="[^#][^"]+"'
         bookmaker_img_regex = r'<img\s[^>]*?src="img/kladionice/[^/"]+"'
 
-        work_set = news_mgr.filter(
+        work_set = newstext_mgr.filter(
             Q(content__regex=link_regex) |
-            Q(subtable__regex=link_regex) |
-            Q(subtable__regex=bookmaker_img_regex) |
-            Q(league__contains=',')
+            Q(datatable__regex=link_regex) |
+            Q(datatable__regex=bookmaker_img_regex)
         )
 
         # keep memory low: create list of ids, then load items one-by-one
         for pk in sorted(work_set.values_list('pk', flat=True)):
             if count % 100 == 0:
                 print >>sys.stderr, '%d.. ' % count,
-            news_mgr.get(pk=pk).save()  # upgrade is performed by overridden save()
+            newstext_mgr.get(pk=pk).save()  # upgrade is performed by NewsText.save()
             count += 1
 
         if count:
-            print '\n%d news upgraded' % count
+            print '\n%d news links upgraded' % count
