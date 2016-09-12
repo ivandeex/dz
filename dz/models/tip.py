@@ -54,7 +54,7 @@ class Tip(models.Model):
 
     @staticmethod
     def from_json(data):
-        pk = data['id']
+        pk = data['pk']
         try:
             tip = Tip.objects.get(pk=pk)
         except Tip.DoesNotExist:

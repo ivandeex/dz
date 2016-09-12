@@ -85,7 +85,7 @@ class Command(BaseCommand):
             if item['status'] == 'finished':
                 item['status'] = 'complete'
             models.Crawl.objects.create(
-                id=item['pk'],
+                pk=item['pk'],
                 target=item['action'],
                 manual=item['type'] == 'manual',
                 status=item['status'],
@@ -111,7 +111,7 @@ class Command(BaseCommand):
             crawled = self.convert_time(item['crawled'])
 
             models.Tip.objects.create(
-                id=item['pk'],
+                pk=item['pk'],
                 league=item['place'],
                 parties=item['title'],
                 title=item['tip'],

@@ -3,6 +3,6 @@
 {% if tip.text_cut %}
 <div class="dz-body">
   <span>{{ tip.text_cut | striptags | strip_cut_tags }}</span>
-  <a href="{% url opts|admin_urlname:'tip_content' id=tip.id %}" title="{% trans 'Show details' %}" id="{% blocktrans with id=tip.id %}Tip #{{id}}{% endblocktrans %}" onclick="return showRelatedObjectLookupPopup(this);">({% trans 'more...' %})</a>
+  <a href="{% url opts|admin_urlname:'tip_content' pk=tip.pk %}" title="{% trans 'Show details' %}" id="{% blocktrans with pk=tip.pk %}Tip #{{pk}}{% endblocktrans %}" onclick="return showRelatedObjectLookupPopup(this);">({% trans 'more...' %})</a>
 </div>
 {% endif %}

@@ -42,17 +42,15 @@ class TipsSpider(BaseSpider):
         self.end()
 
     def parse_tip(self, sel, elem):
-        item = {}
         rel_url = sel.css('.tpl_right > h3 > a::attr(href)').extract_first()
         link = urljoin(self.webdriver.current_url, rel_url)
 
         try:
-            id = int(re.search(r'id_dogadjaj=(\d+)', link).group(1))
+            pk = int(re.search(r'id_dogadjaj=(\d+)', link).group(1))
         except Exception:
             logger.info('Skip incomplete tip %s', link)
             return
-        item['id'] = id
-        item['link'] = link
+        item = dict(pk=pk, link=link)
 
         item['league'] = first_text(sel, '.tpl_right > h3 > span')
         item['parties'] = first_text(sel, '.tpl_right > h3 > a')
@@ -96,5 +94,5 @@ class TipsSpider(BaseSpider):
         # if publish date is not found, default to update date
         item['published'] = item['published'] or item['updated']
 
-        self.crawled_ids.add(id)
+        self.crawled_ids.add(pk)
         api_send_item(self.target, self.start_utc, self.debug, item)

@@ -62,7 +62,7 @@ class News(models.Model):
 
     @staticmethod
     def from_json(data):
-        pk = int(data['id'])
+        pk = int(data['pk'])
         try:
             news = News.objects.get(pk=pk)
         except News.DoesNotExist:

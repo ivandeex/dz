@@ -74,7 +74,7 @@ class NewsAdmin(DzCrawlModelAdmin):
 
     def get_urls(self):
         news_content_url = url(
-            r'^(?P<id>\d+)/news-content/$',
+            r'^(?P<pk>\d+)/news-content/$',
             self.admin_site.admin_view(self.news_content_view),
             name='%s_%s_news_content' % (self.opts.app_label, self.opts.model_name)
         )
@@ -85,8 +85,8 @@ class NewsAdmin(DzCrawlModelAdmin):
         orig_urls = super(NewsAdmin, self).get_urls()
         return [news_content_url, data_table_img_url] + orig_urls
 
-    def news_content_view(self, request, id):
-        news = self.get_object(request, id)
+    def news_content_view(self, request, pk):
+        news = self.get_object(request, pk)
         if news:
             context = {
                 'news': news,

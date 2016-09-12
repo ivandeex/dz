@@ -29,10 +29,10 @@ class NewsSpider(BaseSpider):
 
         while True:
             try:
-                url, id = self.get_next_news()
+                url, pk = self.get_next_news()
                 if not url:
                     break
-                self.parse_news(url, id)
+                self.parse_news(url, pk)
 
                 logger.debug('Go back and sleep ~ %d sec', self.page_delay)
                 self.webdriver.back()
@@ -63,30 +63,30 @@ class NewsSpider(BaseSpider):
             self.done_urls.add(url)
 
             try:
-                id = int(re.search(r'id_dogadjaj=(\d+)', url).group(1))
+                pk = int(re.search(r'id_dogadjaj=(\d+)', url).group(1))
             except Exception:
                 self.todo -= 1
                 logger.warn('Invalid news url %s', url)
                 continue
 
-            if id not in self.seen_news:
+            if pk not in self.seen_news:
                 link.click()
-                return url, id
+                return url, pk
 
             # skip this url but mark as fresh
-            self.crawled_ids.add(id)
+            self.crawled_ids.add(pk)
             self.todo -= 1
             logger.info('News already crawled %s', url)
 
         return None, None
 
-    def parse_news(self, url, id):
-        logger.debug('Crawling news %d from %s', id, url)
+    def parse_news(self, url, pk):
+        logger.debug('Crawling news %d from %s', pk, url)
         self.wait_for_ajax()
         randsleep(5)
 
         sel = self.page_sel()
-        item = dict(link=url, id=id)
+        item = dict(link=url, pk=pk)
 
         item['sport'] = first_text(sel, '.lnfl')
         item['league'] = first_text(sel, '.lnfl.tename').partition(',')[0]
@@ -114,7 +114,7 @@ class NewsSpider(BaseSpider):
         table2 = '\n'.join(html.strip() for html in sel.xpath(xpath).extract())
         item['newstext.datatable'] = u'%s\n<div class="subtable2">\n%s\n</div>' % (table1, table2)
 
-        self.crawled_ids.add(id)
+        self.crawled_ids.add(pk)
         api_send_item(self.target, self.start_utc, self.debug, item)
         logger.info('Crawled news #%d of %d from %s',
                     len(self.crawled_ids), max(self.todo or 0, 1), url)

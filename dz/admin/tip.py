@@ -83,13 +83,13 @@ class TipAdmin(DzCrawlModelAdmin):
 
     def get_urls(self):
         tip_content_url = url(
-            r'^(?P<id>\d+)/tip-content/$',
+            r'^(?P<pk>\d+)/tip-content/$',
             self.admin_site.admin_view(self.tip_content_view),
             name='%s_%s_tip_content' % (self.opts.app_label, self.opts.model_name))
         return [tip_content_url] + super(TipAdmin, self).get_urls()
 
-    def tip_content_view(self, request, id):
-        tip = self.get_object(request, id)
+    def tip_content_view(self, request, pk):
+        tip = self.get_object(request, pk)
         if tip:
             return TemplateResponse(request, 'admin/dz/tip_content_popup.html',
                                     dict(tip=tip, is_popup=True))

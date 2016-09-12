@@ -166,13 +166,14 @@ def api_crawl_job(request):
 
 @csrf_exempt
 def api_crawl_item(request):
-    id = None
+    target = pk = None
     try:
         req = parse_request(request, 'item')
-        Model = get_model(req['target'])
+        target = req['target']
+        Model = get_model(target)
 
         data = req['data']
-        id = data['id']
+        pk = data['pk']
         data['crawled'] = api2time(data.pop('crawled_utc'), 'UTC')
         data['updated'] = api2time(data['updated'])
         data['published'] = api2time(data['published'])
@@ -183,7 +184,7 @@ def api_crawl_item(request):
         running_crawls = models.Crawl.objects.filter(status__in=['started', 'running'])
         crawl, created = running_crawls.get_or_create(
             started=api2time(req['start_utc'], 'UTC'),
-            target=req['target'],
+            target=target,
             host=req['host'],
             pid=req['pid'],
         )
@@ -192,21 +193,22 @@ def api_crawl_item(request):
         crawl.ended = None
         crawl.save()
 
-        return make_response(ok=True, id=id, target=req['target'])
+        return make_response(ok=True, pk=pk, target=target)
 
     except Exception as err:
         if settings.DEBUG:
             raise
         logger.info('Invalid item packet: %s', err)
-        return make_response(ok=False, error=repr(err), id=id, target=['target'])
+        return make_response(ok=False, error=repr(err), pk=pk, target=target)
 
 
 @csrf_exempt
 def api_crawl_complete(request):
+    target = None
     try:
         req = parse_request(request, 'complete')
-
-        Model = get_model(req['target'])
+        target = req['target']
+        Model = get_model(target)
         ids = split_ranges(req['ids'])
 
         # just crawled items become fresh
@@ -216,7 +218,7 @@ def api_crawl_complete(request):
 
         running_crawls = models.Crawl.objects.filter(status__in=['started', 'running'])
         crawl, created = running_crawls.get_or_create(
-            target=req['target'],
+            target=target,
             started=api2time(req['start_utc'], 'UTC'),
             host=req['host'],
             pid=req['pid'],
@@ -226,10 +228,10 @@ def api_crawl_complete(request):
         crawl.ended = timezone.now()
         crawl.save()
 
-        return make_response(ok=True, target=req['target'])
+        return make_response(ok=True, target=target)
 
     except Exception as err:
         if settings.DEBUG:
             raise
         logger.info('Invalid final packet: %s', err)
-        return make_response(ok=False, error=repr(err), target=req['target'])
+        return make_response(ok=False, error=repr(err), target=target)
