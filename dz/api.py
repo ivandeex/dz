@@ -181,13 +181,7 @@ def api_crawl_item(request):
 
         Model.from_json(data)
 
-        running_crawls = models.Crawl.objects.filter(status__in=['started', 'running'])
-        crawl, created = running_crawls.get_or_create(
-            started=api2time(req['start_utc'], 'UTC'),
-            target=target,
-            host=req['host'],
-            pid=req['pid'],
-        )
+        crawl = models.Crawl.from_json(req)
         crawl.count = F('count') + 1
         crawl.status = 'running'
         crawl.ended = None
@@ -216,13 +210,7 @@ def api_crawl_complete(request):
         # the remainder becomes archived
         Model.objects.filter(~Q(id__in=ids)).update(archived=True)
 
-        running_crawls = models.Crawl.objects.filter(status__in=['started', 'running'])
-        crawl, created = running_crawls.get_or_create(
-            target=target,
-            started=api2time(req['start_utc'], 'UTC'),
-            host=req['host'],
-            pid=req['pid'],
-        )
+        crawl = models.Crawl.from_json(req)
         crawl.count = len(ids)
         crawl.status = 'complete'
         crawl.ended = timezone.now()

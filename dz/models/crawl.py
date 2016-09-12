@@ -85,3 +85,16 @@ class Crawl(models.Model):
             crawl = objs.create(target=target, status='waiting', started=utc, manual=False)
             logger.info('Schedule %s crawl at %02d:%02d (UTC)', target, utc.hour, utc.minute)
             return crawl
+
+    @classmethod
+    def from_json(cls, req):
+        from ..api import api2time
+
+        running_crawls = cls.objects.filter(status__in=['started', 'running'])
+        crawl, created = running_crawls.get_or_create(
+            started=api2time(req['start_utc'], 'UTC'),
+            target=req['target'],
+            host=req['host'],
+            pid=req['pid'],
+        )
+        return crawl
