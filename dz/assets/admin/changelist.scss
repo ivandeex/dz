@@ -13,6 +13,8 @@ $paginator-line-height: 22px;
 $paginator-vert-padding: 10px;
 $paginator-border-height: 1px;
 
+$filter-title-color: #79aec8;
+
 
 .object-tools {
   margin-right: 20px;
@@ -36,6 +38,17 @@ $paginator-border-height: 1px;
     width: calc(100% - 30px);
     margin: 0 15px;
     padding: 0;
+  }
+
+  h2 {
+    cursor: pointer;
+    background-color: $filter-title-color;
+    transition: all linear .2s;
+
+    &:hover {
+      background-color: adjust-color($filter-title-color, $lightness: -20%);
+      text-decoration: underline;
+    }
   }
 
   &.hidden {
