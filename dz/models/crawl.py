@@ -58,14 +58,16 @@ class Crawl(models.Model):
         if auto_target == target and abs((auto_utc - now_utc).total_seconds()) <= 120:
             return 'refused'
 
-        # check that active (non-waiting) manual job with same time does not exist
+        # shift for later time if there is an active manual job with same time
         objs = cls.objects
-        if objs.filter(started=now_utc).filter(~Q(status='waiting')).count():
-            return 'refused'
+        while objs.filter(started=now_utc).filter(~Q(status='waiting')).exists():
+            now_utc += timezone.timedelta(minutes=1)
 
         # update time of existing waiting job or create a new job
         try:
-            objs.get(target=target, status='waiting', manual=True).update(started=now_utc)
+            wjob = objs.get(target=target, status='waiting', manual=True)
+            wjob.started = now_utc
+            wjob.save()
             return 'updated'
         except cls.DoesNotExist:
             objs.create(target=target, status='waiting', started=now_utc, manual=True)
