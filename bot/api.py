@@ -18,7 +18,7 @@ except ImportError:
     json_decode = json.loads
 
 
-DEFAULT_WEB_SERVER = 'http://dz.com/dz/api/crawl/'
+DEFAULT_API_URL = 'http://localhost/dz/api/crawl/'
 DEFAULT_SECRET_KEY = 'please change me'
 MAX_TIME_DIFF = 900
 
@@ -34,8 +34,8 @@ def api2naive(dt_str):
 
 
 def api_request(command, params):
-    web_server = os.environ.get('WEB_SERVER', DEFAULT_WEB_SERVER)
-    secret_key = os.environ.get('SECRET_KEY', DEFAULT_SECRET_KEY)
+    web_server = os.environ.get('SERVER_API_URL', DEFAULT_API_URL)
+    secret_key = os.environ.get('SPIDER_SECRET_KEY', DEFAULT_SECRET_KEY)
 
     req = params.copy()
     req['time'] = naive2api(datetime.utcnow())

@@ -21,8 +21,8 @@ def main():
 
     setup_logging(service, debug)
 
-    getopt('server', 'WEB_SERVER')
-    getopt('secret', 'SECRET_KEY')
+    getopt('server', 'SERVER_API_URL')
+    getopt('secret', 'SPIDER_SECRET_KEY')
     getopt('pollsec', 'POLL_SECONDS')
     getopt('delay', 'PAGE_DELAY')
     getopt('userpass', 'USERPASS')
