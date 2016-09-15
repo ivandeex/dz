@@ -1,4 +1,5 @@
 import re
+import random
 from .api import api_send_item
 from .spider import BaseSpider
 from .utils import logger, extract_datetime, first_text, randsleep, split_ranges
@@ -52,6 +53,7 @@ class NewsSpider(BaseSpider):
 
     def get_next_news(self):
         news_links = self.webdriver.find_elements_by_css_selector('.rswcl_najava h3 > a')
+        random.shuffle(news_links)
         if self.todo is None:
             self.todo = len(news_links)
             logger.info('Will crawl at most %d news', self.todo)
