@@ -1,10 +1,10 @@
 'use strict';
 
 let path = require('path'),
-    rimraf = require('rimraf'),
     webpack = require('webpack'),
     ExtractTextPlugin = require('extract-text-webpack-plugin'),
-    DjangoBundleTracker = require('webpack-bundle-tracker');
+    DjangoBundleTracker = require('webpack-bundle-tracker'),
+    CleanPlugin = require('clean-webpack-plugin');
 
 const dev_host = process.env.DEV_HOST || 'localhost',
       dev_port = parseInt(process.env.DEV_PORT || 3000),
@@ -23,6 +23,7 @@ let config = {
   output: {
     path: `${__dirname}/assets/${bundle_dir}`,
     filename: '[name].js',
+    chunkFilename: 'chunk.[name]-[id].js',
     publicPath: is_dev_server ? `http://${dev_host}:${dev_port}/`: `/static/${bundle_dir}/`
   },
 
@@ -68,11 +69,8 @@ let config = {
 
   plugins: [
     new webpack.NoErrorsPlugin(),  // don't publish if compilation fails
-    {
-      apply: (compiler) => {
-        rimraf.sync(compiler.options.output.path);
-      }
-    },
+    new webpack.optimize.OccurenceOrderPlugin(),  // keep hashes consistent between builds
+    new CleanPlugin([`assets/${bundle_dir}`], {}),
     new DjangoBundleTracker({  // must be the first
       path: __dirname,
       filename: is_production ? 'stats-prod.json': 'stats-devel.json'
@@ -86,7 +84,6 @@ let config = {
 
 if (is_production) {
   config.plugins = config.plugins.concat([
-    new webpack.optimize.OccurenceOrderPlugin(),  // keep hashes consistent between builds
     new webpack.optimize.UglifyJsPlugin({
       compressor: {warnings: false}
     })

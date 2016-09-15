@@ -1,12 +1,11 @@
 'use strict';
 
-// bundled javascript is only needed by webpack-dev-server to hot-reload the page,
-// so we split required css and images into separate bundle by asynchronous require,
-// but never actually load it (if-undefined).
-if (undefined) {
-  require([
-    './css/base.css',
-    './css/custom.scss',
-    './img/bookmakers/' + undefined + '.png'
-  ], function() {});
+// Entry bundle is only needed by webpack-dev-server to hot-reload the page,
+// so we never really call __requirements__().
+function __requirements__(name) {
+  require.include('./css/base.css');
+  require.include('./css/custom.scss');
+
+  // Split required images into lazy bundle by asynchronous amd:
+  require(['./img/bookmakers/' + name], () => {});
 }
