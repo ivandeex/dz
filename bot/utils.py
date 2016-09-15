@@ -72,22 +72,14 @@ def first_text(sel, css):
     return (sel.css(css + ' ::text').extract_first() or '').strip()
 
 
-def poll_sleep(end_time, poll_sec=10):
-    time.sleep(min(poll_sec, max(end_time - time.time(), 0)))
-
-
 def randsleep(delay):
     time.sleep(delay * random.uniform(0.5, 1.5))
-
-
-_date_trans = [
-    (r'(\d{1,2}:\d\d)\s?\D+$', r'\1'),
-]
 
 
 def extract_datetime(text):
     text = (text or '').strip().lower()
     orig = ''
+    _date_trans = [(r'(\d{1,2}:\d\d)\s?\D+$', r'\1')]
     while orig != text:
         orig = text
         for src, dst in _date_trans:

@@ -1,12 +1,10 @@
 import os
 import tempfile
-from time import time
-from parsel import Selector
 from selenium.webdriver import PhantomJS, DesiredCapabilities
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions
-from .utils import logger, randsleep, poll_sleep
+from selenium.webdriver.support import expected_conditions as EC
+from .utils import logger, randsleep
 from .api import api_send_complete, naive2api
 
 DEFAULT_PAGE_DELAY = 50
@@ -15,7 +13,7 @@ DEFAULT_PAGE_DELAY = 50
 class BaseSpider(object):
     user_agent = 'Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'
     home_url = 'http://www.dvoznak.com/'
-    timeout = 60
+    timeout = 30
     target = None
 
     def __init__(self, env):
@@ -47,72 +45,47 @@ class BaseSpider(object):
         self.webdriver.quit()
         self.webdriver = None
 
-    def page_sel(self):
-        return Selector(self.webdriver.page_source)
-
     def login(self):
         self.wait_for_ajax()
-        randsleep(2)
+        wait = WebDriverWait(self.webdriver, self.timeout)
 
         if not (self.username and self.password):
             logger.info('Working without login')
             return
 
-        page_sel = self.page_sel()
-        form = page_sel.css('form[name="prijava"]')
-        id_user = form.css('input[type="text"]::attr(id)').extract_first()
-        id_pass = form.css('input[type="password"]::attr(id)').extract_first()
+        # opening login drawer
+        el = wait.until(EC.element_to_be_clickable((By.ID, 'login_btn')))
+        el.click()
 
-        logger.debug('Opening login drawer')
-        self.click('login_btn', by=By.ID)
-        self.wait_for_ajax()
-        randsleep(2)
+        # fill login form
+        el = wait.until(EC.visibility_of_element_located(
+            (By.CSS_SELECTOR, 'form[name="prijava"] input[type="text"]')))
+        el.send_keys(self.username)
 
-        logger.debug('Filling the form')
-        self.send_keys(id_user, self.username)
-        self.send_keys(id_pass, self.password)
-        randsleep(2)
+        el = self.webdriver.find_element_by_css_selector(
+            'form[name="prijava"] input[type="password"]')
+        el.send_keys(self.password)
 
-        logger.debug('Click the login button')
-        self.click('Prijava', by=By.NAME)
-        randsleep(4)
+        # click login button
+        el = wait.until(EC.element_to_be_clickable((By.NAME, 'Prijava')))
+        el.click()
 
+        wait.until(EC.visibility_of_element_located((By.LINK_TEXT, 'Moj profil')))
         logger.info('Logged in as %s', self.username)
 
     def click_menu(self, menu):
-        logger.debug('Clicking on %s menu', menu)
-        xpath = '//ul[@id="mainmenu"]/li/a[contains(.,"%s")]' % menu
-        el = self.webdriver.find_element_by_xpath(xpath)
+        logger.debug('Click on menu "%s"', menu)
+        wait = WebDriverWait(self.webdriver, self.timeout)
+        css = '#mainmenu a[href*="%s"]' % menu.lower()
+        el = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, css)))
         el.click()
         self.wait_for_ajax()
-        randsleep(4)
-
-    def wait_for_css(self, css):
-        end_time = time() + self.timeout
-        while time() < end_time:
-            result = self.page_sel().css(css)
-            if result:
-                return result
-            poll_sleep(end_time)
 
     def wait_for_ajax(self):
-        end_time = time() + self.timeout
-        while time() < end_time:
-            ajax_counts = self.webdriver.execute_script(
+        def ajax_request_count(driver):
+            return sum(filter(bool, driver.execute_script(
                 'return [window.jQuery && window.jQuery.active, '
                 'window.Ajax && window.Ajax.activeRequestCount, '
-                'window.dojo && window.io.XMLHTTPTransport.inFlight.length];')
-            if not any(ajax_counts):
-                return True
-            poll_sleep(end_time)
-
-    def send_keys(self, id, keys):
-        el = self.webdriver.find_element_by_id(id)
-        el.clear()
-        el.send_keys(keys)
-
-    def click(self, id, by):
-        cond = expected_conditions.element_to_be_clickable((by, id))
-        el = WebDriverWait(self.webdriver, self.timeout).until(cond)
-        logger.debug('now click %s', id)
-        el.click()
+                'window.dojo && window.io.XMLHTTPTransport.inFlight.length];')))
+        WebDriverWait(self.webdriver, self.timeout).until_not(ajax_request_count)
+        randsleep(2)

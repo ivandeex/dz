@@ -1,5 +1,9 @@
 import re
 from urlparse import urljoin
+from parsel import Selector
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 from .utils import logger, extract_datetime, first_text
 from .spider import BaseSpider
 from .api import api_send_item
@@ -32,16 +36,16 @@ class TipsSpider(BaseSpider):
         self.login()
         self.click_menu('Prognoze')
 
-        tip_css = '.tiprog_list_block'
-        tip_selectors = self.wait_for_css(tip_css)
-        tip_elements = self.webdriver.find_elements_by_css_selector(tip_css)
+        tip_elements = WebDriverWait(self.webdriver, self.timeout).until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.tiprog_list_block')))
 
-        for tip_sel, tip_elem in zip(tip_selectors, tip_elements):
-            self.parse_tip(tip_sel, tip_elem)
+        for tip_elem in tip_elements:
+            self.parse_tip(tip_elem)
 
         self.end()
 
-    def parse_tip(self, sel, elem):
+    def parse_tip(self, tip_elem):
+        sel = Selector(tip_elem.get_attribute('innerHTML'))
         rel_url = sel.css('.tpl_right > h3 > a::attr(href)').extract_first()
         link = urljoin(self.webdriver.current_url, rel_url)
 
@@ -58,36 +62,32 @@ class TipsSpider(BaseSpider):
 
         item['updated'] = extract_datetime(first_text(sel, '.tiprot_right'))
 
-        all_p = sel.css('.tipoprog_content_wrap').xpath('text()').extract()
-        item['text'] = u' '.join(p.strip() for p in all_p if p.strip())
+        para_list = sel.css('.tipoprog_content_wrap').xpath('text()').extract()
+        item['text'] = u' '.join(para.strip() for para in para_list if para.strip())
 
-        d = {}
-        table_css = '.tipoprog_table_small tr'
-        row_selectors = sel.css(table_css)
-        row_elements = elem.find_elements_by_css_selector(table_css)
-
-        for row_sel, row_elem in zip(row_selectors, row_elements):
-            td = row_sel.css('td ::text').extract()
-            td.extend(['', ''])
-            label = td[0].rstrip(': ').lower()
-            value = td[1].strip()
+        data = {}
+        for row_elem in tip_elem.find_elements_by_css_selector('.tipoprog_table_small tr'):
+            td_text = [td_elem.text for td_elem in row_elem.find_elements_by_tag_name('td')]
+            label = td_text[0].strip(': ').lower() if td_text else ''
+            value = td_text[1].strip() if len(td_text) > 1 else ''
 
             if not value and label == 'kladionica':
-                value = row_sel.css('td a::attr(title)').extract_first() or ''
+                a_elems = row_elem.find_elements_by_css_selector('td a[title]')
+                value = a_elems[0].get_attribute('title') if a_elems else ''
 
             if not value and label == u'uspje\u0161nost':
-                td2_span = row_elem.find_elements_by_xpath('td[2]/span')
-                if td2_span:
-                    bg_image = td2_span[0].value_of_css_property('background-image') or ''
+                span_elems = row_elem.find_elements_by_xpath('td[2]/span')
+                if span_elems:
+                    bg_image = span_elems[0].value_of_css_property('background-image') or ''
                     match = re.search(r'^url\(.*/([^.]+)\.(png|gif|jpg)\)$', bg_image.strip())
                     if match:
                         value = match.group(1).strip().lower()
                         value = SUCCESS_BG_IMAGE_MAP.get(value, '')
 
-            d[label] = value
+            data[label] = value
 
         for dst, src in DATA_MAP.items():
-            item[dst] = d.get(src, '')
+            item[dst] = data.get(src, '')
 
         item['published'] = extract_datetime(item['published'])
 

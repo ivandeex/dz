@@ -1,5 +1,6 @@
 import re
 import random
+from parsel import Selector
 from .api import api_send_item
 from .spider import BaseSpider
 from .utils import logger, extract_datetime, first_text, randsleep, split_ranges
@@ -85,9 +86,8 @@ class NewsSpider(BaseSpider):
     def parse_news(self, url, pk):
         logger.debug('Crawling news %d from %s', pk, url)
         self.wait_for_ajax()
-        randsleep(5)
 
-        sel = self.page_sel()
+        sel = Selector(self.webdriver.page_source)
         item = dict(link=url, pk=pk)
 
         item['sport'] = first_text(sel, '.lnfl')
