@@ -1,44 +1,34 @@
 # -*- coding: utf-8 -*-
-import os
-import dj_database_url
 import django
+import environ
+
+django_ver = django.VERSION[0] * 100 + django.VERSION[1]
+root = environ.Path(__file__) - 2
+env = environ.Env()
+env.read_env(root('.env'))
+
+BASE_DIR = root()
 
 
-_django_version = django.VERSION[0] * 100 + django.VERSION[1]
+DEBUG = env.bool('DEBUG', False)
+DEBUG_SQL = env.bool('DEBUG_SQL', DEBUG)
+DEBUG_API = env.bool('DEBUG_API', DEBUG)
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SECRET_KEY = env.str('SECRET_KEY', 'please change me')
 
-try:
-    from honcho.environ import parse as parse_env
-    with open(os.path.join(BASE_DIR, '.env')) as f:
-        for name, value in parse_env(f.read()).items():
-            os.environ.setdefault(name, value)
-except IOError:
-    pass
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost'])
 
-getenv = os.environ.get
-
-
-DEBUG = bool(int(getenv('DEBUG', False)))
-DEBUG_SQL = bool(int(getenv('DEBUG_SQL', DEBUG)))
-DEBUG_API = bool(int(getenv('DEBUG_API', DEBUG)))
-HEROKU = bool(int(getenv('HEROKU', not DEBUG)))
-
-SECRET_KEY = getenv('SECRET_KEY', 'please change me')
-
-ALLOWED_HOSTS = getenv('ALLOWED_HOSTS', 'localhost').split(',')
-
-DATABASES = {'default': dj_database_url.config(conn_max_age=600)}
+DATABASES = {'default': env.db()}
 
 ROOT_URLCONF = 'web.urls'
 WSGI_APPLICATION = 'web.wsgi.application'
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'dist', 'static')
+STATIC_ROOT = root('dist', 'static')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'assets')
+    root('assets')
 ]
 
 
@@ -46,7 +36,7 @@ WEBPACK_SUBDIR = 'devel' if DEBUG else 'prod'
 WEBPACK_LOADER = {
     'DEFAULT': {
         'BUNDLE_DIR_NAME': '/' + WEBPACK_SUBDIR,
-        'STATS_FILE': os.path.join(BASE_DIR, 'stats-%s.json' % WEBPACK_SUBDIR)
+        'STATS_FILE': root('stats-%s.json' % WEBPACK_SUBDIR)
     }
 }
 
@@ -62,7 +52,7 @@ LANGUAGES = [
 LOCALE_PATHS = []
 
 
-DEBUG_SESSIONS = bool(int(getenv('DEBUG_SESSIONS', False)))
+DEBUG_SESSIONS = env.bool('DEBUG_SESSIONS', False)
 if DEBUG_SESSIONS:
     SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
@@ -95,25 +85,25 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-if _django_version < 110:
+if django_ver < 110:
     MIDDLEWARE_CLASSES = MIDDLEWARE
 
 
 if DEBUG and USE_I18N:
     INSTALLED_APPS += ['rosetta']
     # rosetta does not look into locale directories of installed apps
-    LOCALE_PATHS += [os.path.join(BASE_DIR, 'dz', 'locale')]
+    LOCALE_PATHS += [root('dz', 'locale')]
 
 
-DEBUG_TOOLBAR_ENABLED = bool(int(getenv('DEBUG_TOOLBAR', True)))
+DEBUG_TOOLBAR_ENABLED = env.bool('DEBUG_TOOLBAR', True)
 
 if DEBUG and DEBUG_TOOLBAR_ENABLED:
     INSTALLED_APPS += ['debug_toolbar']
-    INTERNAL_IPS = getenv('INTERNAL_IPS', '127.0.0.1').split(',')
+    INTERNAL_IPS = env.list('INTERNAL_IPS', default=['127.0.0.1'])
     DEBUG_TOOLBAR_CONFIG = {'SHOW_COLLAPSED': True}
     DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
-    if _django_version < 110:
+    if django_ver < 110:
         MIDDLEWARE_CLASSES.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
     else:
         from django.utils.deprecation import MiddlewareMixin
@@ -128,7 +118,7 @@ if DEBUG and DEBUG_TOOLBAR_ENABLED:
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [root('templates')],
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -146,7 +136,7 @@ TEMPLATES = [
     },
     {
         'BACKEND': 'django.template.backends.jinja2.Jinja2',
-        'DIRS': [os.path.join(BASE_DIR, 'templates', 'jinja2')],
+        'DIRS': [root('templates', 'jinja2')],
         'APP_DIRS': True,
         'OPTIONS': {
         },
@@ -209,15 +199,15 @@ TIME_INPUT_FORMATS = ['%H:%M']
 
 
 # Migration from MongoDB
-MONGODB_URL = getenv('MONGODB_URL', '')
+MONGODB_URL = env.str('MONGODB_URL', '')
 
 
 # Custom DZ settings
-SPIDER_TIME_ZONE = getenv('SPIDER_TIME_ZONE', TIME_ZONE)
-SPIDER_SECRET_KEY = getenv('SPIDER_SECRET_KEY', 'please change me')
-SPIDER_PAGE_DELAY = int(getenv('SPIDER_PAGE_DELAY', 50))
-SPIDER_LOAD_IMAGES = bool(int(getenv('SPIDER_LOAD_IMAGES', True)))
-SPIDER_USERPASS = getenv('SPIDER_USERPASS', '')
-SPIDER_LOG_LEVEL = getenv('SPIDER_LOG_LEVEL', 'DEBUG' if DEBUG else 'INFO')
+SPIDER_TIME_ZONE = env.str('SPIDER_TIME_ZONE', TIME_ZONE)
+SPIDER_SECRET_KEY = env.str('SPIDER_SECRET_KEY', 'please change me')
+SPIDER_PAGE_DELAY = env.int('SPIDER_PAGE_DELAY', 50)
+SPIDER_LOAD_IMAGES = env.bool('SPIDER_LOAD_IMAGES', True)
+SPIDER_USERPASS = env.str('SPIDER_USERPASS', '')
+SPIDER_LOG_LEVEL = env.str('SPIDER_LOG_LEVEL', 'DEBUG' if DEBUG else 'INFO')
 FIELD_CUT_LENGTH = 100
-NARROW_GRIDS = bool(int(getenv('NARROW_GRIDS', False)))
+NARROW_GRIDS = False
