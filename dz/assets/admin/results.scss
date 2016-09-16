@@ -37,7 +37,7 @@ body {
     }
   }
 
-  td.field-link_str {
+  td.field-link_str {  // sass-lint:disable-line force-element-nesting no-qualifying-elements
     font-size: 70%;
   }
 }
@@ -56,7 +56,7 @@ body {
 
 .dz-body {
   a,
-  button.btn-link {
+  button.btn-link {  // sass-lint:disable-line force-element-nesting no-qualifying-elements
     font-weight: bold;
   }
 }

@@ -71,7 +71,7 @@ let config = {
       },
       {
         test: /\.scss$/,
-        loader: ExtractTextPlugin.extract('css?sourceMap!sass?sourceMap')
+        loader: ExtractTextPlugin.extract('css?sourceMap!postcss!resolve-url!sass?sourceMap')
       },
       {
         test: /\.(png|gif)$/,
@@ -79,6 +79,8 @@ let config = {
       }
     ]
   },
+
+  postcss: () => [require('autoprefixer')],
 
   externals: {
     jquery: 'django.jQuery'  // global django jquery
