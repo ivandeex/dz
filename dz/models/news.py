@@ -108,7 +108,7 @@ class NewsText(models.Model):
 
         def fix_bookmaker_img(html):
             return re.sub(r'<img\s([^>]*?)\bsrc="img/kladionice/([^/"]+)"(.*?)>',
-                          r'<img \1src="img/bookmaker-\2"\3>',
+                          r'<img \1src="img/bookmaker/\2"\3>',
                           html)
 
         # deactivate external links in content and data

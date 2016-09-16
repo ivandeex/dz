@@ -2,6 +2,7 @@
 
 const path = require('path'),
       webpack = require('webpack'),
+      fileExists = require('file-exists'),
       ExtractTextPlugin = require('extract-text-webpack-plugin'),
       DjangoBundleTracker = require('webpack-bundle-tracker'),
       CopyPlugin = require('copy-webpack-plugin'),
@@ -53,7 +54,10 @@ let config = {
       },
       {
         test: /\.css$/,
-        loader: ExtractTextPlugin.extract('css?sourceMap')
+        loader: ExtractTextPlugin.extract([
+                  'string-replace?search=url\\(\\.\\./img/&replace=url_FixWhiteNoice(../img/&flags=g',
+                  'css?sourceMap'
+                ])
       },
       {
         test: /\.scss$/,
@@ -87,10 +91,20 @@ let config = {
     // global django jquery
     new webpack.ProvidePlugin({ $: 'jquery' }),
 
+    // resolve absent css images with fallback 1x1
+    new webpack.NormalModuleReplacementPlugin(
+      /^(\.\.\/img\/.*\.(png|gif|jpg)|\.\/css\/pie\.htc)$/, (result) => {
+        if (/news-content\/css$/.test(result.context) &&
+            !fileExists(path.resolve(result.context, result.request))) {
+          // console.log('absent: ' + path.resolve(result.context, result.request));
+          result.request = `file?name=1x1.png!../img/1x1.png`;
+        }
+    }),
+
     new ExtractTextPlugin('[name].css', { allChunks: true }),
 
     new CopyPlugin([
-      { from: 'dz/assets/news-content/img/bookmakers', to: 'bookmakers' }
+      { from: 'dz/assets/news-content/img/bookmakers', to: 'bookmaker' }
     ]),
 
     new CleanPlugin([`assets/${TARGET}`])
