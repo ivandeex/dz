@@ -1,11 +1,13 @@
 'use strict';
 
 // Entry bundle is only needed by webpack-dev-server to hot-reload the page,
-// so we never really call __requirements__().
-function __requirements__(name) {
-  require.include('./css/base.css');
-  require.include('./css/custom.scss');
+// so we never really call __requirements().
+function __requirements(name) {
+  require.ensure([], function(require) {
+    // Split required images into lazy bundle by asynchronous amd:
+    require('./img/bookmakers/' + name + '.png');
 
-  // Split required images into lazy bundle by asynchronous amd:
-  require(['./img/bookmakers/' + name], () => {});
+    require.include('./css/base.css');
+    require.include('./css/custom.scss');
+  }, 'bookmakers');
 }

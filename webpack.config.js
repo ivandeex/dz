@@ -23,7 +23,7 @@ let config = {
   output: {
     path: `${__dirname}/assets/${bundle_dir}`,
     filename: '[name].js',
-    chunkFilename: 'chunk.[name]-[id].js',
+    chunkFilename: '_[name]-[id].js',
     publicPath: is_dev_server ? `http://${dev_host}:${dev_port}/`: `/static/${bundle_dir}/`
   },
 
@@ -66,6 +66,10 @@ let config = {
       }
     ]
   },
+
+  externals: [
+    'django.jQuery'  // global django
+  ],
 
   plugins: [
     new webpack.NoErrorsPlugin(),  // don't publish if compilation fails

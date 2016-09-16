@@ -1,6 +1,7 @@
 'use strict';
 
-require('./base.scss');
-require('./changelist.scss');
-require('./results.scss');
-require('./filter.js');
+require('imports?$=django.jQuery!./filter.js');
+
+require.include('./base.scss');
+require.include('./changelist.scss');
+require.include('./results.scss');

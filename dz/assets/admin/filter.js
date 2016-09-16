@@ -1,6 +1,4 @@
 'use strict';
-/* global django */
-var $ = django.jQuery;
 
 $(() => {
   $('.messagelist li').click(function() {
