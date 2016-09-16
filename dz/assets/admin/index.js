@@ -1,6 +1,6 @@
 'use strict';
 
-require('imports?$=django.jQuery!./filter.js');
+require('./filter.js');
 
 require.include('./base.scss');
 require.include('./changelist.scss');

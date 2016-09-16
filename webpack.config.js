@@ -1,44 +1,48 @@
 'use strict';
 
-let path = require('path'),
-    webpack = require('webpack'),
-    ExtractTextPlugin = require('extract-text-webpack-plugin'),
-    DjangoBundleTracker = require('webpack-bundle-tracker'),
-    CleanPlugin = require('clean-webpack-plugin');
+const path = require('path'),
+      webpack = require('webpack'),
+      ExtractTextPlugin = require('extract-text-webpack-plugin'),
+      DjangoBundleTracker = require('webpack-bundle-tracker'),
+      CopyPlugin = require('copy-webpack-plugin'),
+      CleanPlugin = require('clean-webpack-plugin');
 
-const dev_host = process.env.DEV_HOST || 'localhost',
-      dev_port = parseInt(process.env.DEV_PORT || 3000),
-      web_port = parseInt(process.env.WEB_PORT || 8000),
-      is_production = process.env.NODE_ENV === 'production',
-      is_dev_server = require.main.filename.indexOf('webpack-dev-server') !== -1;
+const DEV_HOST = process.env.DEV_HOST || 'localhost',
+      DEV_PORT = parseInt(process.env.DEV_PORT || 3000),
+      WEB_PORT = parseInt(process.env.WEB_PORT || 8000),
+      PRODUCTION = process.env.NODE_ENV === 'production',
+      DEV_SERVER = require.main.filename.indexOf('webpack-dev-server') !== -1;
 
-const bundle_dir = is_production ? 'prod' : 'devel';
+const TARGET = PRODUCTION ? 'prod' : 'devel';
 
 let config = {
+  context: __dirname,
+
   entry: {
     'dz-admin': './dz/assets/admin',
     'dz-news-content': './dz/assets/news-content'
   },
 
   output: {
-    path: `${__dirname}/assets/${bundle_dir}`,
+    path: path.resolve(__dirname, 'assets', TARGET),
     filename: '[name].js',
     chunkFilename: '_[name]-[id].js',
-    publicPath: is_dev_server ? `http://${dev_host}:${dev_port}/`: `/static/${bundle_dir}/`
+    publicPath: DEV_SERVER ? `http://${DEV_HOST}:${DEV_PORT}/`: `/static/${TARGET}/`,
+    pathinfo: !PRODUCTION
   },
 
   devServer: {
     proxy: {
       '/static/*': {
-        target: `http://${dev_host}:${web_port}/`
+        target: `http://${DEV_HOST}:${WEB_PORT}/`
       }
     },
-    host: dev_host,
-    port: dev_port,
+    host: DEV_HOST,
+    port: DEV_PORT,
     inline: true
   },
 
-  devtool: is_production ? null : 'cheap-inline-module-source-map',
+  devtool: PRODUCTION ? null : 'cheap-inline-module-source-map',
 
   module: {
     loaders: [
@@ -56,42 +60,49 @@ let config = {
         loader: ExtractTextPlugin.extract('css?sourceMap!sass?sourceMap')
       },
       {
-        include: /\/img\/bookmakers\//,
-        loader: 'file?name=bookmaker-[name].[ext]'
-      },
-      {
         test: /\.(png|gif)$/,
-        exclude: /\/img\/bookmakers\//,
         loader: 'url?name=[name].[hash:4].[ext]&limit=3100'
       }
     ]
   },
 
-  externals: [
-    'django.jQuery'  // global django
-  ],
+  externals: {
+    jquery: 'django.jQuery'  // global django jquery
+  },
 
   plugins: [
-    new webpack.NoErrorsPlugin(),  // don't publish if compilation fails
-    new webpack.optimize.OccurenceOrderPlugin(),  // keep hashes consistent between builds
-    new CleanPlugin([`assets/${bundle_dir}`], {}),
-    new DjangoBundleTracker({  // must be the first
-      path: __dirname,
-      filename: is_production ? 'stats-prod.json': 'stats-devel.json'
-    }),
-    new ExtractTextPlugin(
-      '[name].css',
-      {allChunks: true}
-    )
-  ]
-};
 
-if (is_production) {
-  config.plugins = config.plugins.concat([
+    // must be the first
+    new DjangoBundleTracker({
+      path: __dirname,
+      filename: `stats-${TARGET}.json`
+    }),
+
+    // don't publish if compilation fails
+    new webpack.NoErrorsPlugin(),
+
+    // keep hashes consistent between builds
+    new webpack.optimize.OccurenceOrderPlugin(),
+
+    // global django jquery
+    new webpack.ProvidePlugin({ $: 'jquery' }),
+
+    new ExtractTextPlugin('[name].css', { allChunks: true }),
+
+    new CopyPlugin([
+      { from: 'dz/assets/news-content/img/bookmakers', to: 'bookmakers' }
+    ]),
+
+    new CleanPlugin([`assets/${TARGET}`])
+
+  // production-only plugins
+  ].concat(PRODUCTION ? [
+
     new webpack.optimize.UglifyJsPlugin({
       compressor: {warnings: false}
     })
-  ]);
-}
+
+  ] : [])
+};
 
 module.exports = config;

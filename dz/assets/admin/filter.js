@@ -1,4 +1,5 @@
 'use strict';
+/* global $ */
 
 $(() => {
   $('.messagelist li').click(function() {
