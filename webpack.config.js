@@ -16,6 +16,16 @@ const DEV_HOST = process.env.DEV_HOST || 'localhost',
 
 const TARGET = PRODUCTION ? 'prod' : 'devel';
 
+// Whitenoise fails if a css-referenced image does not exist.
+// Below we replace suck references in url() with webpack.NormalModuleReplacementPlugin,
+// This pass ignores url() references inside comments, but stupid whitenoice still fails,
+// since it's simple and reacts just to the url(...) sequence in css. As a workaround,
+// we pass css through regexp-loader and replace url(../img/*) by url_SOMETHING.
+// For simplicity we don't check for (possibly multiline) comments around url() and use
+// simple fact that all replaced image links start with slash (due to output.publicPath).
+const WHITENOICE_CSS_FIX = { match: { pattern: 'url\\(\\.\\./img/', flags: 'g' },
+                             replaceWith: 'url_FixWhiteNoice(../img/' };
+
 let config = {
   context: __dirname,
 
@@ -55,9 +65,9 @@ let config = {
       {
         test: /\.css$/,
         loader: ExtractTextPlugin.extract([
-                  'string-replace?search=url\\(\\.\\./img/&replace=url_FixWhiteNoice(../img/&flags=g',
-                  'css?sourceMap'
-                ])
+          'regexp-replace?' + JSON.stringify(WHITENOICE_CSS_FIX),
+          'css?sourceMap'
+        ])
       },
       {
         test: /\.scss$/,
