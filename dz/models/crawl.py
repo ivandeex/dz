@@ -59,18 +59,17 @@ class Crawl(models.Model):
             return 'refused'
 
         # shift for later time if there is an active manual job with same time
-        objs = cls.objects
-        while objs.filter(started=now_utc).filter(~Q(status='waiting')).exists():
+        while cls.objects.filter(started=now_utc).filter(~Q(status='waiting')).exists():
             now_utc += timezone.timedelta(minutes=1)
 
         # update time of existing waiting job or create a new job
         try:
-            wjob = objs.get(target=target, status='waiting', manual=True)
+            wjob = cls.objects.get(target=target, status='waiting', manual=True)
             wjob.started = now_utc
             wjob.save()
             return 'updated'
         except cls.DoesNotExist:
-            objs.create(target=target, status='waiting', started=now_utc, manual=True)
+            cls.objects.create(target=target, status='waiting', started=now_utc, manual=True)
             return 'submitted'
 
     @classmethod
@@ -78,13 +77,15 @@ class Crawl(models.Model):
         return cls.objects.filter(status='waiting', manual=True).order_by('id').first()
 
     @classmethod
-    def get_auto_crawl(cls, consume=True):
-        utc, target = Schedule.get_next_job(consume)
-        if consume and utc and target:
-            objs = cls.objects
-            crawl = objs.create(target=target, status='waiting', started=utc, manual=False)
-            logger.info('Schedule %s crawl at %02d:%02d (UTC)', target, utc.hour, utc.minute)
-            return crawl
+    def get_auto_crawl(cls):
+        utc, target = Schedule.get_next_job(consume=True)
+        if not utc:
+            return
+        if cls.objects.filter(target=target, started=utc, manual=False).exists():
+            logger.info('Auto-skip %s crawl at %02d:%02d (UTC)', target, utc.hour, utc.minute)
+            return
+        logger.info('Schedule %s crawl at %02d:%02d (UTC)', target, utc.hour, utc.minute)
+        return cls.objects.create(target=target, status='waiting', started=utc, manual=False)
 
     @classmethod
     def from_json(cls, req):
