@@ -14,9 +14,14 @@ DEBUG = env.bool('DEBUG', False)
 DEBUG_SQL = env.bool('DEBUG_SQL', DEBUG)
 DEBUG_API = env.bool('DEBUG_API', DEBUG)
 
-SECRET_KEY = env.str('SECRET_KEY', 'please change me')
-
+# ALLOWED_HOSTS is required by production mode
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost'])
+
+# INTERNAL_IPS is required by debug toolbar and debug context processor
+INTERNAL_IPS = env.list('INTERNAL_IPS', default=['127.0.0.1'])
+
+
+SECRET_KEY = env.str('SECRET_KEY', 'please change me')
 
 DATABASES = {'default': env.db()}
 
@@ -59,6 +64,7 @@ if DEBUG_SESSIONS:
 
 INSTALLED_APPS = [
     'dz',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -99,7 +105,6 @@ DEBUG_TOOLBAR_ENABLED = env.bool('DEBUG_TOOLBAR', True)
 
 if DEBUG and DEBUG_TOOLBAR_ENABLED:
     INSTALLED_APPS += ['debug_toolbar']
-    INTERNAL_IPS = env.list('INTERNAL_IPS', default=['127.0.0.1'])
     DEBUG_TOOLBAR_CONFIG = {'SHOW_COLLAPSED': True}
     DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
