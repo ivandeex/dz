@@ -31,7 +31,7 @@ let config = {
 
   entry: {
     'dz-admin': './dz/assets/admin',
-    'dz-news-content': './dz/assets/news-content'
+    'dz-newsbox': './dz/assets/newsbox'
   },
 
   output: {
@@ -106,7 +106,7 @@ let config = {
     // resolve absent css images with fallback 1x1
     new webpack.NormalModuleReplacementPlugin(
       /^(\.\.\/img\/.*\.(png|gif|jpg)|\.\/css\/pie\.htc)$/, (result) => {
-        if (/news-content\/css$/.test(result.context) &&
+        if (/newsbox\/css$/.test(result.context) &&
             !fileExists(path.resolve(result.context, result.request))) {
           // console.log('absent: ' + path.resolve(result.context, result.request));
           result.request = `file?name=1x1.png!../img/1x1.png`;
@@ -116,7 +116,7 @@ let config = {
     new ExtractTextPlugin('[name].css', { allChunks: true }),
 
     new CopyPlugin([
-      { from: 'dz/assets/news-content/img/bookmakers', to: 'bookmaker' }
+      { from: 'dz/assets/newsbox/img/bookmakers', to: 'bookmaker' }
     ]),
 
     new CleanPlugin([`assets/${TARGET}`])

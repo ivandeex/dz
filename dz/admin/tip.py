@@ -48,7 +48,7 @@ class TipAdmin(DzCrawlModelAdmin):
         return (auth_user or self._request.user).has_perm('dz.follow_tips')
 
     def description_str(self, obj):
-        tpl = TemplateResponse(self._request, 'admin/dz/tip_content_cut.html',
+        tpl = TemplateResponse(self._request, 'admin/dz/tip_description.html',
                                context=dict(tip=obj, opts=self.opts))
         return tpl.rendered_content
     description_str.short_description = _('tip cut (column)')
@@ -82,16 +82,16 @@ class TipAdmin(DzCrawlModelAdmin):
     link_str.admin_order_field = 'link'
 
     def get_urls(self):
-        tip_content_url = url(
-            r'^(?P<pk>\d+)/tip-content/$',
-            self.admin_site.admin_view(self.tip_content_view),
-            name='%s_%s_tip_content' % (self.opts.app_label, self.opts.model_name))
-        return [tip_content_url] + super(TipAdmin, self).get_urls()
+        tipbox_url = url(
+            r'^(?P<pk>\d+)/tipbox/$',
+            self.admin_site.admin_view(self.tipbox_view),
+            name='%s_%s_tipbox' % (self.opts.app_label, self.opts.model_name))
+        return [tipbox_url] + super(TipAdmin, self).get_urls()
 
-    def tip_content_view(self, request, pk):
+    def tipbox_view(self, request, pk):
         tip = self.get_object(request, pk)
         if tip:
-            return TemplateResponse(request, 'admin/dz/tip_content_popup.html',
+            return TemplateResponse(request, 'admin/dz/tipbox_popup.html',
                                     dict(tip=tip, is_popup=True))
         else:
             return HttpResponseNotFound()

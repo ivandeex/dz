@@ -50,7 +50,7 @@ class NewsAdmin(DzCrawlModelAdmin):
         return (auth_user or self._request.user).has_perm('dz.follow_news')
 
     def description_str(self, obj):
-        tpl = TemplateResponse(self._request, 'admin/dz/news_content_cut.html',
+        tpl = TemplateResponse(self._request, 'admin/dz/news_description.html',
                                context=dict(news=obj, opts=self.opts))
         return tpl.rendered_content
     description_str.short_description = _('news cut (column)')
@@ -73,19 +73,19 @@ class NewsAdmin(DzCrawlModelAdmin):
     link_str.admin_order_field = 'link'
 
     def get_urls(self):
-        news_content_url = url(
-            r'^(?P<pk>\d+)/news-content/$',
-            self.admin_site.admin_view(self.news_content_view),
+        newsbox_url = url(
+            r'^(?P<pk>\d+)/newsbox/$',
+            self.admin_site.admin_view(self.newsbox_view),
             name='%s_%s_news_content' % (self.opts.app_label, self.opts.model_name)
         )
         data_table_img_url = url(
-            r'^\d+/news-content/img/(?P<path>.*)$',
+            r'^\d+/newsbox/img/(?P<path>.*)$',
             self.data_table_img_view
         )
         orig_urls = super(NewsAdmin, self).get_urls()
-        return [news_content_url, data_table_img_url] + orig_urls
+        return [newsbox_url, data_table_img_url] + orig_urls
 
-    def news_content_view(self, request, pk):
+    def newsbox_view(self, request, pk):
         news = self.get_object(request, pk)
         if news:
             context = {
@@ -93,7 +93,7 @@ class NewsAdmin(DzCrawlModelAdmin):
                 'can_follow_links': self.user_can_follow_links(request.user),
                 'debug': settings.DEBUG,
             }
-            return TemplateResponse(request, 'admin/dz/news_content_popup.html', context)
+            return TemplateResponse(request, 'admin/dz/newsbox_popup.html', context)
         else:
             return HttpResponseNotFound()
 

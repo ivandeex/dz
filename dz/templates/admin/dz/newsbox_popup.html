@@ -9,7 +9,7 @@
     {% if can_follow_links %}
     <meta name="referrer" content="no-referrer">
     {% endif %}
-    {% render_bundle 'dz-news-content' 'css' %}
+    {% render_bundle 'dz-newsbox' 'css' %}
 </head>
 <body>
   <div class="news-block nlsn_content">
@@ -34,7 +34,7 @@
   {{ news.newstext.datatable | safe }}
   </div>
   {% if debug %}
-  {% render_bundle 'dz-news-content' 'js' %}
+  {% render_bundle 'dz-newsbox' 'js' %}
   {% endif %}
 </body>
 </html>
