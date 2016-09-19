@@ -10,7 +10,7 @@ class Tip(models.Model):
     id = models.IntegerField(_('tip id (column)'), db_column='pk', primary_key=True)
     league = models.CharField(_('tip league (column)'), max_length=40, db_index=True)
     parties = models.CharField(_('tip parties (column)'), max_length=150, db_index=True)
-    title = models.CharField(_('tip title (column)'), max_length=70)
+    title = models.CharField(_('tip title (column)'), max_length=90)
     # Translators: Bookmaker (Kladionica)
     bookmaker = models.CharField(_('tip bookmaker (column)'), max_length=32)
     # Translators: Coeff. (Koeficijent)
