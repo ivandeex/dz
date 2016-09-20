@@ -1,0 +1,53 @@
+#grp-user-tools {
+  .grp-user-options-container {
+    width: 120px !important; // override grappelli, make this item shorter
+  }
+}
+
+#grp-admin-title {
+  border-right: 1px solid #090909;  // copy border style from #grp-user-tools
+  font-size: 16px !important;
+  padding-right: 16px !important;
+}
+
+.dz-top-nav {
+  list-style-type: none;
+  padding: 10px;  // copy padding from grappelli's #grap-admin-title
+
+  display: inline-block;
+  white-space: nowrap;
+
+  @media(min-width: 960px) {
+    position: absolute;
+    left: 40%;
+    transform: translateX(-50%);
+  }
+
+  li {
+    display: inline-block;
+    white-space: nowrap;
+
+    margin-left: 12px;
+    font-weight: bold;
+  }
+
+  a {
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.dz-time {
+  // copy padding from grapelli's grp-horizontal-list
+  padding: 5px 20px;
+
+  .dz-time__label {
+    opacity: .7;
+    font-size: 80%;
+    vertical-align: top;  // compensate for smaller font
+    margin-right: 10px;
+  }
+}

@@ -47,7 +47,7 @@ class NewsAdmin(DzCrawlModelAdmin):
         return (auth_user or self._request.user).has_perm('dz.follow_news')
 
     def description_str(self, obj):
-        tpl = TemplateResponse(self._request, 'admin/dz/news_description.html',
+        tpl = TemplateResponse(self._request, 'admin/dz-admin/news_description.html',
                                context=dict(news=obj, opts=self.opts))
         return tpl.rendered_content
     description_str.short_description = _('news cut (column)')
@@ -89,7 +89,7 @@ class NewsAdmin(DzCrawlModelAdmin):
                 'news': news,
                 'can_follow_links': self.user_can_follow_links(request.user),
             }
-            return TemplateResponse(request, 'admin/dz/newsbox_popup.html', context)
+            return TemplateResponse(request, 'admin/dz-admin/newsbox_popup.html', context)
         else:
             return HttpResponseNotFound()
 

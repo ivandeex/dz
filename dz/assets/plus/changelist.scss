@@ -1,0 +1,35 @@
+$header-line-height: 40px;
+$header-vert-padding: 10px;
+$breadcrumbs-line-height: 19px;
+$breadcrumbs-vert-padding: 10px;
+$content-vert-padding: 10px;
+$content-h1-line-height: 27px;
+$content-h1-vert-padding: 10px;
+$xfull-line-height: 27px;
+$actions-line-height: 26px;
+$actions-vert-padding: 10px;
+$results-top-margin: 5px;
+$paginator-line-height: 22px;
+$paginator-vert-padding: 10px;
+$paginator-border-height: 1px;
+
+$filter-title-color: #79aec8;
+
+@import 'changelist-filter';
+@import 'result_list';
+
+.object-tools {
+  margin-right: 20px;
+}
+
+#content {
+  padding: $content-vert-padding 20px;
+}
+
+#footer {
+  padding: 0;
+}
+
+#changelist {
+  margin-bottom: 0;
+}

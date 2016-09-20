@@ -12,32 +12,39 @@
 {% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
 {% block branding %}
-<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}+</a></h1>
 {% endblock %}
 
 {% block extrastyle %}
 {{ block.super }}
-{% render_bundle 'dz-admin' 'css' %}
+{% if dz_skin == 'plus' %}
+  {% render_bundle 'dz-plus' 'css' %}
+{% endif %}
 {% endblock %}
 
 {% block footer %}
 {{ block.super }}
-{% render_bundle 'dz-admin' 'js' %}
+{% if dz_skin == 'plus' %}
+  {% render_bundle 'dz-plus' 'js' %}
+{% endif %}
 {% endblock %}
 
 {% block nav-global %}
-  {{ block.super }}
-
+{{ block.super }}
+{% if dz_skin == 'plus' %}
   <ul class="dz-top-nav">
   {% for model in dz_models %}
     <li><a href="{{ model.url }}">{{ model.name }}</a></li>
   {% endfor %}
   </ul>
+{% endif %}
 {% endblock %}
 
 {% block usertools %}
-  {{ block.super }}
+{{ block.super }}
+{% if dz_skin == 'plus' %}
   {% block lang-selector %}
-    {% include "admin/dz/lang_selector.html" %}
+    {% include "admin/dz-plus/lang_selector.html" %}
   {% endblock %}
+{% endif %}
 {% endblock %}

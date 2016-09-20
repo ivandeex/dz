@@ -1,0 +1,79 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+{% load render_bundle from webpack_loader %}
+
+{% block extrastyle %}
+{{ block.super }}
+  {% render_bundle 'dz-grappelli' 'css' %}
+{% endblock %}
+
+{% block javascripts %}
+{{ block.super }}
+  {% render_bundle 'dz-grappelli' 'js' %}
+{% endblock %}
+
+{# grappelli does not provide model name class, so we force it here #}
+{% block bodyclass %}{{block.super}} model-{{model_name}}{% endblock %}
+
+{% block blockbots %}
+{{ block.super }}
+{% if can_follow_links %}
+{# prevent browser from setting referrer when clicking on external links #}
+<meta name="referrer" content="no-referrer" />
+{% endif %}
+{% endblock %}
+
+{% block page-tools %}
+{{ block.super }}
+{% if not is_popup %}
+<div class="dz-time"><span class="dz-time__label">{% trans 'Server time' %} ({{ server_time|date:"e" }}):</span><span class="dz-time__value">{{ server_time|date:"Y-m-d H:i" }}</span></div>
+{% endif %}
+{% endblock %}
+
+{% block user-tools %}
+  {% block dz-top-nav %}
+  <ul class="dz-top-nav">
+  {% for model in dz_models %}
+    <li><a href="{{ model.url }}">{{ model.name }}</a></li>
+  {% endfor %}
+  </ul>
+  {% endblock %}
+
+{{ block.super }}
+{% endblock %}
+
+{% block userlinks %}
+{{ block.super }}
+
+  {% block lang-selector %}
+  {% get_current_language as cur_lang %}
+  {% get_available_languages as all_langs %}
+  <li class="grp-collapse grp-closed">
+    <a href="javascript://" class="user-options-handler grp-collapse-handler">{{cur_lang}}</a>
+    <ul>
+      {% for lang in all_langs %}
+      {% if lang.0 != cur_lang %}
+      <li>
+        <a href="javascript:document.forms['setlang-{{lang.0}}'].submit();">{{lang.0}}</a>
+        <form name="setlang-{{lang.0}}" action="{% url 'set_language' %}" method="post" style="display:none;">
+          {% csrf_token %}
+          <input name="next" type="hidden" value="{{redirect_to}}" />
+          <input name="language" type="hidden" value="{{lang.0}}" />
+        </form>
+      </li>
+      {% endif %}
+      {% endfor %}
+    </ul>
+  </li>
+  {% endblock %}
+{% endblock %}
+
+{% block object-tools-items %}
+  {{ block.super }}
+  {% if can_crawl %}
+    <li><a href="crawl/{{ cl.get_query_string }}" class="grp-add-link grp-state-focus">{% blocktrans with target=cl.opts.verbose_name_plural %}Crawl {{target}}{% endblocktrans %}</a></li>
+  {% endif %}
+  {% if can_export %}
+    <li><a href="export/{{ cl.get_query_string }}" class="grp-add-link grp-state-focus">{% trans "Export" %}</a></li>
+  {% endif %}
+{% endblock %}

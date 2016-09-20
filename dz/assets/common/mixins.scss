@@ -1,0 +1,12 @@
+
+@mixin field-description {
+  min-width: 240px;
+}
+
+@mixin field-title {
+  min-width: 150px;
+}
+
+@mixin field-link {
+  font-size: 70%;
+}

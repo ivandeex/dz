@@ -1,0 +1,18 @@
+@import '../common/mixins';
+
+// grappelli does not provide model name class on the body tag,
+// so we force them in the overridden DzModelAdmin
+.model-news,
+.model-tip {
+  .field-description_str {
+    @include field-description;
+  }
+
+  .field-title {
+    @include field-title;
+  }
+}
+
+.field-link_str {
+  @include field-link;
+}

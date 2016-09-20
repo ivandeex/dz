@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
 import django
 import environ
+from django.utils.translation import ugettext_lazy as _
+
 
 django_ver = django.VERSION[0] * 100 + django.VERSION[1]
 root = environ.Path(__file__) - 2
 env = environ.Env()
 env.read_env(root('.env'))
 
+
 BASE_DIR = root()
 
+DZ_SKIN = env.str('DZ_SKIN', 'grappelli')
+assert DZ_SKIN in ('django', 'plus', 'grappelli', 'bootstrap')
 
 DEBUG = env.bool('DEBUG', False)
 DEBUG_SQL = env.bool('DEBUG_SQL', DEBUG)
@@ -63,7 +68,7 @@ if DEBUG_SESSIONS:
 
 
 INSTALLED_APPS = [
-    'dz',
+    'dz',  # override django admin templates, most importantly base_site.html
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -79,6 +84,10 @@ INSTALLED_APPS = [
     'constance.backends.database',
 ]
 
+if DZ_SKIN == 'grappelli':
+    # override dz's admin templates, in particular base_site.html
+    INSTALLED_APPS.insert(0, 'grappelli')
+    GRAPPELLI_ADMIN_TITLE = _('D.Z.')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -126,6 +135,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'dz.admin.context_processors.dz_skin'
             ],
             'loaders': [
                 ('django.template.loaders.cached.Loader', [

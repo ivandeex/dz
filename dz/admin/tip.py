@@ -2,6 +2,7 @@ from __future__ import unicode_literals, absolute_import
 from django.template.response import TemplateResponse
 from django.http import HttpResponseNotFound
 from django.conf.urls import url
+from django.conf import settings
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from .common import DzCrawlModelAdmin, DzExportResource
@@ -44,7 +45,7 @@ class TipAdmin(DzCrawlModelAdmin):
         return (auth_user or self._request.user).has_perm('dz.follow_tips')
 
     def description_str(self, obj):
-        tpl = TemplateResponse(self._request, 'admin/dz/tip_description.html',
+        tpl = TemplateResponse(self._request, 'admin/dz-admin/tip_description.html',
                                context=dict(tip=obj, opts=self.opts))
         return tpl.rendered_content
     description_str.short_description = _('tip cut (column)')
@@ -87,7 +88,12 @@ class TipAdmin(DzCrawlModelAdmin):
     def tipbox_view(self, request, pk):
         tip = self.get_object(request, pk)
         if tip:
-            return TemplateResponse(request, 'admin/dz/tipbox_popup.html',
-                                    dict(tip=tip, is_popup=True))
+            skin = settings.DZ_SKIN
+            if skin == 'grappelli':
+                is_popup = False
+            else:
+                skin, is_popup = 'plus', True
+            template = 'admin/dz-%s/tipbox_popup.html' % skin
+            return TemplateResponse(request, template, dict(tip=tip, is_popup=is_popup))
         else:
             return HttpResponseNotFound()

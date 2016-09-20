@@ -2,6 +2,7 @@
 
 const path = require('path'),
       webpack = require('webpack'),
+      autoprefixer = require('autoprefixer'),
       fileExists = require('file-exists'),
       ExtractTextPlugin = require('extract-text-webpack-plugin'),
       DjangoBundleTracker = require('webpack-bundle-tracker'),
@@ -17,7 +18,7 @@ const DEV_HOST = process.env.DEV_HOST || 'localhost',
 const TARGET = PRODUCTION ? 'prod' : 'devel';
 
 // Whitenoise fails if a css-referenced image does not exist.
-// Below we replace suck references in url() with webpack.NormalModuleReplacementPlugin,
+// Below we replace such references in url() with webpack.NormalModuleReplacementPlugin,
 // This pass ignores url() references inside comments, but stupid whitenoice still fails,
 // since it's simple and reacts just to the url(...) sequence in css. As a workaround,
 // we pass css through regexp-loader and replace url(../img/*) by url_SOMETHING.
@@ -34,7 +35,8 @@ let config = {
   context: __dirname,
 
   entry: {
-    'dz-admin': './dz/assets/admin',
+    'dz-plus': './dz/assets/plus',
+    'dz-grappelli': './dz/assets/grappelli',
     'dz-newsbox': './dz/assets/newsbox'
   },
 
@@ -84,11 +86,14 @@ let config = {
     ]
   },
 
-  postcss: () => [require('autoprefixer')],
+  postcss: () => [
+    autoprefixer({ browsers: ['last 2 versions', '> 5%'] })
+  ],
 
-  externals: {
-    jquery: 'django.jQuery'  // global django jquery
-  },
+  externals: [
+    'django.jQuery',  // global django jquery
+    'grp.jQuery'      // grappelli skin' jQuery
+  ],
 
   plugins: [
 
@@ -103,9 +108,6 @@ let config = {
 
     // keep hashes consistent between builds
     new webpack.optimize.OccurenceOrderPlugin(),
-
-    // global django jquery
-    new webpack.ProvidePlugin({ $: 'jquery' }),
 
     // resolve absent css images with fallback 1x1
     new webpack.NormalModuleReplacementPlugin(

@@ -47,7 +47,7 @@ def api2time(time_str, tzname=None):
 
 def parse_request(request, command):
     assert request.method == 'POST', 'Invalid request type'
-    assert request.content_type == 'application/json', 'Invalid content type'
+    assert request.META['CONTENT_TYPE'] == 'application/json', 'Invalid content type'
 
     unicode_body = request.body.decode(request.encoding or settings.DEFAULT_CHARSET)
     req = json_decode(unicode_body)

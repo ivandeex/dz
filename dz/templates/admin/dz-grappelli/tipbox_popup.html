@@ -1,0 +1,22 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{% blocktrans with id=tip.id %}Tip #{{id}}{% endblocktrans %}{% endblock %}
+
+{% block header %}
+<header id="grp-header" class="">
+  <div id="grp-navigation">
+    <h1 id="grp-admin-title">{{tip.title}} [{{tip.id}}]</h1>
+    <ul id="grp-user-tools">
+      <li><a href="javascript:window.close();">{% trans 'Close' %}</a></li>
+    </ul>
+  </div>
+</header>
+{% endblock %}
+
+{% block messages %}
+{% endblock %}
+
+{% block content %}
+<p>{{ tip.text }}</p>
+{% endblock %}

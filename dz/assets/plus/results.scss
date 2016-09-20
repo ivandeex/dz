@@ -1,0 +1,24 @@
+
+@import '../common/mixins';
+
+.model-tip {
+  .field-description_str {
+    @include field-description;
+  }
+}
+
+.model-news {
+  .field-description_str {
+    @include field-description;
+  }
+
+  .field-title {
+    @include field-title;
+  }
+}
+
+#result_list {
+  .field-link_str {  // sass-lint:disable-line force-element-nesting no-qualifying-elements
+    @include field-link;
+  }
+}

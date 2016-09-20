@@ -3,6 +3,7 @@ from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
 from django.conf.urls import url
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
+from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from import_export.admin import ExportMixin
@@ -12,7 +13,11 @@ from ..models import Crawl
 
 
 class DzSelectFieldListFilter(admin.AllValuesFieldListFilter):
-    template = 'admin/dz/list_filter.html'
+
+    def __init__(self, *args, **kwargs):
+        if settings.DZ_SKIN == 'plus':
+            self.template = 'admin/dz-plus/list_filter.html'
+        super(DzSelectFieldListFilter, self).__init__(*args, **kwargs)
 
 
 class DzArchivedListFilter(admin.SimpleListFilter):
@@ -43,10 +48,6 @@ class DzModelAdmin(admin.ModelAdmin):
     can_export = False
     _get_readonly_fields_called = False
 
-    # class Media:
-    #     css = {'all': ['dz/admin/changelist.css', 'dz/admin/results.css']}
-    #     js = ['dz/admin/filter.js']
-
     crawl_action = None
 
     def user_can_crawl(self, auth_user):
@@ -57,6 +58,12 @@ class DzModelAdmin(admin.ModelAdmin):
 
     def user_can_follow_links(self, auth_user):
         return False
+
+    def __init__(self, *args, **kwargs):
+        skin = settings.DZ_SKIN
+        if skin in ('plus', 'grappelli'):
+            self.change_list_template = 'admin/dz-%s/change_list.html' % skin
+        super(DzModelAdmin, self).__init__(*args, **kwargs)
 
     def get_list_display_links(self, request, list_display):
         if self.user_is_readonly(request.user):
@@ -87,12 +94,14 @@ class DzModelAdmin(admin.ModelAdmin):
                 # the URL to internationalize. We might disable HTTP_REFERRED for selected
                 # users, so we set the fallback here.
                 'redirect_to': request.get_full_path(),
+                # grappelli does not provide model name class on the body element,
+                # so we do it ourselves.
+                'model_name': self.model._meta.model_name,
             })
         return tpl_resp
 
 
 class DzCrawlModelAdmin(ExportMixin, DzModelAdmin):
-    change_list_template = 'admin/dz/change_list.html'
     formats = [base_formats.XLSX]
     can_export = True
 

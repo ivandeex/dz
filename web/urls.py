@@ -15,6 +15,9 @@ urlpatterns_i18n = [
     url(r'^$', lambda request: redirect('dz:index')),
 ]
 
+if settings.DZ_SKIN == 'grappelli':
+    urlpatterns_i18n.insert(0, url(r'^grappelli/', include('grappelli.urls')))
+
 urlpatterns_setlang = [url(r'^i18n/', include('django.conf.urls.i18n'))]
 
 urlpatterns_i18n += urlpatterns_setlang
