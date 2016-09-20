@@ -6,6 +6,7 @@ from django.conf import settings
 from django.utils import timezone
 from pymongo import MongoClient
 from dz import models
+from dz.config import spider_config
 
 
 class Command(BaseCommand):
@@ -38,7 +39,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        self.default_tz = pytz.timezone(settings.SPIDER_TIME_ZONE)
+        self.default_tz = pytz.timezone(spider_config('TIME_ZONE'))
         self.mongodb = MongoClient(options['mongourl']).get_default_database()
 
         table = options['table']

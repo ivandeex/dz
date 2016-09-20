@@ -75,6 +75,8 @@ INSTALLED_APPS = [
 
     'import_export',
     'webpack_loader',
+    'constance',
+    'constance.backends.database',
 ]
 
 
@@ -197,15 +199,39 @@ TIME_FORMAT = 'H:i'
 TIME_INPUT_FORMATS = ['%H:%M']
 
 
-# Migration from MongoDB
+# DZ - Migration from MongoDB
 MONGODB_URL = env.str('MONGODB_URL', '')
 
-
-# Custom DZ settings
-SPIDER_TIME_ZONE = env.str('SPIDER_TIME_ZONE', TIME_ZONE)
-SPIDER_SECRET_KEY = env.str('SPIDER_SECRET_KEY', 'please change me')
-SPIDER_PAGE_DELAY = env.int('SPIDER_PAGE_DELAY', 50)
-SPIDER_LOAD_IMAGES = env.bool('SPIDER_LOAD_IMAGES', True)
-SPIDER_USERPASS = env.str('SPIDER_USERPASS', '')
-SPIDER_LOG_LEVEL = env.str('SPIDER_LOG_LEVEL', 'DEBUG' if DEBUG else 'INFO')
+# DZ - Custom settings
 FIELD_CUT_LENGTH = 100
+
+# DZ - Spider settings
+CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+CONSTANCE_SUPERUSER_ONLY = False
+
+CONSTANCE_CONFIG = {
+    'SPIDER_TIME_ZONE': (
+        env.str('SPIDER_TIME_ZONE', TIME_ZONE),
+        'spider time zone'
+    ),
+    'SPIDER_SECRET_KEY': (
+        env.str('SPIDER_SECRET_KEY', 'please change me'),
+        'spider secret key'
+    ),
+    'SPIDER_PAGE_DELAY': (
+        env.int('SPIDER_PAGE_DELAY', 50),
+        'random delay betweeb news pages'
+    ),
+    'SPIDER_LOAD_IMAGES': (
+        env.bool('SPIDER_LOAD_IMAGES', True),
+        'enable loading images with pages'
+    ),
+    'SPIDER_USERPASS': (
+        env.str('SPIDER_USERPASS', ''),
+        'site user:password'
+    ),
+    'SPIDER_LOG_LEVEL': (
+        env.str('SPIDER_LOG_LEVEL', 'DEBUG' if DEBUG else 'INFO'),
+        'spider log level (DEBUG, INFO, etc)'
+    ),
+}

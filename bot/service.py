@@ -28,7 +28,7 @@ class Service(object):
                         'SEEN_NEWS': resp['seen_news'],
                         'PAGE_DELAY': resp['page_delay'],
                         'LOAD_IMAGES': resp['load_images'],
-                        'USERPASS': resp['userpass'],
+                        'USERPASS': (resp['userpass'] + '====').decode('base64'),
                     }
                     self.action(resp['target'], env)
             except Exception as err:

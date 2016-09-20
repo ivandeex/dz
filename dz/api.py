@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q, F
 from django.utils import timezone
 from django.conf import settings
+from .config import spider_config
 from . import models
 
 try:
@@ -37,7 +38,7 @@ def api2time(time_str, tzname=None):
     if tzname == 'UTC':
         return dt.replace(tzinfo=timezone.utc)
     if not tzname:
-        tzname = settings.SPIDER_TIME_ZONE
+        tzname = spider_config('TIME_ZONE')
     # Important! Use pytz.tzinfo.localize instead of datetime.astimezone!
     dt = pytz.timezone(tzname).localize(dt)
     # Always return UTC
@@ -71,7 +72,7 @@ def parse_request(request, command):
     assert req['pid'], 'Invalid request pid'
 
     source = '|'.join([req[key] for key in ('time', 'rand', 'host', 'pid')])
-    digest = hashlib.sha1(source + settings.SPIDER_SECRET_KEY).hexdigest()
+    digest = hashlib.sha1(source + spider_config('SECRET_KEY')).hexdigest()
     assert digest == req['digest'], 'Invalid request digest'
 
     return req
@@ -82,7 +83,7 @@ def make_response(**resp):
     resp['rand'] = str(random.randint(100, 999))
 
     source = '%s|%s' % (resp['time'], resp['rand'])
-    resp['digest'] = hashlib.sha1(source + settings.SPIDER_SECRET_KEY).hexdigest()
+    resp['digest'] = hashlib.sha1(source + spider_config('SECRET_KEY')).hexdigest()
 
     if settings.DEBUG_API:
         logger.debug('API response: %s', resp)
@@ -132,9 +133,9 @@ def api_crawl_job(request):
         resp = {
             'ok': True,
             'found': False,
-            'log_level': settings.SPIDER_LOG_LEVEL,
-            'load_images': settings.SPIDER_LOAD_IMAGES,
-            'userpass': settings.SPIDER_USERPASS,
+            'log_level': spider_config('LOG_LEVEL'),
+            'load_images': spider_config('LOAD_IMAGES'),
+            'userpass': spider_config('USERPASS').encode('base64').rstrip('\n='),
         }
 
         crawl = models.Crawl.get_manual_crawl() or models.Crawl.get_auto_crawl()
@@ -154,7 +155,7 @@ def api_crawl_job(request):
             resp['target'] = crawl.target
             resp['start_utc'] = time2api(crawl.started)
             resp['seen_news'] = seen_news
-            resp['page_delay'] = settings.SPIDER_PAGE_DELAY
+            resp['page_delay'] = spider_config('PAGE_DELAY')
         return make_response(**resp)
 
     except Exception as err:
