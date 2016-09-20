@@ -473,16 +473,4 @@ msgstr "Закрыть"
 #: dz/templates/dz/welcome.html:6
 msgctxt "welcome"
 msgid "Welcome"
-msgstr "Приветствие"
-
-#: dz/templates/dz/welcome.html:10
-#, python-format
-msgctxt "welcome"
-msgid "Hello %(csv_usernames)s!"
-msgstr "Привет, %(csv_usernames)s!"
-
-#: dz/templates/dz/welcome.html:11
-#, python-format
-msgctxt "welcome"
-msgid "Welcome to %(server_name)s!"
-msgstr "Добро пожаловать на сервер %(server_name)s!"
+msgstr "Привет"

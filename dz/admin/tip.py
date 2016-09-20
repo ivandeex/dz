@@ -1,7 +1,6 @@
 from __future__ import unicode_literals, absolute_import
 from django.template.response import TemplateResponse
 from django.http import HttpResponseNotFound
-from django.conf import settings
 from django.conf.urls import url
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
@@ -23,9 +22,6 @@ class TipAdmin(DzCrawlModelAdmin):
                     'result', 'tipster', 'odds', 'min_odds',
                     'stake', 'earnings', 'spread', 'bookmaker', 'success_str',
                     'updated', 'crawled', 'link_str', 'archived_str']
-    if settings.NARROW_GRIDS:
-        list_display = ['id', 'published', 'place', 'title', 'description_str',
-                        'result', 'tipster', 'archived']
     list_filter = [('league', DzSelectFieldListFilter),
                    ('parties', DzSelectFieldListFilter),
                    ('tipster', DzSelectFieldListFilter),

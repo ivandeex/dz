@@ -26,6 +26,10 @@ const TARGET = PRODUCTION ? 'prod' : 'devel';
 const WHITENOICE_CSS_FIX = { match: { pattern: 'url\\(\\.\\./img/', flags: 'g' },
                              replaceWith: 'url_FixWhiteNoice(../img/' };
 
+let babelSettings = {
+  presets: ['es2015']
+};
+
 let config = {
   context: __dirname,
 
@@ -59,7 +63,7 @@ let config = {
     loaders: [
       {
         test: /\.js$/,
-        loader: 'babel?presets[]=es2015',
+        loader: 'babel?' + JSON.stringify(babelSettings),
         exclude: /node_modules\//
       },
       {

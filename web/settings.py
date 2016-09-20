@@ -95,12 +95,6 @@ if django_ver < 110:
     MIDDLEWARE_CLASSES = MIDDLEWARE
 
 
-if DEBUG and USE_I18N:
-    INSTALLED_APPS += ['rosetta']
-    # rosetta does not look into locale directories of installed apps
-    LOCALE_PATHS += [root('dz', 'locale')]
-
-
 DEBUG_TOOLBAR_ENABLED = env.bool('DEBUG_TOOLBAR', True)
 
 if DEBUG and DEBUG_TOOLBAR_ENABLED:
@@ -215,4 +209,3 @@ SPIDER_LOAD_IMAGES = env.bool('SPIDER_LOAD_IMAGES', True)
 SPIDER_USERPASS = env.str('SPIDER_USERPASS', '')
 SPIDER_LOG_LEVEL = env.str('SPIDER_LOG_LEVEL', 'DEBUG' if DEBUG else 'INFO')
 FIELD_CUT_LENGTH = 100
-NARROW_GRIDS = False

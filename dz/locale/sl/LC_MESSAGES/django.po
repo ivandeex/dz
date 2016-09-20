@@ -473,15 +473,3 @@ msgstr "Zapreti"
 msgctxt "welcome"
 msgid "Welcome"
 msgstr "Dobrodošli"
-
-#: dz/templates/dz/welcome.html:10
-#, python-format
-msgctxt "welcome"
-msgid "Hello %(csv_usernames)s!"
-msgstr "Zdravo %(csv_usernames)s!"
-
-#: dz/templates/dz/welcome.html:11
-#, python-format
-msgctxt "welcome"
-msgid "Welcome to %(server_name)s!"
-msgstr "Dobrodošli v %(server_name)s!"

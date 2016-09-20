@@ -22,9 +22,6 @@ class NewsAdmin(DzCrawlModelAdmin):
     list_display = ['id', 'published', 'sport', 'league',
                     'parties', 'title', 'description_str',
                     'updated', 'crawled', 'link_str', 'archived_str']
-    if settings.NARROW_GRIDS:
-        list_display = ['id', 'published', 'sport', 'league',
-                        'description_str', 'archived_str']
 
     list_filter = [('sport', DzSelectFieldListFilter),
                    ('league', DzSelectFieldListFilter),

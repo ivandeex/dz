@@ -23,4 +23,3 @@ flake8==3.0.4
 ipython==5.0.0
 ipdb==0.10.1
 django-debug-toolbar==1.5
-django-rosetta==0.7.12
