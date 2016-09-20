@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-11 23:47+0200\n"
+"POT-Creation-Date: 2016-09-22 22:25+0200\n"
 "PO-Revision-Date: 2016-09-01A 12:00+0300\n"
 "Last-Translator: ivandeex <ivandeex@gmail.com>\n"
 "Language-Team: ivandeex <ivandeex@gmail.com>\n"
@@ -19,458 +19,475 @@ msgstr ""
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: dz/admin/__init__.py:28 dz/admin/__init__.py:29
+#: admin/__init__.py:28 admin/__init__.py:29
 msgid "D.Z."
 msgstr "D.Z."
 
-#: dz/admin/__init__.py:30
+#: admin/__init__.py:30
 msgid "Index:"
 msgstr "Индекс:"
 
-#: dz/admin/common.py:19
+#: admin/common.py:25
 msgid "archive (filter)"
 msgstr "архив"
 
-#: dz/admin/common.py:24
+#: admin/common.py:30
 msgid "All"
 msgstr "Всё"
 
-#: dz/admin/common.py:25 dz/admin/news.py:61 dz/admin/tip.py:71
+#: admin/common.py:31 admin/news.py:65 admin/tip.py:71
 msgid "Archived"
 msgstr "Из архива"
 
-#: dz/admin/common.py:26 dz/admin/news.py:61 dz/admin/tip.py:71
+#: admin/common.py:32 admin/news.py:65 admin/tip.py:71
 msgid "Fresh"
 msgstr "Текущее"
 
 #. Translators: status (from models.Crawl) is one of: refused, updated, submitted
-#: dz/admin/common.py:106
+#: admin/common.py:129
 #, python-format
 msgid "Crawling %s!"
 msgstr ""
 
 #. Translators: force translation of all forms of the python-format above
-#: dz/admin/common.py:109
+#: admin/common.py:132
 msgid "Crawling refused!"
 msgstr "Ошибка обновления!"
 
-#: dz/admin/common.py:110
+#: admin/common.py:133
 msgid "Crawling updated!"
 msgstr "Время обновления изменено!"
 
-#: dz/admin/common.py:111
+#: admin/common.py:134
 msgid "Crawling submitted!"
 msgstr "Обновление скоро начнется!"
 
 #. Translators: don't translate this, use translation from Django
-#: dz/admin/crawl.py:10
+#: admin/crawl.py:10
 msgid "Yes"
 msgstr ""
 
 #. Translators: don't translate this, use translation from Django
-#: dz/admin/crawl.py:12
+#: admin/crawl.py:12
 msgid "No"
 msgstr ""
 
-#: dz/admin/crawl.py:17 dz/admin/crawl.py:38
+#: admin/crawl.py:17 admin/crawl.py:44
 msgid "manual (crawl type)"
 msgstr "вручную"
 
-#: dz/admin/crawl.py:19 dz/admin/crawl.py:40
+#: admin/crawl.py:19 admin/crawl.py:46
 msgid "scheduled (crawl type)"
 msgstr "по расписанию"
 
-#: dz/admin/crawl.py:36
+#: admin/crawl.py:42
 msgid "orphan (crawl type)"
 msgstr "неизвестно"
 
-#: dz/admin/crawl.py:41
+#: admin/crawl.py:47
 msgid "crawl type (str column)"
 msgstr "способ активации"
 
-#: dz/admin/news.py:57
+#: admin/news.py:61
 msgid "news cut (column)"
 msgstr "описание"
 
-#: dz/admin/news.py:62 dz/admin/tip.py:72 dz/models/news.py:20
-#: dz/models/tip.py:35
+#: admin/news.py:66 admin/tip.py:72 models/news.py:22 models/tip.py:35
 msgid "archived (column)"
 msgstr "архив или текущее?"
 
-#: dz/admin/news.py:73 dz/models/news.py:12
+#: admin/news.py:71 models/news.py:14
 msgid "news link (column)"
 msgstr "ссылка"
 
-#: dz/admin/tip.py:56
+#: admin/tip.py:56
 msgid "tip cut (column)"
 msgstr "описание"
 
-#: dz/admin/tip.py:60
+#: admin/tip.py:60
 msgid "(success) unknown"
 msgstr "неизвестно"
 
-#: dz/admin/tip.py:61
+#: admin/tip.py:61
 msgid "(success) hit"
 msgstr "попадание"
 
-#: dz/admin/tip.py:62
+#: admin/tip.py:62
 msgid "(success) miss"
 msgstr "промах"
 
 #. Translators: Success (Uspje\u0161nost)
-#: dz/admin/tip.py:67 dz/models/tip.py:28
+#: admin/tip.py:67 models/tip.py:28
 msgid "tip success (column)"
 msgstr "успех"
 
-#: dz/admin/tip.py:83 dz/models/tip.py:34
+#: admin/tip.py:77 models/tip.py:34
 msgid "tip link (column)"
 msgstr "ссылка"
 
-#: dz/models/common.py:8
+#: models/common.py:8
 msgid "news (crawl target)"
 msgstr "новости"
 
-#: dz/models/common.py:9
+#: models/common.py:9
 msgid "tips (crawl target)"
 msgstr "ставки"
 
-#: dz/models/crawl.py:17
+#: models/crawl.py:17
 msgid "waiting (crawl status)"
 msgstr "ожидает"
 
-#: dz/models/crawl.py:18
+#: models/crawl.py:18
 msgid "started (crawl status)"
 msgstr "началось"
 
-#: dz/models/crawl.py:19
+#: models/crawl.py:19
 msgid "running (crawl status)"
 msgstr "работает"
 
-#: dz/models/crawl.py:20
+#: models/crawl.py:20
 msgid "complete (crawl status)"
 msgstr "завершено"
 
 #. Translators: Job Id
-#: dz/models/crawl.py:24
+#: models/crawl.py:24
 msgid "crawl id (column)"
 msgstr "№"
 
-#: dz/models/crawl.py:25
+#: models/crawl.py:25
 msgid "crawl target (column)"
 msgstr "что обновляем"
 
-#: dz/models/crawl.py:27
+#: models/crawl.py:27
 msgid "crawl type (bool column)"
 msgstr "ручная активация"
 
-#: dz/models/crawl.py:28
+#: models/crawl.py:28
 msgid "crawl status (column)"
 msgstr "статус"
 
-#: dz/models/crawl.py:30
+#: models/crawl.py:30
 msgid "started at (column)"
 msgstr "время начала"
 
-#: dz/models/crawl.py:31
+#: models/crawl.py:31
 msgid "ended at (column)"
 msgstr "время завершения"
 
-#: dz/models/crawl.py:32
+#: models/crawl.py:32
 msgid "no. of items (column)"
 msgstr "количество"
 
-#: dz/models/crawl.py:33
+#: models/crawl.py:33
 msgid "hostname (column)"
 msgstr "хост"
 
 #. Translators: PID
-#: dz/models/crawl.py:35
+#: models/crawl.py:35
 msgid "crawler pid (column)"
 msgstr "№ процесса"
 
-#: dz/models/crawl.py:38
+#: models/crawl.py:38
 msgid "crawl (table)"
 msgstr "обновление"
 
-#: dz/models/crawl.py:39
+#: models/crawl.py:39
 msgid "crawls (table)"
 msgstr "обновления"
 
-#: dz/models/news.py:11
+#: models/news.py:13
 msgid "news id (column)"
 msgstr "№"
 
-#: dz/models/news.py:13
+#: models/news.py:15
 msgid "news title (column)"
 msgstr "заголовок"
 
-#: dz/models/news.py:14
+#: models/news.py:16
 msgid "sport (column)"
 msgstr "вид спорта"
 
-#: dz/models/news.py:15
+#: models/news.py:17
 msgid "league (column)"
 msgstr "лига"
 
-#: dz/models/news.py:16
+#: models/news.py:18
 msgid "parties (column)"
 msgstr "участники"
 
 #. Translators: Published (Objavleno)
-#: dz/models/news.py:17 dz/models/tip.py:31
+#: models/news.py:19 models/tip.py:31
 msgid "published (column)"
 msgstr "время публикации"
 
-#: dz/models/news.py:18 dz/models/tip.py:32
+#: models/news.py:20 models/tip.py:32
 msgid "updated (column)"
 msgstr "время изменения"
 
-#: dz/models/news.py:19 dz/models/tip.py:33
+#: models/news.py:21 models/tip.py:33
 msgid "fetched (column)"
 msgstr "время обновления"
 
-#: dz/models/news.py:23
-msgid "news preamble (column)"
-msgstr "введение"
-
-#: dz/models/news.py:24
-msgid "full news content (column)"
-msgstr "содержание"
-
-#: dz/models/news.py:25
-msgid "news datatable (column)"
-msgstr "таблица результатов"
-
-#: dz/models/news.py:28
+#: models/news.py:25
 msgid "news (table)"
 msgstr "новость"
 
-#: dz/models/news.py:29
+#: models/news.py:26
 msgid "many news (table)"
 msgstr "новости"
 
-#: dz/models/news.py:34
+#: models/news.py:31
 msgid "Can crawl news"
 msgstr "Может обновлять новости"
 
-#: dz/models/news.py:35
+#: models/news.py:32
 msgid "Can only view news"
 msgstr "Не может корректировать новости"
 
-#: dz/models/news.py:36
+#: models/news.py:33
 msgid "Can click on news links"
 msgstr "Переходить по ссылкам на новости"
 
-#: dz/models/schedule.py:19
+#: models/news.py:97
+msgid "news preamble (column)"
+msgstr "введение"
+
+#: models/news.py:98
+msgid "full news content (column)"
+msgstr "содержание"
+
+#: models/news.py:99
+msgid "news datatable (column)"
+msgstr "таблица результатов"
+
+#: models/schedule.py:19
 msgid "start time (column)"
 msgstr "время начала"
 
-#: dz/models/schedule.py:20
+#: models/schedule.py:20
 msgid "target (column)"
 msgstr "что обновлять"
 
-#: dz/models/schedule.py:23
+#: models/schedule.py:23
 msgid "schedule item (table)"
 msgstr "пункт расписания"
 
-#: dz/models/schedule.py:24
+#: models/schedule.py:24
 msgid "schedule (table)"
 msgstr "расписание"
 
-#: dz/models/tip.py:10
+#: models/tip.py:10
 msgid "tip id (column)"
 msgstr "№"
 
-#: dz/models/tip.py:11
+#: models/tip.py:11
 msgid "tip league (column)"
 msgstr "лига"
 
-#: dz/models/tip.py:12
+#: models/tip.py:12
 msgid "tip parties (column)"
 msgstr "участники"
 
-#: dz/models/tip.py:13
+#: models/tip.py:13
 msgid "tip title (column)"
 msgstr "заголовок"
 
 #. Translators: Bookmaker (Kladionica)
-#: dz/models/tip.py:15
+#: models/tip.py:15
 msgid "tip bookmaker (column)"
 msgstr "букмекер"
 
 #. Translators: Coeff. (Koeficijent)
-#: dz/models/tip.py:17
+#: models/tip.py:17
 msgid "tip odds (column)"
 msgstr "шансы"
 
-#: dz/models/tip.py:18
+#: models/tip.py:18
 msgid "minimum tip odds (column)"
 msgstr "мин. шансы"
 
 #. Translators: Result (Rezultat)
-#: dz/models/tip.py:20
+#: models/tip.py:20
 msgid "tip result (column)"
 msgstr "результат"
 
 #. Translators: Earnings Due (Zarada)
-#: dz/models/tip.py:22
+#: models/tip.py:22
 msgid "earnings (column)"
 msgstr "выигрыш"
 
 #. Translators: Spread (Is. Margina)
-#: dz/models/tip.py:24
+#: models/tip.py:24
 msgid "spread (column)"
 msgstr "разброс"
 
 #. Translators: Stake (Ulog)
-#: dz/models/tip.py:26
+#: models/tip.py:26
 msgid "stake (column)"
 msgstr "доля"
 
-#: dz/models/tip.py:29
+#: models/tip.py:29
 msgid "tipster (column)"
 msgstr "наводчик"
 
-#: dz/models/tip.py:44
+#: models/tip.py:44
 msgid "tip (table)"
 msgstr "ставка"
 
-#: dz/models/tip.py:45
+#: models/tip.py:45
 msgid "tips (table)"
 msgstr "ставки"
 
-#: dz/models/tip.py:50
+#: models/tip.py:50
 msgid "Can crawl tips"
 msgstr "Может обновлять ставки"
 
-#: dz/models/tip.py:51
+#: models/tip.py:51
 msgid "Can only view tips"
 msgstr "Не может корректировать ставки"
 
-#: dz/models/tip.py:52
+#: models/tip.py:52
 msgid "Can click on tip links"
 msgstr "Переходить по ссылкам на ставки"
 
-#: dz/models/user.py:17
+#: models/user.py:17
 msgid "dz user name"
 msgstr "имя пользователя"
 
-#: dz/models/user.py:18
+#: models/user.py:18
 msgid "dz user password"
 msgstr "пароль"
 
-#: dz/models/user.py:19
+#: models/user.py:19
 msgid "is dz administrator"
 msgstr "права администратора"
 
-#: dz/models/user.py:20
+#: models/user.py:20
 msgid "can follow dz links"
 msgstr "право переходить по ссылкам"
 
-#: dz/models/user.py:26
+#: models/user.py:26
 msgid "dz user"
 msgstr "пользователь"
 
-#: dz/models/user.py:27
+#: models/user.py:27
 msgid "dz users"
 msgstr "пользователи"
 
-#: dz/templates/admin/base_site.html:12
+#: templates/admin/base_site.html:5
 msgid "Django site admin"
 msgstr "Администрирование сайта"
 
-#: dz/templates/admin/base_site.html:15
+#: templates/admin/base_site.html:8
 msgid "Django administration"
 msgstr "Интерфейс администратора"
 
-#: dz/templates/admin/dz/change_list.html:7
-msgid "Home"
-msgstr "Главная"
+#: templates/admin/dz-admin/news-description.html:6
+#: templates/admin/dz-admin/tip-description.html:6
+#: templates/admin/dz-plus/news-description.html:6
+msgid "Show details"
+msgstr "Показать детали"
 
-#: dz/templates/admin/dz/change_list.html:10
-msgid "Server time"
-msgstr "Текущее время"
+#: templates/admin/dz-admin/news-description.html:6
+#: templates/admin/dz-plus/news-description.html:6
+msgid "News %(pk)s"
+msgstr "Новость №%(pk)s"
 
-#: dz/templates/admin/dz/change_list.html:16
-msgid "Log out"
-msgstr "Выйти"
+#: templates/admin/dz-admin/news-description.html:6
+#: templates/admin/dz-admin/tip-description.html:6
+#: templates/admin/dz-plus/news-description.html:6
+msgid "more..."
+msgstr "детали..."
 
-#: dz/templates/admin/dz/change_list.html:26
+#: templates/admin/dz-admin/newsbox-popup.html:13
+msgid "close"
+msgstr "закрыть"
+
+#: templates/admin/dz-admin/newsbox-popup.html:18
+msgid "URL"
+msgstr "Ссылка"
+
+#: templates/admin/dz-admin/newsbox-popup.html:19
+msgid "Sport"
+msgstr "Вид спорта"
+
+#: templates/admin/dz-admin/newsbox-popup.html:20
+msgid "League"
+msgstr "Лига"
+
+#: templates/admin/dz-admin/newsbox-popup.html:21
+msgid "Published"
+msgstr "Опубликовано"
+
+#: templates/admin/dz-admin/newsbox-popup.html:22
+msgid "Updated"
+msgstr "Изменено"
+
+#: templates/admin/dz-admin/newsbox-popup.html:23
+msgid "Fetched"
+msgstr "Обновлено"
+
+#: templates/admin/dz-admin/newsbox-popup.html:24
+msgid "Parties"
+msgstr "Участники"
+
+#: templates/admin/dz-admin/tip-description.html:6
+msgid "Tip #%(pk)s"
+msgstr "Ставка №%(pk)s"
+
+#: templates/admin/dz-bootstrap/change_list.html:24
+msgid "Jump to"
+msgstr "Быстрый переход"
+
+#: templates/admin/dz-bootstrap/change_list.html:40
+#: templates/admin/dz-grappelli/change_list.html:81
+#: templates/admin/dz-plus/change_list.html:29
+msgid "Export"
+msgstr "Экспорт"
+
+#: templates/admin/dz-bootstrap/change_list.html:48
+#: templates/admin/dz-grappelli/change_list.html:77
+#: templates/admin/dz-plus/change_list.html:26
 #, python-format
 msgid "Crawl %(target)s"
 msgstr "Обновить %(target)s"
 
-#: dz/templates/admin/dz/change_list.html:29
-msgid "Export"
-msgstr "Экспорт"
-
-#: dz/templates/admin/dz/change_list.html:41
-msgid "Filter"
-msgstr "Фильтры"
-
-#: dz/templates/admin/dz/list_filter.html:2
-#, python-format
-msgid " By %(filter_title)s "
-msgstr " Фильтр: %(filter_title)s "
-
-#: dz/templates/admin/dz/news_content_cut.html:6
-#: dz/templates/admin/dz/tip_content_cut.html:6
-msgid "Show details"
-msgstr "Показать детали"
-
-#: dz/templates/admin/dz/news_content_cut.html:6
-#, python-format
-msgid "News %(id)s"
-msgstr "Новость №%(id)s"
-
-#: dz/templates/admin/dz/news_content_cut.html:6
-#: dz/templates/admin/dz/tip_content_cut.html:6
-msgid "more..."
-msgstr "детали..."
-
-#: dz/templates/admin/dz/news_content_popup.html:16
-msgid "close"
-msgstr "закрыть"
-
-#: dz/templates/admin/dz/news_content_popup.html:21
-msgid "URL"
-msgstr "Ссылка"
-
-#: dz/templates/admin/dz/news_content_popup.html:22
-msgid "Sport"
-msgstr "Вид спорта"
-
-#: dz/templates/admin/dz/news_content_popup.html:23
-msgid "League"
-msgstr "Лига"
-
-#: dz/templates/admin/dz/news_content_popup.html:24
-msgid "Published"
-msgstr "Опубликовано"
-
-#: dz/templates/admin/dz/news_content_popup.html:25
-msgid "Updated"
-msgstr "Изменено"
-
-#: dz/templates/admin/dz/news_content_popup.html:26
-msgid "Fetched"
-msgstr "Обновлено"
-
-#: dz/templates/admin/dz/news_content_popup.html:27
-msgid "Parties"
-msgstr "Участники"
-
-#: dz/templates/admin/dz/tip_content_cut.html:6
-#: dz/templates/admin/dz/tip_content_popup.html:4
+#: templates/admin/dz-bootstrap/tipbox-popup.html:21
+#: templates/admin/dz-grappelli/tipbox-popup.html:4
+#: templates/admin/dz-plus/tipbox-popup.html:4
 #, python-format
 msgid "Tip #%(id)s"
 msgstr "Ставка №%(id)s"
 
-#: dz/templates/admin/dz/tip_content_popup.html:12
+#: templates/admin/dz-bootstrap/tipbox-popup.html:35
+#: templates/admin/dz-grappelli/tipbox-popup.html:11
+#: templates/admin/dz-plus/tipbox-popup.html:12
 msgid "Close"
 msgstr "Закрыть"
 
-#: dz/templates/dz/welcome.html:6
+#: templates/admin/dz-grappelli/change_list.html:26
+#: templates/admin/dz-plus/change_list.html:10
+msgid "Server time"
+msgstr "Текущее время"
+
+#: templates/admin/dz-plus/change_list.html:7
+msgid "Home"
+msgstr "Главная"
+
+#: templates/admin/dz-plus/change_list.html:16
+msgid "Log out"
+msgstr "Выйти"
+
+#: templates/admin/dz-plus/change_list.html:41
+msgid "Filter"
+msgstr "Фильтры"
+
+#: templates/admin/dz-plus/list_filter.html:2
+#, python-format
+msgid " By %(filter_title)s "
+msgstr " Фильтр: %(filter_title)s "
+
+#: templates/dz/welcome.html:6
 msgctxt "welcome"
 msgid "Welcome"
 msgstr "Привет"

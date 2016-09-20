@@ -62,7 +62,7 @@ class DzModelAdmin(admin.ModelAdmin):
 
     def __init__(self, *args, **kwargs):
         skin = settings.DZ_SKIN
-        if skin in ('plus', 'grappelli'):
+        if skin in ('plus', 'grappelli', 'bootstrap'):
             self.change_list_template = 'admin/dz-%s/change_list.html' % skin
         super(DzModelAdmin, self).__init__(*args, **kwargs)
 
@@ -102,9 +102,8 @@ class DzModelAdmin(admin.ModelAdmin):
         return tpl_resp
 
 
-class DzCrawlModelAdmin(ExportMixin, DzModelAdmin):
+class DzSimpleCrawlModelAdmin(DzModelAdmin):
     formats = [base_formats.XLSX]
-    can_export = True
 
     def format_external_link(self, link):
         if self.user_can_follow_links(None):
@@ -116,7 +115,7 @@ class DzCrawlModelAdmin(ExportMixin, DzModelAdmin):
             return link
 
     def get_urls(self):
-        urls = super(DzCrawlModelAdmin, self).get_urls()
+        urls = super(DzSimpleCrawlModelAdmin, self).get_urls()
         wrap = self.admin_site.admin_view
         rev_fmt = self.opts.app_label, self.opts.model_name
         crawl_url = url(r'^crawl/$', wrap(self.crawl_view), name='%s_%s_crawl' % rev_fmt)
@@ -137,6 +136,10 @@ class DzCrawlModelAdmin(ExportMixin, DzModelAdmin):
         url = reverse('admin:%s_%s_changelist' % rev_fmt, current_app=self.admin_site.name)
         filter_kwargs = dict(opts=opts, preserved_filters=self.get_preserved_filters(request))
         return HttpResponseRedirect(add_preserved_filters(filter_kwargs, url))
+
+
+class DzCrawlModelAdmin(ExportMixin, DzSimpleCrawlModelAdmin):
+    can_export = True
 
 
 class DzExportResource(ModelResource):

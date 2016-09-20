@@ -1,7 +1,5 @@
 @import '../common/mixins';
 
-// grappelli does not provide model name class on the body tag,
-// so we force it in the overridden DzModelAdmin
 .model-news,
 .model-tip {
   .field-description_str {
@@ -13,6 +11,9 @@
   }
 }
 
-.field-link_str {
-  @include field-link;
+// #result_list means "any change_list page"
+#result_list {
+  .field-link_str {
+    @include field-link;
+  }
 }

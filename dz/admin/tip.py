@@ -90,6 +90,8 @@ class TipAdmin(DzCrawlModelAdmin):
             skin = settings.DZ_SKIN
             if skin == 'grappelli':
                 is_popup = False
+            elif skin == 'bootstrap':
+                is_popup = True
             else:
                 skin, is_popup = 'plus', True
             template = 'admin/dz-%s/tipbox-popup.html' % skin

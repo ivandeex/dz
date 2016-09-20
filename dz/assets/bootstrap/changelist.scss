@@ -1,0 +1,20 @@
+// fix some obstacles with button style in object tool bar
+.object-tools {
+  .btn {
+    // add some horizontal gap between buttons
+    margin-left: 6px;
+
+    // django-admin-bootstrappeed's overrides .btn-primary padding in navbar-collapse
+    // apply the same override to default and other buttons as well.
+    padding: 6px 12px;
+  }
+}
+
+.dz-top-nav__item {
+  a {
+    &:hover {
+      // this effect is just for fun
+      box-shadow: inset 0 0 6px #ccc;
+    }
+  }
+}

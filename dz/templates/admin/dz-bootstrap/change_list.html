@@ -1,0 +1,87 @@
+{% extends 'admin/change_list.html' %}
+{% load i18n %}
+{% load render_bundle from webpack_loader %}
+
+
+{% block extrastyle %}
+{{ block.super }}
+  {% render_bundle 'dz-bootstrap' 'css' %}
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+  {% render_bundle 'dz-bootstrap' 'js' %}
+{% endblock %}
+
+
+{# fix model class incorrectly set by bootstrapped template as {{opts.app_label}}-{{opts.object_model}} #}
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }}{% endblock %}
+
+
+{# hide recent actions #}
+{% block logs %}{% endblock %}
+
+
+{% block nav-global %}
+  {{ block.super }}
+
+  {# Server time goes here too #}
+  {% block server-time %}
+  <li>
+    <p class="dz-time navbar-text">
+      <span class="dz-time__label text-muted small">{% trans 'Server time' %} ({{ server_time|date:"e" }}):</span>
+      <strong class="dz-time__value">{{ server_time|date:"Y-m-d H:i" }}</strong>
+    </p>
+  </li>
+  {% endblock %}
+
+  {# top dz navigation #}
+  {% block dz-top-nav %}
+  <li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Jump to' %} <b class="caret"></b></a>
+    <ul class="dropdown-menu scrollable-dropdown-menu dz-top-nav">
+      {% for model in dz_models %}
+        <li class="dz-top-nav__item"><a href="{{ model.url }}">{{ model.name }}</a></li>
+      {% endfor %}
+    </ul>
+  </li>
+  {% endblock %}
+{% endblock %}
+
+
+{# add export and crawl buttons #}
+{% block object-tools-items %}
+  {{ block.super }}
+  {% if can_export %}
+    <li>
+    <a role="button" href="export/{{ cl.get_query_string }}" class="btn btn-default navbar-btn">
+    <i class="glyphicon glyphicon-th-list"></i>
+    {% trans "Export" %}
+    </a>
+    </li>
+  {% endif %}
+  {% if can_crawl %}
+    <li>
+    <a role="button" href="crawl/{{ cl.get_query_string }}" class="btn btn-primary navbar-btn">
+      <i class="glyphicon glyphicon-refresh"></i>
+      {% blocktrans with target=cl.opts.verbose_name_plural %}Crawl {{target}}{% endblocktrans %}
+    </a>
+    </li>
+  {% endif %}
+{% endblock %}
+
+{# fix django-admin-bootstrapped and add alert-dismissible to messages #}
+{% block messages %}
+{% if messages %}
+<div class="row">
+  <div class="col-sm-12">
+    {% for message in messages %}
+    <div class="alert {{ message.tags|default:"alert-info" }} alert-dismissible fade in" role="alert">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      {{ message|capfirst }}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endblock messages %}

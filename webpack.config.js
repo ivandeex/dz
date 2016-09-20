@@ -37,6 +37,7 @@ let config = {
   entry: {
     'dz-plus': './dz/assets/plus',
     'dz-grappelli': './dz/assets/grappelli',
+    'dz-bootstrap': './dz/assets/bootstrap',
     'dz-newsbox': './dz/assets/newsbox'
   },
 

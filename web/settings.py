@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',  # same as manage.py runserver --nostatic
     'django.contrib.staticfiles',     # for manage.py collectstatic
 
+    'bootstrap3',
     'import_export',
     'webpack_loader',
     'constance',
@@ -88,6 +89,19 @@ if DZ_SKIN == 'grappelli':
     # override dz's admin templates, in particular base_site.html
     INSTALLED_APPS.insert(0, 'grappelli')
     GRAPPELLI_ADMIN_TITLE = _('D.Z.')
+
+if DZ_SKIN == 'bootstrap':
+    INSTALLED_APPS.insert(0, 'django_admin_bootstrapped')
+    DAB_FIELD_RENDERER = 'django_admin_bootstrapped.renderers.BootstrapFieldRenderer'
+
+    from django.contrib import messages
+    MESSAGE_TAGS = {
+        messages.INFO: 'alert-info info',
+        messages.SUCCESS: 'alert-success success',
+        messages.WARNING: 'alert-warning warning',
+        messages.ERROR: 'alert-danger error'
+    }
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
