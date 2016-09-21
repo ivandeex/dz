@@ -10,5 +10,5 @@ python manage.py makemigrations --noinput --exit && \
   python manage.py migrate --noinput
 python manage.py compilemessages
 
-[ "$1" != "fast" ] && npm run makeprod
+[ "$1" = "full" ] && npm run makeprod
 python manage.py collectstatic --noinput

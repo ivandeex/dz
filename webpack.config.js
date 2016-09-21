@@ -59,8 +59,6 @@ let config = {
     inline: true
   },
 
-  devtool: PRODUCTION ? null : 'cheap-inline-module-source-map',
-
   module: {
     loaders: [
       {
@@ -134,7 +132,11 @@ let config = {
       compressor: {warnings: false}
     })
 
-  ] : [])
+  ] : []),
+
+  devtool: PRODUCTION ? null : 'cheap-inline-module-source-map',
+
+  watchOptions: { aggregateTimeout: 100 }
 };
 
 module.exports = config;

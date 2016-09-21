@@ -10,18 +10,21 @@
   padding-right: 16px !important;
 }
 
+#grp-navigation {
+  text-align: center;  // puts .dz-top-nav at center, also inherited by menus
+  ul {
+    ul {
+      text-align: left;  // revert to left alignment in popup-menus
+    }
+  }
+}
+
 .dz-top-nav {
   list-style-type: none;
   padding: 10px;  // copy padding from grappelli's #grap-admin-title
 
-  display: inline-block;
+  display: inline-block;  // centered by #grp-navigation
   white-space: nowrap;
-
-  @media(min-width: 960px) {
-    position: absolute;
-    left: 40%;
-    transform: translateX(-50%);
-  }
 
   li {
     display: inline-block;
