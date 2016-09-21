@@ -21,12 +21,18 @@ class DzCrawlTypeFilter(admin.BooleanFieldListFilter):
 
 
 class CrawlAdmin(DzModelAdmin):
-    list_display = ['id', 'target', 'type_str', 'status',
-                    'started', 'ended', 'count', 'host', 'pid']
-    list_filter = [('manual', DzCrawlTypeFilter),
-                   'target',
-                   'status'
-                   ]
+
+    list_display = [
+        'id', 'target', 'type_str', 'status',
+        'started', 'ended', 'count', 'host', 'pid'
+    ]
+
+    list_filter = [
+        'target',
+        'status',
+        ('manual', DzCrawlTypeFilter),
+    ]
+
     date_hierarchy = 'started'
     radio_fields = {'target': admin.HORIZONTAL}
     ordering = ['-id']

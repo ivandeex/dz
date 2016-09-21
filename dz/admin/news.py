@@ -19,15 +19,23 @@ class NewsExportResource(DzExportResource):
 class NewsAdmin(DzCrawlModelAdmin):
     resource_class = NewsExportResource
 
-    list_display = ['id', 'published', 'sport', 'league',
-                    'parties', 'title', 'description_str',
-                    'updated', 'crawled', 'link_str', 'archived_str']
+    list_display = [
+        'id', 'published', 'sport', 'league',
+        'parties', 'title', 'description_str',
+        'updated', 'crawled', 'link_str', 'archived_str'
+    ]
 
-    list_filter = [('sport', DzSelectFieldListFilter),
-                   ('league', DzSelectFieldListFilter),
-                   DzArchivedListFilter,
-                   'updated',
-                   ]
+    def get_list_filter(self, request):
+        list_filter_select = [
+            ('sport', DzSelectFieldListFilter),
+            ('league', DzSelectFieldListFilter),
+        ]
+        list_filter_status = [DzArchivedListFilter, 'updated']
+        if settings.DZ_SKIN in ('django', 'bootstrap'):
+            # push long sport/league lists to the end
+            return list_filter_status + list_filter_select
+        else:  # keep sport/league selectors atop
+            return list_filter_select + list_filter_status
 
     search_fields = ['parties', 'title',
                      'newstext__preamble', 'newstext__content']
@@ -47,7 +55,8 @@ class NewsAdmin(DzCrawlModelAdmin):
         return (auth_user or self._request.user).has_perm('dz.follow_news')
 
     def description_str(self, obj):
-        tpl = TemplateResponse(self._request, 'admin/dz-admin/news_description.html',
+        tpl = TemplateResponse(self._request,
+                               'admin/dz-admin/news-description.html',
                                context=dict(news=obj, opts=self.opts))
         return tpl.rendered_content
     description_str.short_description = _('news cut (column)')
@@ -89,7 +98,7 @@ class NewsAdmin(DzCrawlModelAdmin):
                 'news': news,
                 'can_follow_links': self.user_can_follow_links(request.user),
             }
-            return TemplateResponse(request, 'admin/dz-admin/newsbox_popup.html', context)
+            return TemplateResponse(request, 'admin/dz-admin/newsbox-popup.html', context)
         else:
             return HttpResponseNotFound()
 

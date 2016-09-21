@@ -19,15 +19,20 @@ class TipExportResource(DzExportResource):
 class TipAdmin(DzCrawlModelAdmin):
     resource_class = TipExportResource
 
-    list_display = ['id', 'published', 'league', 'parties', 'description_str',
-                    'result', 'tipster', 'odds', 'min_odds',
-                    'stake', 'earnings', 'spread', 'bookmaker', 'success_str',
-                    'updated', 'crawled', 'link_str', 'archived_str']
-    list_filter = [('league', DzSelectFieldListFilter),
-                   ('parties', DzSelectFieldListFilter),
-                   ('tipster', DzSelectFieldListFilter),
-                   DzArchivedListFilter,
-                   ]
+    list_display = [
+        'id', 'published', 'league', 'parties', 'description_str',
+        'result', 'tipster', 'odds', 'min_odds',
+        'stake', 'earnings', 'spread', 'bookmaker', 'success_str',
+        'updated', 'crawled', 'link_str', 'archived_str'
+    ]
+
+    list_filter = [
+        DzArchivedListFilter,
+        ('tipster', DzSelectFieldListFilter),
+        ('league', DzSelectFieldListFilter),
+        ('parties', DzSelectFieldListFilter),
+    ]
+
     search_fields = ['parties', 'title', 'text']
     exclude = ['text']
     date_hierarchy = 'published'
@@ -45,7 +50,8 @@ class TipAdmin(DzCrawlModelAdmin):
         return (auth_user or self._request.user).has_perm('dz.follow_tips')
 
     def description_str(self, obj):
-        tpl = TemplateResponse(self._request, 'admin/dz-admin/tip_description.html',
+        tpl = TemplateResponse(self._request,
+                               'admin/dz-admin/tip-description.html',
                                context=dict(tip=obj, opts=self.opts))
         return tpl.rendered_content
     description_str.short_description = _('tip cut (column)')
@@ -93,7 +99,7 @@ class TipAdmin(DzCrawlModelAdmin):
                 is_popup = False
             else:
                 skin, is_popup = 'plus', True
-            template = 'admin/dz-%s/tipbox_popup.html' % skin
+            template = 'admin/dz-%s/tipbox-popup.html' % skin
             return TemplateResponse(request, template, dict(tip=tip, is_popup=is_popup))
         else:
             return HttpResponseNotFound()
