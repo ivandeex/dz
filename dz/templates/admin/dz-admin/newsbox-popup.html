@@ -6,9 +6,6 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% if can_follow_links %}
-    <meta name="referrer" content="no-referrer">
-    {% endif %}
     {% render_bundle 'dz-newsbox' 'css' %}
 </head>
 <body>
@@ -18,7 +15,7 @@
     <h2 class="news-subtitle">{{ news.parties }}</h2>
       <div class="news-meta">
         <table>
-          <tr><td class="news-key">{% trans 'URL' %}:</td>       <td class="news-val news-link">{% if can_follow_links %}<a href="{{ news.link }}" target="_blank">{{ news.link }}</a>{% else %}{{ news.link }}{% endif %}</td></tr>
+          <tr><td class="news-key">{% trans 'URL' %}:</td>       <td class="news-val news-link">{{link_str}}</td></tr>
           <tr><td class="news-key">{% trans 'Sport' %}:</td>     <td class="news-val">{{ news.sport }}</td></tr>
           <tr><td class="news-key">{% trans 'League' %}:</td>    <td class="news-val">{{ news.league }}</td></tr>
           <tr><td class="news-key">{% trans 'Published' %}:</td> <td class="news-val">{{ news.published }}</td></tr>

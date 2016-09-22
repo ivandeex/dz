@@ -15,14 +15,6 @@
 {# grappelli does not provide model name class, so we force it here #}
 {% block bodyclass %}{{block.super}} model-{{model_name}}{% endblock %}
 
-{% block blockbots %}
-{{ block.super }}
-{% if can_follow_links %}
-{# prevent browser from setting referrer when clicking on external links #}
-<meta name="referrer" content="no-referrer" />
-{% endif %}
-{% endblock %}
-
 {% block page-tools %}
 {{ block.super }}
 {% if not is_popup %}

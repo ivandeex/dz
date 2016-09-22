@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.utils import timezone
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from import_export.admin import ExportMixin
 from import_export.formats import base_formats
@@ -104,6 +105,15 @@ class DzModelAdmin(admin.ModelAdmin):
 class DzCrawlModelAdmin(ExportMixin, DzModelAdmin):
     formats = [base_formats.XLSX]
     can_export = True
+
+    def format_external_link(self, link):
+        if self.user_can_follow_links(None):
+            return format_html(
+                '<a href="{link}" rel="{rel}" target="_blank">{link}</a>',
+                link=link, rel='nofollow noreferrer noopener'
+            )
+        else:
+            return link
 
     def get_urls(self):
         urls = super(DzCrawlModelAdmin, self).get_urls()

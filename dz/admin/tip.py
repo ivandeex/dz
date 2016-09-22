@@ -3,7 +3,6 @@ from django.template.response import TemplateResponse
 from django.http import HttpResponseNotFound
 from django.conf.urls import url
 from django.conf import settings
-from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from .common import DzCrawlModelAdmin, DzExportResource
 from .common import DzSelectFieldListFilter, DzArchivedListFilter
@@ -74,13 +73,7 @@ class TipAdmin(DzCrawlModelAdmin):
     archived_str.admin_order_field = 'archived'
 
     def link_str(self, obj):
-        if self.user_can_follow_links(None):
-            return format_html(
-                '<a href="{link}" target="_blank">{link}</a>',
-                link=obj.link
-            )
-        else:
-            return obj.link
+        return self.format_external_link(obj.link)
     link_str.short_description = _('tip link (column)')
     link_str.admin_order_field = 'link'
 

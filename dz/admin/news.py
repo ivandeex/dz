@@ -4,7 +4,6 @@ from django.template.response import TemplateResponse
 from django.http.response import HttpResponseNotFound, HttpResponsePermanentRedirect
 from django.conf.urls import url
 from django.conf import settings
-from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from .common import DzCrawlModelAdmin, DzExportResource
 from .common import DzArchivedListFilter, DzSelectFieldListFilter
@@ -68,13 +67,7 @@ class NewsAdmin(DzCrawlModelAdmin):
     archived_str.admin_order_field = 'archived'
 
     def link_str(self, obj):
-        if self.user_can_follow_links(None):
-            return format_html(
-                '<a href="{link}" target="_blank">{link}</a>',
-                link=obj.link
-            )
-        else:
-            return obj.link
+        return self.format_external_link(obj.link)
     link_str.short_description = _('news link (column)')
     link_str.admin_order_field = 'link'
 
@@ -97,6 +90,7 @@ class NewsAdmin(DzCrawlModelAdmin):
             context = {
                 'news': news,
                 'can_follow_links': self.user_can_follow_links(request.user),
+                'link_str': self.format_external_link(news.link),
             }
             return TemplateResponse(request, 'admin/dz-admin/newsbox-popup.html', context)
         else:
