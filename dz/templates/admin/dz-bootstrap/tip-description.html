@@ -1,0 +1,8 @@
+{% load i18n admin_urls dz_extras %}
+<div class="dz-title">{{ tip.title }}</div>
+{% if tip.text_cut %}
+<div class="dz-body">
+  <span>{{ tip.text_cut | striptags | strip_cut_tags }}</span>
+  <a href="{% url opts|admin_urlname:'tipbox' pk=tip.pk %}" data-toggle="modal" data-target="#tipbox-popup" title="{% trans 'Show details' %}">({% trans 'more...' %})</a>
+</div>
+{% endif %}

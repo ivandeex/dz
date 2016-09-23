@@ -1,50 +1,15 @@
-{% extends "admin/base.html" %}
 {% load i18n %}
-{% load render_bundle from webpack_loader  %}
-
-{# ======== apply style overrides ======== #}
-{% block extrastyle %}
-{{ block.super }}
-  {% render_bundle 'dz-bootstrap' 'css' %}
-{% endblock %}
-
-{% block extrahead %}
-{{ block.super }}
-  {% if debug %}  {# no actual scripts are required, only dev-server reloading #}
-  {% render_bundle 'dz-bootstrap' 'js' %}
-  {% endif %}
-{% endblock %}
-
-{% block bodyclass %}{{block.super}} tipbox-popup{% endblock %}
-{# ======== end of style overrides ======== #}
-
-{% block title %}{% blocktrans with id=tip.id %}Tip #{{id}}{% endblocktrans %}{% endblock %}
-
-{% block messages %}{% endblock %}
-
-{% block navbar %}
-<div class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <span class="navbar-brand">{{tip.title}} [{{tip.id}}]</span>
-    </div>
-    <div class="collapse navbar-collapse">
-      <ul class="object-tools nav navbar-nav navbar-right">
-        <li>
-          <button class="btn btn-danger btn-sm" onclick="javascript:window.close();">
-            {% trans 'Close' %} <i class="glyphicon glyphicon-remove"></i>
-          </button>
-        </li>
-      </ul>
-    </div>
-  </div>
+{% if is_ajax %}
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal">&times;</button>
+  <h3>{{tip.title}} [{{tip.id}}]</h3>
 </div>
-{% endblock %}
-
-{% block content %}
-<div class="row">
-  <div class="well well-lg">
-    {{ tip.text }}
-  </div>
+<div class="modal-body">
+  <p>{{ tip.text }}</p>
 </div>
-{% endblock %}
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary" data-dismiss="modal">{% trans 'Close' %}</button>
+</div>
+{% else %}
+{% include 'admin/dz-bootstrap/tipbox-popup-page.html' %}
+{% endif %}

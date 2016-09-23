@@ -22,6 +22,16 @@
 {% block logs %}{% endblock %}
 
 
+{# reserve a div for modal tip popups, put it close to body #}
+{% block footer %}
+  {{ block.super }}
+  {% if opts.model_name == 'tip' %}
+    {% include 'admin/dz-bootstrap/tipbox-modal.html' %}
+  {% endif %}
+{% endblock %}
+
+
+{# page header #}
 {% block nav-global %}
   {{ block.super }}
 
@@ -69,6 +79,7 @@
     </li>
   {% endif %}
 {% endblock %}
+
 
 {# fix django-admin-bootstrapped and add alert-dismissible to messages #}
 {% block messages %}

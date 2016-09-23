@@ -48,14 +48,6 @@ class TipAdmin(DzCrawlModelAdmin):
     def user_can_follow_links(self, auth_user):
         return (auth_user or self._request.user).has_perm('dz.follow_tips')
 
-    def description_str(self, obj):
-        tpl = TemplateResponse(self._request,
-                               'admin/dz-admin/tip-description.html',
-                               context=dict(tip=obj, opts=self.opts))
-        return tpl.rendered_content
-    description_str.short_description = _('tip cut (column)')
-    description_str.admin_order_field = 'title'
-
     SUCCESS_CODE_MAP = {
         'unknown': _('(success) unknown'),
         'hit': _('(success) hit'),
@@ -77,6 +69,16 @@ class TipAdmin(DzCrawlModelAdmin):
     link_str.short_description = _('tip link (column)')
     link_str.admin_order_field = 'link'
 
+    def description_str(self, obj):
+        skin = settings.DZ_SKIN
+        if skin != 'bootstrap':
+            skin = 'admin'
+        template = 'admin/dz-%s/tip-description.html' % skin
+        tpl = TemplateResponse(self._request, template, dict(tip=obj, opts=self.opts))
+        return tpl.rendered_content
+    description_str.short_description = _('tip cut (column)')
+    description_str.admin_order_field = 'title'
+
     def get_urls(self):
         tipbox_url = url(
             r'^(?P<pk>\d+)/tipbox/$',
@@ -86,15 +88,16 @@ class TipAdmin(DzCrawlModelAdmin):
 
     def tipbox_view(self, request, pk):
         tip = self.get_object(request, pk)
-        if tip:
-            skin = settings.DZ_SKIN
-            if skin == 'grappelli':
-                is_popup = False
-            elif skin == 'bootstrap':
-                is_popup = True
-            else:
-                skin, is_popup = 'plus', True
-            template = 'admin/dz-%s/tipbox-popup.html' % skin
-            return TemplateResponse(request, template, dict(tip=tip, is_popup=is_popup))
-        else:
+        if not tip:
             return HttpResponseNotFound()
+        skin = settings.DZ_SKIN
+        if skin == 'grappelli':
+            is_popup = False
+        elif skin == 'bootstrap':
+            is_popup = True
+        else:
+            skin, is_popup = 'plus', True
+        template = 'admin/dz-%s/tipbox-popup.html' % skin
+        is_ajax = bool(request.is_ajax() or request.GET.get('_ajax'))
+        context = dict(tip=tip, is_popup=is_popup, is_ajax=is_ajax)
+        return TemplateResponse(request, template, context)
