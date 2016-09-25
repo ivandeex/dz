@@ -28,17 +28,18 @@ const WHITENOICE_CSS_FIX = { match: { pattern: 'url\\(\\.\\./img/', flags: 'g' }
                              replaceWith: 'url_FixWhiteNoice(../img/' };
 
 let babelSettings = {
-  presets: ['es2015']
+  presets: ['es2015'],
+  plugins: ['transform-runtime']
 };
 
 let config = {
-  context: __dirname,
+  context: path.resolve(__dirname, 'dz', 'assets'),
 
   entry: {
-    'dz-plus': './dz/assets/plus',
-    'dz-grappelli': './dz/assets/grappelli',
-    'dz-bootstrap': './dz/assets/bootstrap',
-    'dz-newsbox': './dz/assets/newsbox'
+    'dz-plus': './plus',
+    'dz-grappelli': './grappelli',
+    'dz-bootstrap': './bootstrap',
+    'dz-newsbox': './newsbox'
   },
 
   output: {
@@ -118,10 +119,22 @@ let config = {
         }
     }),
 
-    new ExtractTextPlugin('[name].css', { allChunks: true }),
+    new webpack.DefinePlugin({
+      DEVELOPMENT: !PRODUCTION
+    }),
+
+    new ExtractTextPlugin(
+      '[name].css',
+      { allChunks: true }
+    ),
+
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'dz-common',
+      minChunks: 3
+    }),
 
     new CopyPlugin([
-      { from: 'dz/assets/newsbox/img/bookmakers', to: 'bookmaker' }
+      { from: './newsbox/img/bookmakers', to: 'bookmaker' }
     ]),
 
     new CleanPlugin([`assets/${TARGET}`])
