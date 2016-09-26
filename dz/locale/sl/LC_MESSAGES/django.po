@@ -93,7 +93,7 @@ msgstr "opis"
 
 #: admin/news.py:66 admin/tip.py:72 models/news.py:22 models/tip.py:35
 msgid "archived (column)"
-msgstr "arhivsko"
+msgstr "arhivsko?"
 
 #: admin/news.py:71 models/news.py:14
 msgid "news link (column)"

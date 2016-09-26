@@ -1,0 +1,8 @@
+{% load i18n admin_urls dz_extras %}
+<div class="dz-pre">{{ record.preamble_cut | striptags | strip_cut_tags }}</div>
+{% if record.content_cut %}
+<div class="dz-body">
+  <span>{{ record.content_cut | striptags | strip_cut_tags }}</span>
+  <a href="/xxx/{{record.pk}}" title="{% trans 'Show details' %}" id="{% blocktrans with pk=record.pk %}News {{pk}}{% endblocktrans %}" onclick="return showRelatedObjectLookupPopup(this);">({% trans 'more...' %})</a>
+</div>
+{% endif %}

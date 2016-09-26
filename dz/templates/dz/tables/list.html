@@ -1,0 +1,15 @@
+{% extends 'dz/tables/base.html' %}
+{% load i18n %}
+{% load render_table from django_tables2 %}
+
+
+{% block title %}{{ verbose_name_plural|title }} | {% trans 'D.Z.' %}{% endblock %}
+
+
+{% block content %}
+<div class="container">
+  {% block results %}
+    {% render_table table 'dz/tables/_table.html' %}
+  {% endblock %}
+</div>
+{% endblock content %}

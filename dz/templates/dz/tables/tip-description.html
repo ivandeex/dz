@@ -1,0 +1,8 @@
+{% load i18n admin_urls dz_extras %}
+<div class="dz-title">{{ record.title }}</div>
+{% if record.text_cut %}
+<div class="dz-body">
+  <span>{{ record.text_cut | striptags | strip_cut_tags }}</span>
+  <a href="/xxx/{{record.pk}}" data-toggle="modal" data-target="#tipbox-popup" title="{% trans 'Show details' %}">({% trans 'more...' %})</a>
+</div>
+{% endif %}

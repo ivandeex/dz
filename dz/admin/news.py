@@ -59,7 +59,7 @@ class NewsAdmin(DzCrawlModelAdmin):
                                context=dict(news=obj, opts=self.opts))
         return tpl.rendered_content
     description_str.short_description = _('news cut (column)')
-    description_str.admin_order_field = 'preamble'
+    description_str.admin_order_field = 'newstext__preamble'
 
     def archived_str(self, obj):
         return _('Archived') if obj.archived else _('Fresh')

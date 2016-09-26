@@ -94,7 +94,7 @@ msgstr "описание"
 
 #: admin/news.py:66 admin/tip.py:72 models/news.py:22 models/tip.py:35
 msgid "archived (column)"
-msgstr "архив или текущее?"
+msgstr "архивное?"
 
 #: admin/news.py:71 models/news.py:14
 msgid "news link (column)"

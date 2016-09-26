@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',  # same as manage.py runserver --nostatic
     'django.contrib.staticfiles',     # for manage.py collectstatic
 
+    'django_tables2',
     'bootstrap3',
     'import_export',
     'webpack_loader',
@@ -231,7 +232,7 @@ TIME_INPUT_FORMATS = ['%H:%M']
 MONGODB_URL = env.str('MONGODB_URL', '')
 
 # DZ - Custom settings
-FIELD_CUT_LENGTH = 100
+FIELD_CUT_LENGTH = 120
 
 # DZ - Spider settings
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'

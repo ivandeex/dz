@@ -1,0 +1,29 @@
+@import '../common/mixins';
+
+.model-tip {
+  td,
+  th {
+    &.success {
+      // Bootstrap .success class clashes with column name "success".
+      // This selector fixes green background in result of this clash.
+      background-color: inherit !important;
+    }
+  }
+}
+
+.model-news,
+.model-tip {
+  td {
+    &.description {
+      @include field-description;
+    }
+
+    &.title {
+      @include field-title;
+    }
+
+    &.link {
+      @include field-link;
+    }
+  }
+}

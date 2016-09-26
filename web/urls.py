@@ -12,6 +12,7 @@ urlpatterns_i18n = [
     url(r'^admin/', admin.site.urls),
     url(r'^dz/admin/', dz_admin.site.urls),
     url(r'^dz/', include('dz.urls', namespace='dz')),
+    url(r'^auth/', include('django.contrib.auth.urls', namespace='auth')),
     url(r'^$', lambda request: redirect('dz:index')),
 ]
 

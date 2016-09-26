@@ -1,0 +1,22 @@
+{% load i18n %}
+{% get_current_language as curr_lang_code %}
+{% get_language_info for curr_lang_code as curr_lang_info %}
+<li class="dropdown">
+  <a role="button" href="#" class="dropdown-toggle" data-toggle="dropdown">
+    {{ curr_lang_info.name_translated }}
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu">
+    {% get_available_languages as all_langs %}
+    {% for lang in all_langs %}
+      {% if lang.0 != curr_lang_code %}
+        <li><a href="javascript:document.forms['set_lang_{{lang.0}}'].submit();">{{lang.1}}</a></li>
+        <form name="set_lang_{{lang.0}}" action="{% url 'set_language' %}" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{redirect_to}}"/>
+          <input type="hidden" name="language" value="{{lang.0}}"/>
+        </form>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</li>

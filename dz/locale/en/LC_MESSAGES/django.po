@@ -35,11 +35,11 @@ msgstr "All"
 
 #: admin/common.py:31 admin/news.py:65 admin/tip.py:71
 msgid "Archived"
-msgstr "Archived"
+msgstr "archived"
 
 #: admin/common.py:32 admin/news.py:65 admin/tip.py:71
 msgid "Fresh"
-msgstr "Current"
+msgstr "fresh"
 
 # # dz/admin/common.py:100
 #. Translators: status (from models.Crawl) is one of: refused, updated, submitted
@@ -85,16 +85,16 @@ msgstr "unknown"
 
 #: admin/crawl.py:47
 msgid "crawl type (str column)"
-msgstr "start method"
+msgstr "type"
 
 #: admin/news.py:61
 msgid "news cut (column)"
-msgstr "description"
+msgstr "content"
 
 # Context: admin filter name
 #: admin/news.py:66 admin/tip.py:72 models/news.py:22 models/tip.py:35
 msgid "archived (column)"
-msgstr "archived or current?"
+msgstr "archived?"
 
 #: admin/news.py:71 models/news.py:14
 msgid "news link (column)"
@@ -102,7 +102,7 @@ msgstr "link"
 
 #: admin/tip.py:56
 msgid "tip cut (column)"
-msgstr "description"
+msgstr "tip"
 
 #: admin/tip.py:60
 msgid "(success) unknown"
@@ -152,11 +152,11 @@ msgstr "complete"
 #. Translators: Job Id
 #: models/crawl.py:24
 msgid "crawl id (column)"
-msgstr "id"
+msgstr "job id"
 
 #: models/crawl.py:25
 msgid "crawl target (column)"
-msgstr "subject"
+msgstr "target"
 
 #: models/crawl.py:27
 msgid "crawl type (bool column)"
@@ -197,7 +197,7 @@ msgstr "crawls"
 
 #: models/news.py:13
 msgid "news id (column)"
-msgstr "id"
+msgstr "ID"
 
 #: models/news.py:15
 msgid "news title (column)"
@@ -213,20 +213,20 @@ msgstr "league"
 
 #: models/news.py:18
 msgid "parties (column)"
-msgstr "parties"
+msgstr "participants"
 
 #. Translators: Published (Objavleno)
 #: models/news.py:19 models/tip.py:31
 msgid "published (column)"
-msgstr "published at"
+msgstr "published"
 
 #: models/news.py:20 models/tip.py:32
 msgid "updated (column)"
-msgstr "updated at"
+msgstr "updated"
 
 #: models/news.py:21 models/tip.py:33
 msgid "fetched (column)"
-msgstr "crawled at"
+msgstr "fetched"
 
 #: models/news.py:25
 msgid "news (table)"
@@ -278,7 +278,7 @@ msgstr "schedule"
 
 #: models/tip.py:10
 msgid "tip id (column)"
-msgstr "id"
+msgstr "ID"
 
 #: models/tip.py:11
 msgid "tip league (column)"

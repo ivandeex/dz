@@ -2,6 +2,7 @@ django==1.10.1
 django-grappelli==2.8.1
 git+https://github.com/hellpanderrr/django-admin-bootstrapped-1.9-compatible.git@master#egg=django_admin_bootstrapped
 django-bootstrap3==7.1.0
+django-tables2==1.2.6
 
 django-environ==0.4.0
 django-import-export==0.4.5

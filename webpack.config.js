@@ -42,7 +42,8 @@ let config = {
     'dz-plus': './plus',
     'dz-grappelli': './grappelli',
     'dz-bootstrap': './bootstrap',
-    'dz-newsbox': './newsbox'
+    'dz-newsbox': './newsbox',
+    'dz-tables': './tables'
   },
 
   output: {
@@ -99,7 +100,8 @@ let config = {
 
   externals: [
     'django.jQuery',  // global django jquery
-    'grp.jQuery'      // grappelli skin' jQuery
+    'grp.jQuery',     // grappelli skin' jQuery
+    'jQuery'          // jQuery for django tables
   ],
 
   plugins: [

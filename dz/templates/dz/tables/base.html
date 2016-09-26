@@ -1,0 +1,80 @@
+{% load static i18n %}
+{% load bootstrap3 %}
+{% load render_bundle from webpack_loader %}
+<html>
+<!DOCTYPE html>
+<head>
+  {% block head %}
+    <meta charset="utf8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="X-UA-Compatible" content="IE=Edge">
+    <title>{% block title %}Tables{% endblock title %}</title>
+
+    {% block css %}
+      {% bootstrap_css %}
+      {% render_bundle 'dz-common' 'css' %}
+      {% render_bundle 'dz-tables' 'css' %}
+    {% endblock %}
+
+    {% block javascript %}
+      {% bootstrap_javascript jquery=1 %}
+      {% render_bundle 'dz-common' 'js'%}
+      {% render_bundle 'dz-tables' 'js'%}
+    {% endblock %}
+  {% endblock head %}
+</head>
+<body>
+  {% block header %}
+    <div class="container">
+      <nav class="navbar navbar-default">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#dz-navbar-collapse">
+            <i class="icon-bar"></i>
+            <i class="icon-bar"></i>
+            <i class="icon-bar"></i>
+          </button>
+          <a class="navbar-brand" href="{% url 'dz:index' %}">{% trans 'D.Z.' %}</a>
+        </div>
+        <div class="collapse navbar-collapse" id="dz-navbar-collapse">
+          {% block top-navigation %}
+            <ul class="nav navbar-nav dz-top-navigation">
+              <li>
+                <a href="{% url 'dz:index' %}">{% trans 'Home' %}</a>
+              </li>
+              {% for text, href in top_nav_links %}
+                <li{% if href == request.path %} class="active"{% endif %}>
+                  <a href="{{href}}">{{text}}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endblock top-navigation %}
+
+          {% block user-tools %}
+            {% if user.is_authenticated %}
+              <ul class="nav navbar-nav navbar-right">
+                <li>
+                  <a href="{% url 'auth:logout' %}">{% trans 'Log out' %}</a>
+                </li>
+                <li class="navbar-text">
+                  {{user.username}}
+                </li>
+              </ul>
+            {% endif %}
+          {% endblock user-tools %}
+
+          {% if not dz_compat %}
+            {% block language-selector %}
+              <ul class="nav navbar-nav navbar-right dz-language-selector">
+                {% include './_language-selector.html' %}
+              </ul>
+            {% endblock language-selector %}
+          {% endif %}
+        </div>
+      </nav>
+    </div>
+  {% endblock header %}
+  {% block content %}
+    <p>Empty content!</p>
+  {% endblock content %}
+</body>
+</html>

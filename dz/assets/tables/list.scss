@@ -1,0 +1,21 @@
+.table {
+  // workaround for strange font-size 18px
+  font-size: 14px;
+
+  // prevent wrapping of column headers
+  th {
+    white-space: nowrap;
+  }
+}
+
+.row_actions {
+  white-space: nowrap;
+  a {
+    color: #000;
+    text-decoration: none;
+
+    &:hover {
+      color: #006;
+    }
+  }
+}

@@ -7,7 +7,14 @@
   </head>
   <body>
     {% include "admin/dz-plus/lang-selector.html" %}
-    <p><a href="{% url 'admin:index' %}">Django Admin</a></p>
-    <p><a href="{% url 'dz-admin:index' %}">DZ Admin</a></p>
+    <ul>
+      <li><a href="{% url 'dz:news-list' %}">News Table</a></li>
+      <li><a href="{% url 'dz:tip-list' %}">Tip Table</a></li>
+      <li><a href="{% url 'dz:crawl-list' %}">Crawl Table</a></li>
+      <li><a href="{% url 'dz:schedule-list' %}">Schedule</a></li>
+
+      <li><a href="{% url 'admin:index' %}">Django Admin</a></li>
+      <li><a href="{% url 'dz-admin:index' %}">DZ Admin</a></li>
+    </ul>
   </body>
 </html>

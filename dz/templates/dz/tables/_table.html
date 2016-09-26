@@ -1,0 +1,60 @@
+{% extends 'django_tables2/bootstrap.html' %}
+{% load i18n %}
+{% load querystring from django_tables2 %}
+
+{% block table %}
+  {# override: add table-tools block #}
+  {% block table-tools %}
+    <ul class="nav nav-tabs table-tools">
+      <li class="active">
+        <a href="javascript://">
+          {% blocktrans with size=table.data|length %}List ({{size}}){% endblocktrans %}
+        </a>
+      </li>
+      <li class="dropdown">
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="javascript://">
+          {% trans 'With selected' %} <i class="caret"></i>
+        </a>
+        <ul class="dropdown-menu">
+          <li>
+            <a href="javascript://">{% trans 'Delete' %}</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  {% endblock %}
+
+  {# override: add the table-hover class and model class #}
+  <table class="table table-bordered table-striped table-hover model-{{ model_name }}"{% if table.attrs %} {{ table.attrs.as_html }}{% endif %}>
+
+    {% block table.thead %}
+      <thead>
+        <tr>
+          {% for column in table.columns %}
+            {% if column.orderable %}
+              <th {{ column.attrs.th.as_html }}>
+                <a href="{% querystring table.prefixed_order_by_field=column.order_by_alias.next %}">
+                  {{ column.header }}
+                  {# override: add order mark #}
+                  {% if column.is_ordered %}
+                    <i class="glyphicon glyphicon-chevron-{% if column.order_by_alias.is_descending %}down{% else %}up{% endif %}"></i>
+                  {% endif %}
+                </a>
+              </th>
+            {% else %}
+              <th {{ column.attrs.th.as_html }}>{{ column.header }}</th>
+            {% endif %}
+          {% endfor %}
+        </tr>
+      </thead>
+    {% endblock table.thead %}
+
+    {% block table.tbody %}
+      {{block.super}}
+    {% endblock table.tbody %}
+
+    {% block table.tfoot %}
+      {{block.super}}
+    {% endblock table.tfoot %}
+  </table>
+{% endblock table %}
