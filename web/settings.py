@@ -10,10 +10,13 @@ env = environ.Env()
 env.read_env(root('.env'))
 
 
-BASE_DIR = root()
-
 DZ_SKIN = env.str('DZ_SKIN', 'grappelli')
 assert DZ_SKIN in ('django', 'plus', 'grappelli', 'bootstrap')
+
+DZ_COMPAT = env.bool('DZ_COMPAT', False)
+
+
+BASE_DIR = root()
 
 DEBUG = env.bool('DEBUG', False)
 DEBUG_SQL = env.bool('DEBUG_SQL', DEBUG)
@@ -149,7 +152,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'dz.admin.context_processors.dz_skin'
+                'dz.admin.context_processors.dz_skin',
+                'dz.admin.context_processors.dz_compat',
             ],
             'loaders': [
                 ('django.template.loaders.cached.Loader', [

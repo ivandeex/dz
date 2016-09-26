@@ -17,6 +17,9 @@ const DEV_HOST = process.env.DEV_HOST || 'localhost',
 
 const TARGET = PRODUCTION ? 'prod' : 'devel';
 
+const __DZ_COMPAT = (process.env.DZ_COMPAT || 'false').toLowerCase();
+const DZ_COMPAT = ['1', 'yes', 'true'].indexOf(__DZ_COMPAT) > -1;
+
 // Whitenoise fails if a css-referenced image does not exist.
 // Below we replace such references in url() with webpack.NormalModuleReplacementPlugin,
 // This pass ignores url() references inside comments, but stupid whitenoice still fails,
@@ -89,6 +92,10 @@ let config = {
   postcss: () => [
     autoprefixer({ browsers: ['last 2 versions', '> 5%'] })
   ],
+
+  sassLoader: {
+    data: `$dz-compat: ${DZ_COMPAT};`
+  },
 
   externals: [
     'django.jQuery',  // global django jquery

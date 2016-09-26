@@ -4,9 +4,14 @@
   gather_facts: false
   tags: env
   tasks:
-    - lineinfile: dest=../.env create=yes mode=0600 line='{{ item|upper }}="{{ public[item] }}"'
+    - lineinfile: dest=../.env create=yes mode=0600
+                  regexp='^{{ item|upper }}='
+                  line='{{ item|upper }}="{{ public[item] }}"'
       with_items: '{{ public.keys() | sort }}'
-    - lineinfile: dest=../.env create=yes mode=0600 line='{{ item|upper }}="{{ secret[item] }}"'
+
+    - lineinfile: dest=../.env create=yes mode=0600
+                  regexp='^{{ item|upper }}='
+                  line='{{ item|upper }}="{{ secret[item] }}"'
       with_items: '{{ secret.keys() | sort }}'
 
 - hosts: localhost
