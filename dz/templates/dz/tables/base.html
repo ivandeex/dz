@@ -12,14 +12,14 @@
 
     {% block css %}
       {% bootstrap_css %}
-      {% render_bundle 'dz-common' 'css' %}
-      {% render_bundle 'dz-tables' 'css' %}
+      {% render_bundle 'common' 'css' %}
+      {% render_bundle 'tables' 'css' %}
     {% endblock %}
 
     {% block javascript %}
       {% bootstrap_javascript jquery=1 %}
-      {% render_bundle 'dz-common' 'js'%}
-      {% render_bundle 'dz-tables' 'js'%}
+      {% render_bundle 'common' 'js'%}
+      {% render_bundle 'tables' 'js'%}
     {% endblock %}
   {% endblock head %}
 </head>

@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.utils.html import format_html
 from django.conf import settings
 import django_tables2 as tables
 from django_tables2.tables import DeclarativeColumnsMetaclass
@@ -66,22 +65,10 @@ class DzTable(TableFixColumns):
     def __init__(self, *args, **kwargs):
         super(DzTable, self).__init__(*args, **kwargs)
 
-        # Force title-cased headers on bound columns by replacing verbose names
+        # Force title-cased headers on bound columns
         for bound_column in self.columns.all():
             orig_header = bound_column.header
             bound_column.column.verbose_name = title(orig_header)
-
-    def user_is_admin(self):
-        return self.context.request.user.dz_user.is_admin
-
-    def format_external_link(self, link):
-        if self.user_is_admin():
-            return format_html(
-                '<a href="{link}" rel="{rel}" target="_blank">{link}</a>',
-                link=link, rel='nofollow noreferrer noopener'
-            )
-        else:
-            return link
 
 
 @login_required

@@ -6,15 +6,15 @@
 {# ======== apply style overrides ======== #}
 {% block extrastyle %}
   {{ block.super }}
-  {% render_bundle 'dz-common' 'css' %}
-  {% render_bundle 'dz-bootstrap' 'css' %}
+  {% render_bundle 'common' 'css' %}
+  {% render_bundle 'bootstrap' 'css' %}
 {% endblock %}
 
 {% block extrahead %}
   {{ block.super }}
   {% if debug %}  {# no actual scripts are required, only dev-server reloading #}
-    {% render_bundle 'dz-common' 'js' %}
-    {% render_bundle 'dz-bootstrap' 'js' %}
+    {% render_bundle 'common' 'js' %}
+    {% render_bundle 'bootstrap' 'js' %}
   {% endif %}
 {% endblock %}
 

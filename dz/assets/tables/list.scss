@@ -1,6 +1,6 @@
 .table {
-  // workaround for strange font-size 18px
-  font-size: 14px;
+  // FIXME workaround for strange font-size 16/18px
+  font-size: inherit;
 
   // prevent wrapping of column headers
   th {

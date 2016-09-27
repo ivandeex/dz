@@ -6,7 +6,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from .common import DzCrawlModelAdmin, DzExportResource
 from .common import DzSelectFieldListFilter, DzArchivedListFilter
-from .. import models
+from .. import models, helpers
 
 
 class TipExportResource(DzExportResource):
@@ -65,7 +65,7 @@ class TipAdmin(DzCrawlModelAdmin):
     archived_str.admin_order_field = 'archived'
 
     def link_str(self, obj):
-        return self.format_external_link(obj.link)
+        return helpers.format_external_link(self._request, obj.link)
     link_str.short_description = _('tip link (column)')
     link_str.admin_order_field = 'link'
 

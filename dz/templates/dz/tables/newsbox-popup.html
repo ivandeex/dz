@@ -6,8 +6,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% render_bundle 'dz-common' 'css' %}
-    {% render_bundle 'dz-newsbox' 'css' %}
+    {% render_bundle 'common' 'css' %}
+    {% render_bundle 'newsbox' 'css' %}
 </head>
 <body>
   <div class="news-block nlsn_content">
@@ -29,11 +29,11 @@
     <div class="news-content">{{ news.newstext.content | safe }}</div>
   </div>
   <div class="news-datatable">
-  {{ news.newstext.datatable | safe }}
+    {{ news.newstext.datatable | safe }}
   </div>
   {% if debug %}
-  {% render_bundle 'dz-common' 'js' %}
-  {% render_bundle 'dz-newsbox' 'js' %}
+    {% render_bundle 'common' 'js' %}
+    {% render_bundle 'newsbox' 'js' %}
   {% endif %}
 </body>
 </html>

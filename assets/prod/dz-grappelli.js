@@ -1,1 +1,1 @@
-webpackJsonp([2],[function(n,i,t){"use strict";t(13)},,,,,function(n,i){},function(n,i){},,,,,,,function(n,i,t){var c=t(15);c(function(){c(".grp-messagelist li").click(function(){c(this).hide("slow")})})},,function(n,i){n.exports=grp.jQuery}]);
+var dz=dz||{};dz.grappelli=webpackJsonpdz__name_([3],{0:function(n,i,t){"use strict";t(16)},5:function(n,i){},6:function(n,i){},16:function(n,i,t){var c=t(19);c(function(){c(".grp-messagelist li").click(function(){c(this).hide("slow")})})},19:function(n,i){n.exports=grp.jQuery}});

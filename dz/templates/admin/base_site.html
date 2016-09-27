@@ -11,16 +11,16 @@
 {% block extrastyle %}
 {{ block.super }}
 {% if dz_skin == 'plus' %}
-  {% render_bundle 'dz-common' 'css' %}
-  {% render_bundle 'dz-plus' 'css' %}
+  {% render_bundle 'common' 'css' %}
+  {% render_bundle 'plus' 'css' %}
 {% endif %}
 {% endblock %}
 
 {% block footer %}
 {{ block.super }}
 {% if dz_skin == 'plus' %}
-  {% render_bundle 'dz-common' 'js' %}
-  {% render_bundle 'dz-plus' 'js' %}
+  {% render_bundle 'common' 'js' %}
+  {% render_bundle 'plus' 'js' %}
 {% endif %}
 {% endblock %}
 

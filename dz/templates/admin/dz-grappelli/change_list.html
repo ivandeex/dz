@@ -5,15 +5,15 @@
 
 {% block extrastyle %}
   {{ block.super }}
-  {% render_bundle 'dz-common' 'css' %}
-  {% render_bundle 'dz-grappelli' 'css' %}
+  {% render_bundle 'common' 'css' %}
+  {% render_bundle 'grappelli' 'css' %}
 {% endblock %}
 
 
 {% block javascripts %}
   {{ block.super }}
-  {% render_bundle 'dz-common' 'js' %}
-  {% render_bundle 'dz-grappelli' 'js' %}
+  {% render_bundle 'common' 'js' %}
+  {% render_bundle 'grappelli' 'js' %}
 {% endblock %}
 
 

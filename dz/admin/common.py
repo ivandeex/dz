@@ -5,12 +5,11 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.utils import timezone
-from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from import_export.admin import ExportMixin
 from import_export.formats import base_formats
 from import_export.resources import ModelResource
-from ..models import Crawl
+from .. import models
 
 
 class DzSelectFieldListFilter(admin.AllValuesFieldListFilter):
@@ -105,15 +104,6 @@ class DzModelAdmin(admin.ModelAdmin):
 class DzSimpleCrawlModelAdmin(DzModelAdmin):
     formats = [base_formats.XLSX]
 
-    def format_external_link(self, link):
-        if self.user_can_follow_links(None):
-            return format_html(
-                '<a href="{link}" rel="{rel}" target="_blank">{link}</a>',
-                link=link, rel='nofollow noreferrer noopener'
-            )
-        else:
-            return link
-
     def get_urls(self):
         urls = super(DzSimpleCrawlModelAdmin, self).get_urls()
         wrap = self.admin_site.admin_view
@@ -124,7 +114,7 @@ class DzSimpleCrawlModelAdmin(DzModelAdmin):
     def crawl_view(self, request, extra_context=None):
         opts = self.opts
         if self.crawl_action and self.user_can_crawl(request.user):
-            status = Crawl.add_manual_crawl(self.crawl_action)
+            status = models.Crawl.add_manual_crawl(self.crawl_action)
             # Translators: status (from models.Crawl) is one of: refused, updated, submitted
             self.message_user(request, _('Crawling %s!' % status))
             if False:

@@ -7,3 +7,12 @@ $(() => {
     $row_selectors.prop('checked', this.checked);
   });
 });
+
+export function showNewsboxPopup(link, name) {
+  let win = window.open(
+    link, name,
+    'height=500,width=1000,resizable=yes,scrollbars=yes'
+  );
+  win.focus();
+  return false;  // prevent default action
+};

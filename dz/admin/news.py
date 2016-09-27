@@ -1,13 +1,13 @@
 from __future__ import unicode_literals, absolute_import
 import re
 from django.template.response import TemplateResponse
-from django.http.response import HttpResponseNotFound, HttpResponsePermanentRedirect
+from django.http.response import HttpResponsePermanentRedirect
 from django.conf.urls import url
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from .common import DzCrawlModelAdmin, DzExportResource
 from .common import DzArchivedListFilter, DzSelectFieldListFilter
-from .. import models
+from .. import models, tables, helpers
 
 
 class NewsExportResource(DzExportResource):
@@ -67,7 +67,7 @@ class NewsAdmin(DzCrawlModelAdmin):
     archived_str.admin_order_field = 'archived'
 
     def link_str(self, obj):
-        return self.format_external_link(obj.link)
+        return helpers.format_external_link(self._request, obj.link)
     link_str.short_description = _('news link (column)')
     link_str.admin_order_field = 'link'
 
@@ -85,16 +85,7 @@ class NewsAdmin(DzCrawlModelAdmin):
         return [newsbox_url, data_table_img_url] + orig_urls
 
     def newsbox_view(self, request, pk):
-        news = self.get_object(request, pk)
-        if news:
-            context = {
-                'news': news,
-                'can_follow_links': self.user_can_follow_links(request.user),
-                'link_str': self.format_external_link(news.link),
-            }
-            return TemplateResponse(request, 'admin/dz-admin/newsbox-popup.html', context)
-        else:
-            return HttpResponseNotFound()
+        return tables.newsbox_view(request, pk)
 
     def data_table_img_view(self, request, path):
         path = re.sub('/change/$', '', path)

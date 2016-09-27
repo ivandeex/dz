@@ -2,7 +2,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 import django_tables2 as tables
 from .common import DzTable, list_view
-from .. import models
+from .. import models, helpers
 
 
 class TipTable(DzTable):
@@ -27,7 +27,7 @@ class TipTable(DzTable):
         return self.SUCCESS_CODE_MAP.get(value, value)
 
     def render_link(self, value):
-        return self.format_external_link(value)
+        return helpers.format_external_link(self.context.request, value)
 
     def render_archived(self, value):
         return _('Archived') if value else _('Fresh')

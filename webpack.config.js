@@ -39,17 +39,18 @@ let config = {
   context: path.resolve(__dirname, 'dz', 'assets'),
 
   entry: {
-    'dz-plus': './plus',
-    'dz-grappelli': './grappelli',
-    'dz-bootstrap': './bootstrap',
-    'dz-newsbox': './newsbox',
-    'dz-tables': './tables'
+    'plus': './plus',
+    'grappelli': './grappelli',
+    'bootstrap': './bootstrap',
+    'newsbox': './newsbox',
+    'tables': './tables'
   },
 
   output: {
     path: path.resolve(__dirname, 'assets', TARGET),
-    filename: '[name].js',
-    chunkFilename: '_[name]-[id].js',
+    filename: 'dz-[name].js',
+    library: ['dz', '[name]'],
+    chunkFilename: '_dz-[name]-[id].js',
     publicPath: DEV_SERVER ? `http://${DEV_HOST}:${DEV_PORT}/`: `/static/${TARGET}/`,
     pathinfo: !PRODUCTION
   },
@@ -133,12 +134,12 @@ let config = {
     }),
 
     new ExtractTextPlugin(
-      '[name].css',
+      'dz-[name].css',
       { allChunks: true }
     ),
 
     new webpack.optimize.CommonsChunkPlugin({
-      name: 'dz-common',
+      name: 'common',
       minChunks: 3
     }),
 

@@ -4,15 +4,15 @@
 
 
 {% block extrastyle %}
-{{ block.super }}
-  {% render_bundle 'dz-common' 'css' %}
-  {% render_bundle 'dz-bootstrap' 'css' %}
+  {{ block.super }}
+  {% render_bundle 'common' 'css' %}
+  {% render_bundle 'bootstrap' 'css' %}
 {% endblock %}
 
 {% block extrahead %}
-{{ block.super }}
-  {% render_bundle 'dz-common' 'js' %}
-  {% render_bundle 'dz-bootstrap' 'js' %}
+  {{ block.super }}
+  {% render_bundle 'common' 'js' %}
+  {% render_bundle 'bootstrap' 'js' %}
 {% endblock %}
 
 

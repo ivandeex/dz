@@ -3,6 +3,8 @@
 {% if record.content_cut %}
 <div class="dz-body">
   <span>{{ record.content_cut | striptags | strip_cut_tags }}</span>
-  <a href="/xxx/{{record.pk}}" title="{% trans 'Show details' %}" id="{% blocktrans with pk=record.pk %}News {{pk}}{% endblocktrans %}" onclick="return showRelatedObjectLookupPopup(this);">({% trans 'more...' %})</a>
+  {% url 'dz:newsbox-popup' pk=record.pk as popup_url %}
+  {% blocktrans asvar popup_name with pk=record.pk %}News {{pk}}{% endblocktrans %}
+  <a href="{{ popup_url }}" title="{% trans 'Show details' %}" onclick="return dz.tables.showNewsboxPopup('{{popup_url}}', '{{popup_name}}');">({% trans 'more...' %})</a>
 </div>
 {% endif %}

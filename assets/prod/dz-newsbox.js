@@ -1,1 +1,1 @@
-webpackJsonp([4],{0:function(n,c,t){"use strict"},7:function(n,c){},11:function(n,c){}});
+var dz=dz||{};dz.newsbox=webpackJsonpdz__name_([5],{0:function(n,c,o){"use strict"},7:function(n,c){},14:function(n,c){}});
