@@ -1,5 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
+from django.shortcuts import render, get_object_or_404
 import django_tables2 as tables
 from .common import DzTable, list_view
 from .. import models, helpers
@@ -47,3 +48,10 @@ class TipTable(DzTable):
 
 def tip_list_view(request):
     return list_view(request, TipTable)
+
+
+def tipbox_view(request, pk):
+    tip = get_object_or_404(models.Tip, pk=pk)
+    ajax_mode = request.is_ajax() or request.GET.get('_ajax')
+    template = 'dz/tables/tipbox-popup-%s.html' % ('modal' if ajax_mode else 'page')
+    return render(request, template, dict(tip=tip))

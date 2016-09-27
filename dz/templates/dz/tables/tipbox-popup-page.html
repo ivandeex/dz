@@ -1,0 +1,13 @@
+{% extends 'dz/tables/base.html' %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="well">
+    <h2 class="text-center">{{tip.title}} <small>[{{tip.id}}]</small></h2>
+    <p>{{tip.text}}</p>
+  </div>
+</div>
+{% endblock %}
