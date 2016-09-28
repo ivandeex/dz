@@ -3,27 +3,6 @@
 {% load querystring from django_tables2 %}
 
 {% block table %}
-  {# override: add table-tools block #}
-  {% block table-tools %}
-    <ul class="nav nav-tabs table-tools">
-      <li class="active">
-        <a href="javascript://">
-          {% blocktrans with size=table.data|length %}List ({{size}}){% endblocktrans %}
-        </a>
-      </li>
-      <li class="dropdown">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="javascript://">
-          {% trans 'With selected' %} <i class="caret"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li>
-            <a href="javascript://">{% trans 'Delete' %}</a>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  {% endblock %}
-
   {# override: add the table-hover class and model class #}
   <table class="table table-bordered table-striped table-hover model-{{ model_name }}"{% if table.attrs %} {{ table.attrs.as_html }}{% endif %}>
 

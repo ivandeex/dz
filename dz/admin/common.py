@@ -115,13 +115,8 @@ class DzSimpleCrawlModelAdmin(DzModelAdmin):
         opts = self.opts
         if self.crawl_action and self.user_can_crawl(request.user):
             status = models.Crawl.add_manual_crawl(self.crawl_action)
-            # Translators: status (from models.Crawl) is one of: refused, updated, submitted
-            self.message_user(request, _('Crawling %s!' % status))
-            if False:
-                # Translators: force translation of all forms of the python-format above
-                _('Crawling refused!')
-                _('Crawling updated!')
-                _('Crawling submitted!')
+            message = models.Crawl.get_status_message(status)
+            self.message_user(request, message)
         rev_fmt = opts.app_label, opts.model_name
         url = reverse('admin:%s_%s_changelist' % rev_fmt, current_app=self.admin_site.name)
         filter_kwargs = dict(opts=opts, preserved_filters=self.get_preserved_filters(request))

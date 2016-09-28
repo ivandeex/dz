@@ -20,6 +20,8 @@ class Crawl(models.Model):
         ('complete', _('complete (crawl status)')),
     ]
 
+    CRAWL_TARGETS = ('news', 'tips')
+
     # Translators: Job Id
     id = models.AutoField(_('crawl id (column)'), primary_key=True)
     target = models.CharField(_('crawl target (column)'), max_length=6,
@@ -47,8 +49,20 @@ class Crawl(models.Model):
             self.id = 1 + (Crawl.objects.aggregate(Max('id'))['id__max'] or 0)
         super(Crawl, self).save(*args, **kwargs)
 
+    @staticmethod
+    def get_status_message(status):
+        # Translators: status from models.Crawl is one of: refused, updated, submitted
+        return _('Crawling %s!' % status)
+        if None:
+            _('Crawling refused!')
+            _('Crawling updated!')
+            _('Crawling submitted!')
+
     @classmethod
     def add_manual_crawl(cls, target):
+        if target not in cls.CRAWL_TARGETS:
+            return 'refused'
+
         # round time up to next full minute because server-bot api doesn't support seconds
         now_utc = timezone.now().replace(microsecond=0).astimezone(timezone.utc)
         now_utc = (now_utc + timezone.timedelta(seconds=59)).replace(second=0)

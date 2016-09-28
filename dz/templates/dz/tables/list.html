@@ -1,16 +1,65 @@
 {% extends 'dz/tables/base.html' %}
-{% load i18n %}
+{% load i18n dz_extras %}
 {% load render_table from django_tables2 %}
 
 
 {% block title %}{{ verbose_name_plural|title }} | {% trans 'D.Z.' %}{% endblock %}
 
 
+{% block messages %}
+  {% if messages %}
+    <div class="container dz-messages">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags|msg_tag_to_bs_class }} alert-dismissible fade in">
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endblock messages %}
+
+
 {% block content %}
 <div class="container">
+  {% block table-tools %}
+    <ul class="nav nav-tabs table-tools">
+      <li class="active">
+        <a href="javascript:void(0);">
+          {% blocktrans with size=table.data|length %}List ({{size}}){% endblocktrans %}
+        </a>
+      </li>
+
+      {% block crawl-tool %}
+        {% if crawl_target %}
+          <li>
+            <form class="form-inline dz-crawl-form" name="submit-crawl" method="post" action="{% url 'dz:crawl-action' %}">
+              {% csrf_token %}
+              <input type="hidden" name="model_name" value="{{ model_name }}" />
+              <input type="hidden" name="crawl_target" value="{{ crawl_target }}" />
+              <input type="hidden" name="preserved_query" value="{{ preserved_query }}" />
+              <button type="submit" class="btn btn-default btn-sm">{{ crawl_label }}</button>
+            </form>
+          </li>
+        {% endif %}
+      {% endblock crawl-tool %}
+
+      <li class="dropdown">
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="javascript://">
+          {% trans 'With selected' %} <i class="caret"></i>
+        </a>
+        <ul class="dropdown-menu">
+          <li>
+            <a href="javascript://">{% trans 'Delete' %}</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  {% endblock table-tools %}
+
   {% block results %}
     {% render_table table 'dz/tables/_table.html' %}
-  {% endblock %}
+  {% endblock results %}
 </div>
 {% endblock content %}
 
