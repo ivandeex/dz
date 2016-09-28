@@ -92,10 +92,9 @@ class Command(BaseCommand):
                 status=item['status'],
                 started=self.convert_time(item['started']),
                 ended=self.convert_time(item.get('ended')),
-                count=item['news'] if item['action'] == 'news' else item['tips'],
-                host=item['host'],
-                # ignored: item['ipaddr']
-                pid=item['pid'],
+                count=item['news' if item['action'] == 'news' else 'tips'] or 0,
+                host=item['host'] or item['ipaddr'] or '-',
+                pid=item['pid'] or 0,
             )
             count += 1
         print '%d crawls imported' % count
