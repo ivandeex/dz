@@ -8,9 +8,9 @@
 *.diff
 *.mo
 /.env
-/dist/
+/static/
 /ansible/secret.yml
 /node_modules/
 /pip_modules/
 /stats-devel.json
-/assets/devel/
+/public/devel/

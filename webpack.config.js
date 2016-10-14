@@ -47,7 +47,7 @@ let config = {
   },
 
   output: {
-    path: path.resolve(__dirname, 'assets', TARGET),
+    path: path.resolve(__dirname, 'public', TARGET),
     filename: 'dz-[name].js',
     library: ['dz', '[name]'],
     chunkFilename: '_dz-[name]-[id].js',
@@ -125,7 +125,7 @@ let config = {
         if (/newsbox\/css$/.test(result.context) &&
             !fileExists(path.resolve(result.context, result.request))) {
           // console.log('absent: ' + path.resolve(result.context, result.request));
-          result.request = `file?name=1x1.png!../img/1x1.png`;
+          result.request = 'file?name=1x1.png!../img/1x1.png';
         }
     }),
 
@@ -147,7 +147,7 @@ let config = {
       { from: './newsbox/img/bookmakers', to: 'bookmaker' }
     ]),
 
-    new CleanPlugin([`assets/${TARGET}`])
+    new CleanPlugin([`public/${TARGET}`])
 
   // production-only plugins
   ].concat(PRODUCTION ? [

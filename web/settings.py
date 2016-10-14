@@ -37,11 +37,11 @@ ROOT_URLCONF = 'web.urls'
 WSGI_APPLICATION = 'web.wsgi.application'
 
 STATIC_URL = '/static/'
-STATIC_ROOT = root('dist', 'static')
+STATIC_ROOT = root('static')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATICFILES_DIRS = [
-    root('assets')
+    root('public')
 ]
 
 
