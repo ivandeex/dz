@@ -1,1 +1,5 @@
 extends: google
+
+rules:
+  camelcase: off
+  require-jsdoc: off

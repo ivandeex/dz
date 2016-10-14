@@ -1,4 +1,4 @@
-/* global $ */  // This comment shuts up javascript linter.
+/* global $ window */  // This comment shuts up javascript linter.
 
 $(() => {
   // Let user select all rows at once by clicking on the row_selextor header.
@@ -15,4 +15,4 @@ export function showNewsboxPopup(link, name) {
   );
   win.focus();
   return false;  // prevent default action
-};
+}
