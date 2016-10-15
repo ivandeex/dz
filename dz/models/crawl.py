@@ -5,7 +5,7 @@ from django.db.models import Q, Max
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
-from .common import TARGET_CHOICES
+from .base import TARGET_CHOICES
 from .schedule import Schedule
 
 logger = logging.getLogger(__name__)

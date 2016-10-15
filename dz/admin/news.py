@@ -5,8 +5,8 @@ from django.http.response import HttpResponsePermanentRedirect
 from django.conf.urls import url
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from .common import DzCrawlModelAdmin, DzExportResource
-from .common import DzArchivedListFilter, DzSelectFieldListFilter
+from .base import (DzCrawlModelAdmin, DzExportResource,
+                   DzArchivedListFilter, DzSelectFieldListFilter)
 from .. import models, tables, helpers
 
 

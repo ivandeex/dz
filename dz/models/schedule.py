@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.db.models import signals
 from django.dispatch import receiver
 from threading import RLock
-from .common import TARGET_CHOICES
+from .base import TARGET_CHOICES
 from ..config import spider_config
 
 logger = logging.getLogger(__name__)

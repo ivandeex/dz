@@ -4,8 +4,8 @@ from django.http import HttpResponseNotFound
 from django.conf.urls import url
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from .common import DzCrawlModelAdmin, DzExportResource
-from .common import DzSelectFieldListFilter, DzArchivedListFilter
+from .base import (DzCrawlModelAdmin, DzExportResource,
+                   DzSelectFieldListFilter, DzArchivedListFilter)
 from .. import models, helpers
 
 

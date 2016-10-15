@@ -1,4 +1,5 @@
-from .common import DzTable, list_view
+from .base import DzTable
+from .views import list_view
 from .. import models
 
 

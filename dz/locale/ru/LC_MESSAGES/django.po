@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-28 02:58+0200\n"
+"POT-Creation-Date: 2016-10-15 02:29+0200\n"
 "PO-Revision-Date: 2016-09-01A 12:00+0300\n"
 "Last-Translator: ivandeex <ivandeex@gmail.com>\n"
 "Language-Team: ivandeex <ivandeex@gmail.com>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: admin/__init__.py:28 admin/__init__.py:29 templates/dz/tables/base.html:36
+#: admin/__init__.py:28 admin/__init__.py:29 templates/dz/tables/base.html:35
 #: templates/dz/tables/list.html:6
 msgid "D.Z."
 msgstr "D.Z."
@@ -28,20 +28,20 @@ msgstr "D.Z."
 msgid "Index:"
 msgstr "Индекс:"
 
-#: admin/common.py:24
+#: admin/base.py:24
 msgid "archive (filter)"
 msgstr "архив"
 
-#: admin/common.py:29
+#: admin/base.py:29
 msgid "All"
 msgstr "Всё"
 
-#: admin/common.py:30 admin/news.py:65 admin/tip.py:63 tables/news.py:28
+#: admin/base.py:30 admin/news.py:65 admin/tip.py:63 tables/news.py:28
 #: tables/tip.py:34
 msgid "Archived"
 msgstr "Из архива"
 
-#: admin/common.py:31 admin/news.py:65 admin/tip.py:63 tables/news.py:28
+#: admin/base.py:31 admin/news.py:65 admin/tip.py:63 tables/news.py:28
 #: tables/tip.py:34
 msgid "Fresh"
 msgstr "Текущее"
@@ -109,11 +109,11 @@ msgstr "ссылка"
 msgid "tip cut (column)"
 msgstr "описание"
 
-#: models/common.py:8
+#: models/base.py:8
 msgid "news (crawl target)"
 msgstr "новости"
 
-#: models/common.py:9
+#: models/base.py:9
 msgid "tips (crawl target)"
 msgstr "ставки"
 
@@ -377,16 +377,16 @@ msgid "dz users"
 msgstr "пользователи"
 
 #. Translators: crawl label is one of "Crawl news now", "Crawl tips now"
-#: tables/common.py:94
+#: tables/base.py:94
 #, python-format
 msgid "Crawl %s now"
 msgstr ""
 
-#: tables/common.py:96
+#: tables/base.py:96
 msgid "Crawl news now"
 msgstr "Обновить Новости"
 
-#: tables/common.py:97
+#: tables/base.py:97
 msgid "Crawl tips now"
 msgstr "Обновить Ставки"
 
@@ -465,11 +465,11 @@ msgstr "Ставка №%(id)s"
 msgid "Close"
 msgstr "Закрыть"
 
-#: templates/admin/dz-plus/change_list.html:7 templates/dz/tables/base.html:42
+#: templates/admin/dz-plus/change_list.html:7 templates/dz/tables/base.html:41
 msgid "Home"
 msgstr "Главная"
 
-#: templates/admin/dz-plus/change_list.html:16 templates/dz/tables/base.html:56
+#: templates/admin/dz-plus/change_list.html:16 templates/dz/tables/base.html:55
 msgid "Log out"
 msgstr "Выйти"
 

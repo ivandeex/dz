@@ -5,7 +5,8 @@ from django.http import HttpResponsePermanentRedirect
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 import django_tables2 as tables
-from .common import DzTable, list_view
+from .base import DzTable
+from .views import list_view
 from .. import models, helpers
 
 

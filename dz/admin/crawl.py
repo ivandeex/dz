@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
-from .common import DzModelAdmin
+from .base import DzModelAdmin
 
 
 class DzCrawlTypeFilter(admin.BooleanFieldListFilter):

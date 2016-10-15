@@ -2,7 +2,7 @@ from __future__ import unicode_literals, absolute_import
 from django.contrib import admin
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
-from .common import DzModelAdmin
+from .base import DzModelAdmin
 from .crawl import CrawlAdmin
 from .news import NewsAdmin
 from .tip import TipAdmin

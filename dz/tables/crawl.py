@@ -1,6 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 import django_tables2 as tables
-from .common import DzTable, list_view
+from .base import DzTable
+from .views import list_view
 from .. import models
 
 
