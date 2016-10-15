@@ -6,8 +6,11 @@ from .. import models
 class ScheduleTable(DzTable):
     class Meta:
         model = models.Schedule
-        fields = ('time', 'target')
         order_by = 'time'
+
+        fields = DzTable.Meta.fields + (
+            'time', 'target'
+        )
 
 
 def schedule_list_view(request):

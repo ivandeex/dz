@@ -33,7 +33,7 @@ class NewsTable(DzTable):
         model = models.News
         order_by = ('-published', '-id')
 
-        fields = (
+        fields = DzTable.Meta.fields + (
             'id', 'published', 'sport', 'league',
             'parties', 'title', 'description',
             'updated', 'crawled', 'link', 'archived'

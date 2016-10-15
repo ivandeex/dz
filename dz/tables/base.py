@@ -1,5 +1,4 @@
 import django_tables2 as tables
-from django_tables2.tables import DeclarativeColumnsMetaclass
 from django_tables2.templatetags.django_tables2 import title
 
 
@@ -22,41 +21,14 @@ class RowActionsColumn(tables.TemplateColumn):
         )
 
 
-class FixColumnsMetaclass(DeclarativeColumnsMetaclass):
-    '''
-    DeclarativeColumnsMetaclass set column headers of Table's base_columns
-    at the time class is instantiated. This is wrong because does not take
-    into account current request locale.
-    This metaclass resets verbose names to None, so that they are correctly
-    retireved from queryset by bound columns with correct locale.
-    Also we add row_selector and row_actions columns.
-    '''
-    def __new__(mcs, name, bases, attrs):
-        # prepend two default columns
-        attrs['row_selector'] = RowSelectorColumn()
-        attrs['row_actions'] = RowActionsColumn()
+class DzTable(tables.Table):
 
-        # make default columns the first
-        Meta = attrs.get('Meta', None)
-        if hasattr(Meta, 'fields') and 'row_selector' not in Meta.fields:
-            Meta.fields = ('row_selector', 'row_actions') + tuple(Meta.fields)
-        if hasattr(Meta, 'sequence') and 'row_selector' not in Meta.sequence:
-            Meta.sequence = ('row_selector', 'row_actions') + tuple(Meta.sequence)
+    row_selector = RowSelectorColumn()
+    row_actions = RowActionsColumn()
 
-        cls = super(FixColumnsMetaclass, mcs).__new__(mcs, name, bases, attrs)
+    class Meta:
+        fields = ('row_selector', 'row_actions')
 
-        # remove column headers derived with incorrect locale
-        for field, column in cls.base_columns.items():
-            if not column._explicit and column.verbose_name is not None:
-                column.verbose_name = None
-
-        return cls
-
-
-TableFixColumns = FixColumnsMetaclass(str('TableFixColumns'), (tables.Table,), {})
-
-
-class DzTable(TableFixColumns):
     def __init__(self, *args, **kwargs):
         super(DzTable, self).__init__(*args, **kwargs)
 

@@ -39,7 +39,7 @@ class TipTable(DzTable):
         model = models.Tip
         order_by = ('-published', '-id')
 
-        fields = (
+        fields = DzTable.Meta.fields + (
             'id', 'published', 'league', 'parties', 'description',
             'result', 'tipster', 'odds', 'min_odds',
             'stake', 'earnings', 'spread', 'bookmaker', 'success',

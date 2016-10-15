@@ -6,8 +6,11 @@ from .. import models
 class UserTable(DzTable):
     class Meta:
         model = models.User
-        fields = ('username', 'is_admin', 'can_follow')
         order_by = 'username'
+
+        fields = DzTable.Meta.fields + (
+            'username', 'is_admin', 'can_follow'
+        )
 
 
 def user_list_view(request):

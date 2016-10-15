@@ -25,11 +25,12 @@ class CrawlTable(DzTable):
 
     class Meta:
         model = models.Crawl
-        fields = (
+        order_by = '-id'
+
+        fields = DzTable.Meta.fields + (
             'id', 'target', 'type_str', 'status',
             'started', 'ended', 'count', 'host', 'pid'
         )
-        order_by = '-id'
 
 
 def crawl_list_view(request):
