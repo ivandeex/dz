@@ -1,7 +1,9 @@
 
 .dz-server-time {
   float: right;
-  margin: -8px 0 0;
+  position: relative;
+  top: -8px;
+  margin: 0; // override `p { margin-top: 2px; }` from base.css
   color: #fff;
   font-size: 85%;
   text-align: center;
@@ -37,7 +39,7 @@
 
 .dz-lang-selector {
   float: right;
-  margin: auto 0 auto 10px;
+  margin: 0;
   padding: 0;
 
   li {
