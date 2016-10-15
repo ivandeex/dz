@@ -29,7 +29,7 @@ class NewsTable(DzTable):
         return _('Archived') if value else _('Fresh')
 
     class Meta:
-        default = mark_safe('&hellip;')
+        default = mark_safe('<span class="text-muted">&hellip;</span>')
         model = models.News
         order_by = ('-published', '-id')
 

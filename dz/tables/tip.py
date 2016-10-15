@@ -35,7 +35,7 @@ class TipTable(DzTable):
         return _('Archived') if value else _('Fresh')
 
     class Meta:
-        default = mark_safe('&hellip;')
+        default = mark_safe('<span class="text-muted">&hellip;</span>')
         model = models.Tip
         order_by = ('-published', '-id')
 
