@@ -48,7 +48,7 @@ def newsbox_view(request, pk):
     news = get_object_or_404(models.News, pk=pk)
     context = {
         'news': news,
-        'can_follow_links': helpers.user_is_admin(request),
+        'can_follow_links': helpers.user_can_follow(request),
         'link_str': helpers.format_external_link(request, news.link),
     }
     return TemplateResponse(request, 'dz/tables/newsbox-popup.html', context)
