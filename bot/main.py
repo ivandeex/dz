@@ -12,6 +12,7 @@ if not __package__:
 
 
 def main():
+    # Imports are postponed here due to late package setup above.
     from .service import Service
     from .utils import getopt, setup_logging
 
@@ -36,6 +37,7 @@ def main():
 
 
 if __name__ == '__main__':
+    # We import freeze_support only in main module as per multiprocessing documentation.
     from multiprocessing import freeze_support
     freeze_support()
     main()

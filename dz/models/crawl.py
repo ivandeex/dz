@@ -103,7 +103,7 @@ class Crawl(models.Model):
 
     @classmethod
     def from_json(cls, req):
-        from ..api import api2time
+        from ..api import api2time  # avoid circular import
 
         running_crawls = cls.objects.filter(status__in=['started', 'running'])
         crawl, created = running_crawls.get_or_create(
