@@ -1,6 +1,6 @@
 from __future__ import unicode_literals, absolute_import
 import re
-from django.template.response import TemplateResponse
+from django.template.loader import render_to_string
 from django.http.response import HttpResponsePermanentRedirect
 from django.conf.urls import url
 from django.conf import settings
@@ -51,13 +51,20 @@ class NewsAdmin(DzCrawlModelAdmin):
         return auth_user.has_perm('dz.view_news')
 
     def user_can_follow_links(self, auth_user):
+        # If this method is called by a field rendering method, auth_user
+        # and request are not available. As a fallback, we use self._request
+        # saved in advance by DzModelAdmin.changelist_view().
         return (auth_user or self._request.user).has_perm('dz.follow_news')
 
     def description_str(self, obj):
-        tpl = TemplateResponse(self._request,
-                               'admin/dz-admin/news-description.html',
-                               context=dict(news=obj, opts=self.opts))
-        return tpl.rendered_content
+        # Our templates require request object, which is not available
+        # in the field rendering methods. Fallback to self._request
+        # saved in advance by DzModelAdmin.changelist_view().
+        return render_to_string(
+            'admin/dz-admin/news-description.html',
+            {'news': obj, 'opts': self.opts},
+            self._request
+        )
     description_str.short_description = _('news cut (column)')
     description_str.admin_order_field = 'newstext__preamble'
 
@@ -67,6 +74,9 @@ class NewsAdmin(DzCrawlModelAdmin):
     archived_str.admin_order_field = 'archived'
 
     def link_str(self, obj):
+        # To check whether user has permission to click on links, we need
+        # a request object, which is not available in field rendering methods.
+        # Fallback to self._request saved by DzModelAdmin.changelist_view().
         return helpers.format_external_link(self._request, obj.link)
     link_str.short_description = _('news link (column)')
     link_str.admin_order_field = 'link'

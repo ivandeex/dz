@@ -3,3 +3,5 @@ extends: google
 rules:
   camelcase: off
   require-jsdoc: off
+  # set maximum line length and tab width
+  max-len: ['warn', 90, 4]

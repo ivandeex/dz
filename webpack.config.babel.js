@@ -153,8 +153,8 @@ let config = {
     ),
 
     new webpack.DefinePlugin({
-      __DEVELOPMENT__: !PRODUCTION,
-      __DEV_SERVER__: DEV_SERVER,
+      '__DEVELOPMENT__': !PRODUCTION,
+      '__DEV_SERVER__': DEV_SERVER,
 
       // In dev-server mode the style loader needs require() to do hot reload.
       // Else, the extract text plugin will render style modules empty, and we
@@ -187,7 +187,7 @@ let config = {
     new webpack.HotModuleReplacementPlugin(),
 
     // forces dev-server to write bundle files to the file system
-    new WriteFilePlugin(),
+    new WriteFilePlugin()
 
   ] : [],
 

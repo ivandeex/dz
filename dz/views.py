@@ -1,5 +1,5 @@
-from django.template.response import TemplateResponse
+from django.shortcuts import render
 
 
 def index(request):
-    return TemplateResponse(request, 'dz/welcome.html', {})
+    return render(request, 'dz/welcome.html')

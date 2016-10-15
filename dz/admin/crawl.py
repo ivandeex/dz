@@ -5,6 +5,10 @@ from .base import DzModelAdmin
 
 
 class DzCrawlTypeFilter(admin.BooleanFieldListFilter):
+    '''
+    Replace standard boolean filter choices of Yes/No (they can be localized)
+    by more appropriate wordings: Manual and Scheduled.
+    '''
     def choices(self, changelist):
         # Translators: don't translate this, use translation from Django
         text_yes = force_text(_('Yes'))

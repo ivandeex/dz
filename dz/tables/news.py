@@ -1,8 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-from django.template.response import TemplateResponse
 from django.http import HttpResponsePermanentRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 import django_tables2 as tables
 from .base import DzTable
@@ -51,12 +50,12 @@ def newsbox_view(request, pk):
         'can_follow_links': helpers.user_can_follow(request),
         'link_str': helpers.format_external_link(request, news.link),
     }
-    return TemplateResponse(request, 'dz/tables/newsbox-popup.html', context)
+    return render(request, 'dz/tables/newsbox-popup.html', context)
 
 
 def newsbox_img_redirect(request, path):
-    """
+    '''
     Fix relative url for icons referenced by data table and preamble.
-    """
+    '''
     new_path = settings.STATIC_URL + settings.WEBPACK_SUBDIR + '/' + path
     return HttpResponsePermanentRedirect(new_path)

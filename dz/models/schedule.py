@@ -54,7 +54,9 @@ class Schedule(models.Model):
 
     @classmethod
     def get_schedule(cls):
-        """Get current schedule"""
+        '''
+        Get current schedule
+        '''
 
         with cls._cache_lock:
             # completely reload schedule at midnight
@@ -69,7 +71,9 @@ class Schedule(models.Model):
 
     @classmethod
     def update_schedule(cls):
-        """Update schedule after database changes or at midnight"""
+        '''
+        Update schedule after database changes or at midnight
+        '''
 
         with cls._cache_lock:
             schedule = cls._cache_schedule

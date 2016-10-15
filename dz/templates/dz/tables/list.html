@@ -44,16 +44,18 @@
         {% endif %}
       {% endblock crawl-tool %}
 
-      <li class="dropdown">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="javascript://">
-          {% trans 'With selected' %} <i class="caret"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li>
-            <a href="javascript://">{% trans 'Delete' %}</a>
-          </li>
-        </ul>
-      </li>
+      {% block row-actions %}
+        <li class="dropdown">
+          <a class="btn dropdown-toggle" data-toggle="dropdown" href="javascript://">
+            {% trans 'With selected' %} <i class="caret"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li>
+              <a href="javascript://">{% trans 'Delete' %}</a>
+            </li>
+          </ul>
+        </li>
+      {% endblock row-actions %}
     </ul>
   {% endblock table-tools %}
 

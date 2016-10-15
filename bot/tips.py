@@ -1,7 +1,6 @@
 import re
 from urlparse import urljoin
 from parsel import Selector
-from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from .utils import logger, extract_datetime, first_text
@@ -36,18 +35,19 @@ class TipsSpider(BaseSpider):
         self.login()
         self.click_menu('Prognoze')
 
-        tip_elements = WebDriverWait(self.webdriver, self.timeout).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.tiprog_list_block')))
+        tip_element_list = self.wait.until(EC.presence_of_all_elements_located(
+            (By.CSS_SELECTOR, '.tiprog_list_block')
+        ))
 
-        for tip_elem in tip_elements:
-            self.parse_tip(tip_elem)
+        for tip_element in tip_element_list:
+            self.parse_tip(tip_element)
 
         self.end()
 
     def parse_tip(self, tip_elem):
         sel = Selector(tip_elem.get_attribute('innerHTML'))
-        rel_url = sel.css('.tpl_right > h3 > a::attr(href)').extract_first()
-        link = urljoin(self.webdriver.current_url, rel_url)
+        relative_url = sel.css('.tpl_right > h3 > a::attr(href)').extract_first()
+        link = urljoin(self.webdriver.current_url, relative_url)
 
         try:
             pk = int(re.search(r'id_dogadjaj=(\d+)', link).group(1))

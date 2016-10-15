@@ -88,6 +88,7 @@ def _post_save_auth_user(sender, **kwargs):
         dz_user = auth_user.dz_user
     except User.DoesNotExist:
         return
+
     changed = False
     if auth_user.username != dz_user.username:
         dz_user.username = auth_user.username

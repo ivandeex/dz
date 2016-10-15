@@ -4,9 +4,10 @@ import socket
 import random
 import hashlib
 import requests
+from dz.ranges import merge_ranges
 from urlparse import urljoin
 from datetime import datetime
-from .utils import logger, merge_ranges
+from .utils import logger
 
 try:
     import cjson

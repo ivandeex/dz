@@ -1,9 +1,10 @@
 import re
 import random
 from parsel import Selector
+from dz.ranges import split_ranges
 from .api import api_send_item
 from .spider import BaseSpider
-from .utils import logger, extract_datetime, first_text, randsleep, split_ranges
+from .utils import logger, extract_datetime, first_text, randsleep
 
 
 class NewsSpider(BaseSpider):

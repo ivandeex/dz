@@ -34,8 +34,7 @@ class BaseSpider(object):
             service_args=([] if self.load_images else ['--load-images=no']),
             service_log_path=os.path.join(tempfile.gettempdir(), 'phantomjs.log')
         )
-
-        self.webdriver.get(self.home_url)
+        self.wait = WebDriverWait(self.webdriver, self.timeout)
 
     def end(self):
         logger.info('Crawling complete')
@@ -43,41 +42,45 @@ class BaseSpider(object):
 
     def close(self):
         self.webdriver.quit()
-        self.webdriver = None
+        self.webdriver = self.wait = None
 
     def login(self):
+        self.webdriver.get(self.home_url)
         self.wait_for_ajax()
-        wait = WebDriverWait(self.webdriver, self.timeout)
 
         if not (self.username and self.password):
             logger.info('Working without login')
             return
 
         # opening login drawer
-        el = wait.until(EC.element_to_be_clickable((By.ID, 'login_btn')))
+        el = self.wait.until(EC.element_to_be_clickable(
+            (By.ID, 'login_btn')
+        ))
         el.click()
 
         # fill login form
-        el = wait.until(EC.visibility_of_element_located(
-            (By.CSS_SELECTOR, 'form[name="prijava"] input[type="text"]')))
+        el = self.wait.until(EC.visibility_of_element_located(
+            (By.CSS_SELECTOR, 'form[name="prijava"] input[type="text"]')
+        ))
         el.send_keys(self.username)
 
         el = self.webdriver.find_element_by_css_selector(
-            'form[name="prijava"] input[type="password"]')
+            'form[name="prijava"] input[type="password"]'
+        )
         el.send_keys(self.password)
 
         # click login button
-        el = wait.until(EC.element_to_be_clickable((By.NAME, 'Prijava')))
+        el = self.wait.until(EC.element_to_be_clickable((By.NAME, 'Prijava')))
         el.click()
 
-        wait.until(EC.visibility_of_element_located((By.LINK_TEXT, 'Moj profil')))
+        self.wait.until(EC.visibility_of_element_located((By.LINK_TEXT, 'Moj profil')))
         logger.info('Logged in as %s', self.username)
 
     def click_menu(self, menu):
         logger.debug('Click on menu "%s"', menu)
-        wait = WebDriverWait(self.webdriver, self.timeout)
-        css = '#mainmenu a[href*="%s"]' % menu.lower()
-        el = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, css)))
+        el = self.wait.until(EC.element_to_be_clickable(
+            (By.CSS_SELECTOR, '#mainmenu a[href*="%s"]' % menu.lower())
+        ))
         el.click()
         self.wait_for_ajax()
 
@@ -87,5 +90,6 @@ class BaseSpider(object):
                 'return [window.jQuery && window.jQuery.active, '
                 'window.Ajax && window.Ajax.activeRequestCount, '
                 'window.dojo && window.io.XMLHTTPTransport.inFlight.length];')))
-        WebDriverWait(self.webdriver, self.timeout).until_not(ajax_request_count)
+
+        self.wait.until_not(ajax_request_count)
         randsleep(2)

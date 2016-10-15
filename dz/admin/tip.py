@@ -1,4 +1,5 @@
 from __future__ import unicode_literals, absolute_import
+from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
 from django.http import HttpResponseNotFound
 from django.conf.urls import url
@@ -65,6 +66,7 @@ class TipAdmin(DzCrawlModelAdmin):
     archived_str.admin_order_field = 'archived'
 
     def link_str(self, obj):
+        # _request is saved by DzModelAdmin.changelist_view()
         return helpers.format_external_link(self._request, obj.link)
     link_str.short_description = _('tip link (column)')
     link_str.admin_order_field = 'link'
@@ -73,9 +75,12 @@ class TipAdmin(DzCrawlModelAdmin):
         skin = settings.DZ_SKIN
         if skin != 'bootstrap':
             skin = 'admin'
-        template = 'admin/dz-%s/tip-description.html' % skin
-        tpl = TemplateResponse(self._request, template, dict(tip=obj, opts=self.opts))
-        return tpl.rendered_content
+
+        return render_to_string(
+            'admin/dz-%s/tip-description.html' % skin,
+            {'tip': obj, 'opts': self.opts},
+            self._request,  # _request is saved by DzModelAdmin.changelist_view()
+        )
     description_str.short_description = _('tip cut (column)')
     description_str.admin_order_field = 'title'
 

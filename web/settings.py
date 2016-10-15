@@ -154,6 +154,7 @@ TEMPLATES = [
                 'dz.admin.context_processors.dz_compat',
             ],
             'loaders': [
+                # Cache all templates in memory, when in production mode:
                 ('django.template.loaders.cached.Loader', [
                     'django.template.loaders.filesystem.Loader',
                     'django.template.loaders.app_directories.Loader',
@@ -171,6 +172,7 @@ TEMPLATES = [
 ]
 
 if DEBUG:
+    # Activate app_directories loader and remove caching loader, when in debug mode:
     TEMPLATES[0]['APP_DIRS'] = True
     del TEMPLATES[0]['OPTIONS']['loaders']
 
@@ -266,7 +268,7 @@ CONSTANCE_CONFIG = {
     ),
     'SPIDER_PAGE_DELAY': (
         env.int('SPIDER_PAGE_DELAY', 50),
-        'random delay betweeb news pages'
+        'random delay between news pages'
     ),
     'SPIDER_LOAD_IMAGES': (
         env.bool('SPIDER_LOAD_IMAGES', True),

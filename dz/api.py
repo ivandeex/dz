@@ -10,6 +10,7 @@ from django.db.models import Q, F
 from django.utils import timezone
 from django.conf import settings
 from .config import spider_config
+from .ranges import merge_ranges, split_ranges
 from . import models
 
 try:
@@ -88,35 +89,6 @@ def make_response(**resp):
     if settings.DEBUG_API:
         logger.debug('API response: %s', resp)
     return HttpResponse(json_encode(resp), content_type='application/json')
-
-
-def merge_ranges(data):
-    res = []
-    beg = end = None
-    for v in data:
-        if end is None:
-            beg = end = v
-        elif v == end + 1:
-            end = v
-        else:
-            res.append(str(beg) if beg == end else '%d-%d' % (beg, end))
-            beg = end = v
-    if end is not None:
-        res.append(str(beg) if beg == end else '%d-%d' % (beg, end))
-    return ','.join(res)
-
-
-def split_ranges(range_str):
-    res = set()
-    if range_str:
-        for token in range_str.split(','):
-            if '-' in token:
-                beg, end = token.split('-')
-                for val in range(int(beg), int(end) + 1):
-                    res.add(val)
-            else:
-                res.add(int(token))
-    return res
 
 
 def get_model(target):

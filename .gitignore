@@ -8,6 +8,7 @@
 *.diff
 *.mo
 /.env
+/.virtualenv/
 /static/
 /ansible/secret.yml
 /node_modules/

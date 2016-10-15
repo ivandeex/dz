@@ -10,8 +10,8 @@
     {% get_available_languages as all_langs %}
     {% for lang in all_langs %}
       {% if lang.0 != curr_lang_code %}
-        <li><a href="javascript:document.forms['set_lang_{{lang.0}}'].submit();">{{lang.1}}</a></li>
-        <form name="set_lang_{{lang.0}}" action="{% url 'set_language' %}" method="post">
+        <li><a href="javascript:document.forms['dz-setlang-{{lang.0}}'].submit();">{{lang.1}}</a></li>
+        <form name="dz-setlang-{{lang.0}}" action="{% url 'set_language' %}" method="post">
           {% csrf_token %}
           <input type="hidden" name="next" value="{{redirect_to}}"/>
           <input type="hidden" name="language" value="{{lang.0}}"/>

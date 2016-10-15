@@ -65,9 +65,14 @@ class Command(BaseCommand):
         print '%d schedule jobs imported' % len(self.DEFAULT_SCHEDULE)
 
     def import_users(self):
+        # The line below bulk-deletes dz.model.User`s without activating pre-/post-save
+        # signals in dz.models.user signals, so django users will not be modified.
         models.User.objects.all().delete()
+
         count = 0
         for item in self.mongodb.dvoznak_users.find(sort=[('username', 1)]):
+            # Saving users one-by-one will activate pre-/post-save signals
+            # and consequently will modify django user models.
             models.User.objects.create(
                 username=item['username'],
                 password=item['password'],
@@ -85,14 +90,16 @@ class Command(BaseCommand):
         for item in self.mongodb.dvoznak_crawls.find(sort=ordering):
             if item['status'] == 'finished':
                 item['status'] = 'complete'
+            target = item['action']
+
             models.Crawl.objects.create(
                 pk=item['pk'],
-                target=item['action'],
+                target=target,
                 manual=item['type'] == 'manual',
                 status=item['status'],
                 started=self.convert_time(item['started']),
                 ended=self.convert_time(item.get('ended')),
-                count=item['news' if item['action'] == 'news' else 'tips'] or 0,
+                count=item['news' if target == 'news' else 'tips'] or 0,
                 host=item['host'] or item['ipaddr'] or '-',
                 pid=item['pid'] or 0,
             )

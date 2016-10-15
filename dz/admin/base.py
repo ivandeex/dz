@@ -46,7 +46,6 @@ class DzModelAdmin(admin.ModelAdmin):
     list_per_page = 50
     # actions = None
     can_export = False
-    _get_readonly_fields_called = False
 
     crawl_action = None
 
@@ -71,34 +70,59 @@ class DzModelAdmin(admin.ModelAdmin):
         return super(DzModelAdmin, self).get_list_display_links(request, list_display)
 
     def get_readonly_fields(self, request, obj=None):
-        if self._get_readonly_fields_called or not self.user_is_readonly(request.user):
+        '''
+        Django does not support read-only model permissions out of the box.
+        We override standard get_readonly_fields() to simulate read-only views.
+        Overridden method will simply return all fields from get_fields().
+        Since get_fields() will call back to get_readonly_fields() we use the
+        `get_readonly_fields__is_running` instance flag to avoid infinite recursion.
+        '''
+        if self.get_readonly_fields__is_running:
+            # avoid infinite recursion
             return super(DzModelAdmin, self).get_readonly_fields(request, obj)
+
+        if not self.user_is_readonly(request.user):
+            # user is not read-only - just normal behaviour
+            return super(DzModelAdmin, self).get_readonly_fields(request, obj)
+
         try:
-            self._get_readonly_fields_called = True
+            self.get_readonly_fields__is_running = True
             return self.get_fields(request, obj)
         finally:
-            self._get_readonly_fields_called = False
+            self.get_readonly_fields__is_running = False
+    get_readonly_fields__is_running = False
 
     def changelist_view(self, request, extra_context=None):
-        request.current_app = self.admin_site.name
+        # FIXME: request.current_app is not needed anymore
+        # request.current_app = self.admin_site.name
+
+        # Many field rendering methods in derived classes require `request`,
+        # for example to check requesting user permissions or to render
+        # template partials, but django does not provide request to them.
+        # As a workararound, here we save a reference to request object
+        # on the admin view instance.
         self._request = request
-        tpl_resp = super(DzModelAdmin, self).changelist_view(request, extra_context)
-        if hasattr(tpl_resp, 'context_data'):
-            tpl_resp.context_data.update({
+
+        template_response = super(DzModelAdmin, self).changelist_view(request, extra_context)
+        # FIXME: explain when context_data can be missing
+        if hasattr(template_response, 'context_data'):
+            template_response.context_data.update({
                 'title': _(self.opts.verbose_name_plural.title()),  # override title
                 'can_crawl': self.user_can_crawl(request.user),
                 'can_export': self.can_export,
                 'can_follow_links': self.user_can_follow_links(request.user),
                 'server_time': timezone.now(),
+
                 # Language selector will use HTTP_REFERRER or "redirect_to" to determine
-                # the URL to internationalize. We might disable HTTP_REFERRED for selected
-                # users, so we set the fallback here.
+                # the URL to internationalize. We might disable HTTP_REFERRER for users
+                # without link-clicking permission, so we set the fallback here.
                 'redirect_to': request.get_full_path(),
+
                 # grappelli does not provide model name class on the body element,
                 # so we do it ourselves.
                 'model_name': self.model._meta.model_name,
             })
-        return tpl_resp
+        return template_response
 
 
 class DzSimpleCrawlModelAdmin(DzModelAdmin):
@@ -112,15 +136,19 @@ class DzSimpleCrawlModelAdmin(DzModelAdmin):
         return [crawl_url] + urls
 
     def crawl_view(self, request, extra_context=None):
-        opts = self.opts
         if self.crawl_action and self.user_can_crawl(request.user):
             status = models.Crawl.add_manual_crawl(self.crawl_action)
             message = models.Crawl.get_status_message(status)
             self.message_user(request, message)
-        rev_fmt = opts.app_label, opts.model_name
+
+        # Restore query string from original request.
+        # Alas, Django does not provide a simple method to do that.
+        rev_fmt = (self.opts.app_label, self.opts.model_name)
         url = reverse('admin:%s_%s_changelist' % rev_fmt, current_app=self.admin_site.name)
-        filter_kwargs = dict(opts=opts, preserved_filters=self.get_preserved_filters(request))
-        return HttpResponseRedirect(add_preserved_filters(filter_kwargs, url))
+        preserved_filters = self.get_preserved_filters(request)
+        filter_kwargs = dict(preserved_filters=preserved_filters, opts=self.opts)
+        return_url = add_preserved_filters(filter_kwargs, url)
+        return HttpResponseRedirect(return_url)
 
 
 class DzCrawlModelAdmin(ExportMixin, DzSimpleCrawlModelAdmin):
@@ -130,6 +158,9 @@ class DzCrawlModelAdmin(ExportMixin, DzSimpleCrawlModelAdmin):
 class DzExportResource(ModelResource):
     @classmethod
     def field_from_django_field(cls, field_name, django_field, readonly):
+        '''
+        Replace default field names by localized verbose column names.
+        '''
         field = super(DzExportResource, cls)\
             .field_from_django_field(field_name, django_field, readonly)
         field.column_name = django_field.verbose_name

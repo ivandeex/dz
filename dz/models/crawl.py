@@ -41,7 +41,7 @@ class Crawl(models.Model):
         verbose_name_plural = _('crawls (table)')
 
     def __str__(self):
-        start_time = self.started.astimezone(timezone.utc).strftime('%Y-%m-%d %H:%m')
+        start_time = self.started.astimezone(timezone.utc).strftime('%Y-%m-%d %H:%M')
         return u'{} @ {}'.format(self.target, start_time)
 
     def save(self, *args, **kwargs):

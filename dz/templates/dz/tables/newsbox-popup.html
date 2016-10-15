@@ -33,13 +33,34 @@
     <h2 class="news-subtitle">{{ news.parties }}</h2>
       <div class="news-meta">
         <table>
-          <tr><td class="news-key">{% trans 'URL' %}:</td>       <td class="news-val news-link">{{link_str}}</td></tr>
-          <tr><td class="news-key">{% trans 'Sport' %}:</td>     <td class="news-val">{{ news.sport }}</td></tr>
-          <tr><td class="news-key">{% trans 'League' %}:</td>    <td class="news-val">{{ news.league }}</td></tr>
-          <tr><td class="news-key">{% trans 'Published' %}:</td> <td class="news-val">{{ news.published }}</td></tr>
-          <tr><td class="news-key">{% trans 'Updated' %}:</td>   <td class="news-val">{{ news.updated }}</td></tr>
-          <tr><td class="news-key">{% trans 'Fetched' %}:</td>   <td class="news-val">{{ news.crawled }}</td></tr>
-          <tr><td class="news-key">{% trans 'Parties' %}:</td>   <td class="news-val">{{ news.parties }}</td></tr>
+          <tr>
+            <td class="news-key">{% trans 'URL' %}:</td>
+            <td class="news-val news-link">{{link_str}}</td>
+          </tr>
+          <tr>
+            <td class="news-key">{% trans 'Sport' %}:</td>
+            <td class="news-val">{{ news.sport }}</td>
+          </tr>
+          <tr>
+            <td class="news-key">{% trans 'League' %}:</td>
+            <td class="news-val">{{ news.league }}</td>
+          </tr>
+          <tr>
+            <td class="news-key">{% trans 'Published' %}:</td>
+            <td class="news-val">{{ news.published }}</td>
+          </tr>
+          <tr>
+            <td class="news-key">{% trans 'Updated' %}:</td>
+            <td class="news-val">{{ news.updated }}</td>
+          </tr>
+          <tr>
+            <td class="news-key">{% trans 'Fetched' %}:</td>
+            <td class="news-val">{{ news.crawled }}</td>
+          </tr>
+          <tr>
+            <td class="news-key">{% trans 'Parties' %}:</td>
+            <td class="news-val">{{ news.parties }}</td>
+          </tr>
         </table>
       </div>
     <h3 class="news-preamble" itemprop="headline">{{ news.newstext.preamble }}</h3>
