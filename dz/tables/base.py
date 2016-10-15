@@ -64,3 +64,14 @@ class DzTable(TableFixColumns):
         for bound_column in self.columns.all():
             orig_header = bound_column.header
             bound_column.column.verbose_name = title(orig_header)
+
+    def get_column_class_names(self, classes_set, bound_column):
+        '''
+        Returns a set of HTML class names for cells (both td and th) of a **bound column**
+        in this table. By default this is class names from attributes plus the *plain*
+        bound column's name. This results in problems. For example, column named `success`
+        takes the bootstrap's success color. As a solution, we prepend 'col-' to the name.
+        Please note that super() is *not* chanined *intentionally*.
+        '''
+        classes_set.add('col-' + bound_column.name)
+        return classes_set

@@ -1,28 +1,17 @@
 @import '../base/mixins';
 
-.model-tip {
-  td,
-  th {
-    &.success {
-      // Bootstrap .success class clashes with column name "success".
-      // This selector fixes green background in result of this clash.
-      background-color: inherit !important;
-    }
-  }
-}
-
 .model-news,
 .model-tip {
   td {
-    &.description {
+    &.col-description {
       @include field-description;
     }
 
-    &.title {
+    &.col-title {
       @include field-title;
     }
 
-    &.link {
+    &.col-link {
       @include field-link;
     }
   }
