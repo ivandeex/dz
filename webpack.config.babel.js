@@ -6,6 +6,7 @@ import autoprefixer from 'autoprefixer';
 import fileExists from 'file-exists';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import DjangoBundleTracker from 'webpack-bundle-tracker';
+import WriteFilePlugin from 'write-file-webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
 import CleanPlugin from 'clean-webpack-plugin';
 
@@ -68,7 +69,9 @@ let config = {
     host: DEV_HOST,
     port: DEV_PORT,
     inline: true,
-    hot: true
+    hot: true,
+    // output path for WriteFilePlugin:
+    outputPath: path.resolve(__dirname, 'public', 'dev-server')
   },
 
   module: {
@@ -176,7 +179,12 @@ let config = {
 
   // === dev-server plugins ===
   DEV_SERVER ? [
-    new webpack.HotModuleReplacementPlugin()
+
+    new webpack.HotModuleReplacementPlugin(),
+
+    // forces dev-server to write bundle files to the file system
+    new WriteFilePlugin(),
+
   ] : [],
 
   // === production-only plugins ===
