@@ -1,5 +1,10 @@
 @import '../base/mixins';
 
+.col-row_selector,
+.col-row_actions {
+  width: 1px;
+}
+
 .model-news,
 .model-tip {
   td {
