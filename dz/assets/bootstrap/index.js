@@ -1,6 +1,6 @@
 'use strict';
 
-require.include('./changelist.scss');
-require.include('./results.scss');
-require.include('../base/description.scss');
-require.include('./tipbox-popup.scss');
+require.styles('./changelist.scss');
+require.styles('./results.scss');
+require.styles('../base/description.scss');
+require.styles('./tipbox-popup.scss');

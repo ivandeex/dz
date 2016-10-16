@@ -2,7 +2,7 @@
 
 require('imports?$=django.jQuery!./filter.js');
 
-require.include('./base.scss');
-require.include('./changelist.scss');
-require.include('./results.scss');
-require.include('../base/description.scss');
+require.styles('./base.scss');
+require.styles('./changelist.scss');
+require.styles('./results.scss');
+require.styles('../base/description.scss');

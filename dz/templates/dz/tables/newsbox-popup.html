@@ -8,6 +8,11 @@
   <title>{{ news.title }}</title>
   {% render_bundle 'common' 'css' %}
   {% render_bundle 'newsbox' 'css' %}
+  {% if debug %}
+    {# load js early because dev-server applies styles via js #}
+    {% render_bundle 'common' 'js' %}
+    {% render_bundle 'newsbox' 'js' %}
+  {% endif %}
 </head>
 <body>
   <div class="news-block nlsn_content">
@@ -31,9 +36,5 @@
   <div class="news-datatable">
     {{ news.newstext.datatable | safe }}
   </div>
-  {% if debug %}
-    {% render_bundle 'common' 'js' %}
-    {% render_bundle 'newsbox' 'js' %}
-  {% endif %}
 </body>
 </html>

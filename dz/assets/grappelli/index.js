@@ -2,6 +2,6 @@
 
 require('imports?$=grp.jQuery!./helpers.js');
 
-require.include('./changelist.scss');
-require.include('./results.scss');
-require.include('../base/description.scss');
+require.styles('./changelist.scss');
+require.styles('./results.scss');
+require.styles('../base/description.scss');

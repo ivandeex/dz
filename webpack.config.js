@@ -66,7 +66,8 @@ let config = {
     },
     host: DEV_HOST,
     port: DEV_PORT,
-    inline: true
+    inline: true,
+    hot: true
   },
 
   module: {
@@ -78,14 +79,21 @@ let config = {
       },
       {
         test: /\.css$/,
-        loader: ExtractTextPlugin.extract([
-          'regexp-replace?' + JSON.stringify(WHITENOICE_CSS_FIX),
-          'css?sourceMap'
-        ])
+        loader: ExtractTextPlugin.extract(
+          'style',
+          [].concat(
+            // This fix is only required in production mode, but triggers buggy behaviour
+            // in extract text plugin when it is effectively disabled in dev-server mode.
+            // Workaround: disable regexp-replace loader in dev-server mode.
+            DEV_SERVER ? [] : ['regexp-replace?' + JSON.stringify(WHITENOICE_CSS_FIX)],
+            ['css?sourceMap']
+          )
+        )
       },
       {
         test: /\.scss$/,
         loader: ExtractTextPlugin.extract(
+          'style',
           'css?sourceMap!postcss!resolve-url!sass?sourceMap'
         )
       },
@@ -110,9 +118,10 @@ let config = {
     'jQuery'          // jQuery for django tables
   ],
 
-  plugins: [
+  plugins: [].concat([
+    // === common plugins ===
 
-    // must be the first
+    // this one must be the first
     new DjangoBundleTracker({
       path: __dirname,
       filename: `stats-${TARGET}.json`
@@ -137,12 +146,19 @@ let config = {
 
     new webpack.DefinePlugin({
       __DEVELOPMENT__: !PRODUCTION,
-      __DEV_SERVER__: DEV_SERVER
+      __DEV_SERVER__: DEV_SERVER,
+
+      // In dev-server mode the style loader needs require() to do hot reload.
+      // Else, the extract text plugin will render style modules empty, and we
+      // use require.include() to hide style inclusions from final javascript.
+      'require.styles': DEV_SERVER ? 'require' : 'require.include'
     }),
 
     new ExtractTextPlugin(
-      'dz-[name].css',
-      {allChunks: true}
+      `dz-[name]${MIN_EXT}.css`, {
+        allChunks: true,
+        disable: DEV_SERVER
+      }
     ),
 
     new webpack.optimize.CommonsChunkPlugin({
@@ -155,15 +171,24 @@ let config = {
     ]),
 
     new CleanPlugin([`public/${TARGET}`])
+  ],
 
-  // production-only plugins
-  ].concat(PRODUCTION ? [
+  // === dev-server plugins ===
+  DEV_SERVER ? [
+    new webpack.HotModuleReplacementPlugin()
+  ] : [],
+
+  // === production-only plugins ===
+  PRODUCTION ? [
 
     new webpack.optimize.UglifyJsPlugin({
       compressor: {warnings: false}
     })
 
-  ] : []),
+  ] : []
+
+  // === end of plugins ===
+  ),
 
   devtool: PRODUCTION ? null : 'cheap-inline-module-source-map',
 

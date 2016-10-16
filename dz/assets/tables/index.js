@@ -1,8 +1,8 @@
 'use strict';
 
-require.include('./base.scss');
-require.include('./list.scss');
-require.include('./results.scss');
-require.include('../base/description.scss');
+require.styles('./base.scss');
+require.styles('./list.scss');
+require.styles('./results.scss');
+require.styles('../base/description.scss');
 
 module.exports = require('./list.js');
