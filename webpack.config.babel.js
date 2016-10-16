@@ -1,13 +1,13 @@
 'use strict';
 
-const path = require('path');
-const webpack = require('webpack');
-const autoprefixer = require('autoprefixer');
-const fileExists = require('file-exists');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const DjangoBundleTracker = require('webpack-bundle-tracker');
-const CopyPlugin = require('copy-webpack-plugin');
-const CleanPlugin = require('clean-webpack-plugin');
+import path from 'path';
+import webpack from 'webpack';
+import autoprefixer from 'autoprefixer';
+import fileExists from 'file-exists';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import DjangoBundleTracker from 'webpack-bundle-tracker';
+import CopyPlugin from 'copy-webpack-plugin';
+import CleanPlugin from 'clean-webpack-plugin';
 
 const DEV_HOST = process.env.DEV_HOST || 'localhost';
 const DEV_PORT = Number.parseInt(process.env.DEV_PORT || 3000, 10);
@@ -34,6 +34,7 @@ const WHITENOICE_CSS_FIX = {
 };
 
 let babelSettings = {
+  babelrc: false,
   presets: ['es2015'],
   plugins: ['transform-runtime']
 };
@@ -195,4 +196,4 @@ let config = {
   watchOptions: {aggregateTimeout: 100}
 };
 
-module.exports = config;
+export default config;
