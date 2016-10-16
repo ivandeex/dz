@@ -1,6 +1,6 @@
 {% extends 'django_tables2/bootstrap.html' %}
 {% load i18n %}
-{% load querystring from django_tables2 %}
+{% load querystring title from django_tables2 %}
 
 {% block table %}
   {# override: add the table-hover class and model class #}
@@ -13,7 +13,8 @@
             {% if column.orderable %}
               <th {{ column.attrs.th.as_html }}>
                 <a href="{% querystring table.prefixed_order_by_field=column.order_by_alias.next %}">
-                  {{ column.header }}
+                  {# override: title case #}
+                  {{ column.header|title }}
                   {# override: add order mark #}
                   {% if column.is_ordered %}
                     <i class="glyphicon glyphicon-chevron-{% if column.order_by_alias.is_descending %}down{% else %}up{% endif %}"></i>
@@ -21,7 +22,8 @@
                 </a>
               </th>
             {% else %}
-              <th {{ column.attrs.th.as_html }}>{{ column.header }}</th>
+              {# override: title case #}
+              <th {{ column.attrs.th.as_html }}>{{ column.header|title }}</th>
             {% endif %}
           {% endfor %}
         </tr>

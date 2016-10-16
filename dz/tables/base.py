@@ -1,5 +1,4 @@
 import django_tables2 as tables
-from django_tables2.templatetags.django_tables2 import title
 
 
 class RowSelectorColumn(tables.CheckBoxColumn):
@@ -28,14 +27,6 @@ class DzTable(tables.Table):
 
     class Meta:
         fields = ('row_selector', 'row_actions')
-
-    def __init__(self, *args, **kwargs):
-        super(DzTable, self).__init__(*args, **kwargs)
-
-        # Force title-cased headers on bound columns
-        for bound_column in self.columns.all():
-            orig_header = bound_column.header
-            bound_column.column.verbose_name = title(orig_header)
 
     def get_column_class_names(self, classes_set, bound_column):
         '''
