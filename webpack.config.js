@@ -16,6 +16,7 @@ const PRODUCTION = process.env.NODE_ENV === 'production';
 const DEV_SERVER = require.main.filename.indexOf('webpack-dev-server') !== -1;
 
 const TARGET = PRODUCTION ? 'prod' : 'devel';
+const MIN_EXT = PRODUCTION ? '.min' : '';
 
 const __DZ_COMPAT = (process.env.DZ_COMPAT || 'false').toLowerCase();
 const DZ_COMPAT = ['1', 'yes', 'true'].indexOf(__DZ_COMPAT) > -1;
@@ -50,9 +51,9 @@ let config = {
 
   output: {
     path: path.resolve(__dirname, 'public', TARGET),
-    filename: 'dz-[name].js',
+    filename: `dz-[name]${MIN_EXT}.js`,
     library: ['dz', '[name]'],
-    chunkFilename: '_dz-[name]-[id].js',
+    chunkFilename: `_dz-[name]-[id]${MIN_EXT}.js`,
     publicPath: DEV_SERVER ? `http://${DEV_HOST}:${DEV_PORT}/` : `/static/${TARGET}/`,
     pathinfo: !PRODUCTION
   },
@@ -90,7 +91,7 @@ let config = {
       },
       {
         test: /\.(png|gif)$/,
-        loader: 'url?name=[name].[hash:4].[ext]&limit=3100'
+        loader: 'url?name=[name].[hash:6].[ext]&limit=3100'
       }
     ]
   },
@@ -135,7 +136,8 @@ let config = {
     ),
 
     new webpack.DefinePlugin({
-      DEVELOPMENT: !PRODUCTION
+      __DEVELOPMENT__: !PRODUCTION,
+      __DEV_SERVER__: DEV_SERVER
     }),
 
     new ExtractTextPlugin(

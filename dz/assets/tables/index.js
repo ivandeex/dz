@@ -1,3 +1,5 @@
+'use strict';
+
 require.include('./base.scss');
 require.include('./list.scss');
 require.include('./results.scss');
