@@ -21,7 +21,7 @@
 
 
 {% block content %}
-<div class="container">
+<div class="container-fluid">
   {% block table-tools %}
     <ul class="nav nav-tabs table-tools">
       <li class="active">
@@ -66,8 +66,8 @@
 
 {# reserve html block for tip modals #}
 {% block footer %}
-<div id="tipbox-popup" class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
+<div id="tipbox-popup" class="modal fade" tabindex="-1">
+  <div class="modal-dialog">
     <div class="modal-content">
       {# dynamic content will be loaded here #}
     </div>

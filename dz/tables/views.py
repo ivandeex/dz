@@ -20,9 +20,14 @@ def list_view(request, Table, crawl_target=None):
         allowed_models += [models.Crawl, models.User]
         if not settings.DZ_COMPAT:
             allowed_models.append(models.Schedule)
-    top_nav_links = [(m._meta.verbose_name_plural.title(),
-                      reverse('dz:%s-list' % m._meta.model_name))
-                     for m in allowed_models]
+
+    top_nav_links = []
+    for model in allowed_models:
+        top_nav_links.append({
+            'text': model._meta.verbose_name_plural.title(),
+            'link': reverse('dz:%s-list' % model._meta.model_name),
+            'name': model._meta.model_name,
+        })
 
     if helpers.user_is_admin(request):
         # Translators: crawl label is one of "Crawl news now", "Crawl tips now"

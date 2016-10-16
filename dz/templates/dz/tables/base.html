@@ -1,12 +1,13 @@
+<!DOCTYPE html>
+<html>
 {% load static i18n %}
 {% load bootstrap3 %}
 {% load render_bundle from webpack_loader %}
-<html>
-<!DOCTYPE html>
+{% get_current_language as lang_code %}
 <head>
   {% block head %}
-    <meta charset="utf8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Tables{% endblock title %}</title>
 
     {% block css %}
@@ -22,27 +23,30 @@
     {% endblock %}
   {% endblock head %}
 </head>
-<body>
+<body class="lang-{{lang_code}}">
   {% block header %}
     <div class="container">
       <nav class="navbar navbar-default">
+
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#dz-navbar-collapse">
             <i class="icon-bar"></i>
             <i class="icon-bar"></i>
             <i class="icon-bar"></i>
           </button>
-          <a class="navbar-brand" href="{% url 'dz:index' %}">{% trans 'D.Z.' %}</a>
+          <span class="navbar-brand">{% trans 'D.Z.' %}</span>
         </div>
+
         <div class="collapse navbar-collapse" id="dz-navbar-collapse">
           {% block top-navigation %}
-            <ul class="nav navbar-nav dz-top-navigation">
-              <li>
+            <ul class="nav navbar-nav dz-top-nav">
+              <li class="dz-top-nav__home">
                 <a href="{% url 'dz:index' %}">{% trans 'Home' %}</a>
               </li>
-              {% for text, href in top_nav_links %}
-                <li{% if href == request.path %} class="active"{% endif %}>
-                  <a href="{{href}}">{{text}}</a>
+
+              {% for item in top_nav_links %}
+                <li class="dz-top-nav__link dz-top-nav__link-{{item.name}}{% if item.link == request.path %} active{% endif %}">
+                  <a href="{{item.link}}">{{item.text}}</a>
                 </li>
               {% endfor %}
             </ul>
@@ -54,10 +58,9 @@
                 <li>
                   <a href="{% url 'auth:logout' %}">{% trans 'Log out' %}</a>
                 </li>
-                <li class="navbar-text">
-                  {{user.username}}
-                </li>
               </ul>
+
+              <p class="navbar-text navbar-right text-capitalize">{{user.username}}</p>
             {% endif %}
           {% endblock user-tools %}
 

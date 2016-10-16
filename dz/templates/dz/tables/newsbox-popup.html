@@ -1,13 +1,13 @@
+<!DOCTYPE html>
+<html>
 {% load static i18n %}
 {% load render_bundle from webpack_loader %}
-<html>
 <head>
-    <title>{{ news.title }}</title>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% render_bundle 'common' 'css' %}
-    {% render_bundle 'newsbox' 'css' %}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ news.title }}</title>
+  {% render_bundle 'common' 'css' %}
+  {% render_bundle 'newsbox' 'css' %}
 </head>
 <body>
   <div class="news-block nlsn_content">

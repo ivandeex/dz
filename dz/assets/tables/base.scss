@@ -7,3 +7,23 @@ body {
     display: none;
   }
 }
+
+// Top navigation menu in slavic languages can become too wide to fit on a
+// medium screen. As a result the right side of navigation bar pops down.
+// The fix is to hide rarely used Home link and link to current page.
+@media (min-width: 768px) and (max-width: 992px) {
+  .lang-ru,
+  .lang-sl {
+    .dz-top-nav__home {
+      display: none;
+    }
+  }
+
+  .lang-ru {
+    .dz-top-nav__link {
+      &.active {
+        display: none;
+      }
+    }
+  }
+}
