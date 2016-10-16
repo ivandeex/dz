@@ -52,6 +52,9 @@
       with_items:
         - webpack
         - webpack-dev-server
+        - eslint
+        - eslint-config-google
+        - sass-lint
       become: true
     # install packages from package.json
     - npm: path={{inventory_dir|dirname}}
