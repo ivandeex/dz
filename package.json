@@ -5,8 +5,8 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "test": "test",
-    "lint": "sass-lint -v -q && eslint */assets && flake8",
+    "test": "./prepare.sh test",
+    "lint": "./prepare.sh lint",
     "makedevel": "NODE_ENV=development webpack",
     "makeprod": "NODE_ENV=production webpack",
     "devserver": "webpack-dev-server"

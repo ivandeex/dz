@@ -4,12 +4,14 @@
   gather_facts: false
   tags: env
   tasks:
-    - lineinfile: dest=../.env create=yes mode=0600
+    - name: add public settings to .env
+      lineinfile: dest=../.env create=yes mode=0600
                   regexp='^{{ item|upper }}='
                   line='{{ item|upper }}="{{ public[item] }}"'
       with_items: '{{ public.keys() | sort }}'
 
-    - lineinfile: dest=../.env create=yes mode=0600
+    - name: add non-public settings to .env
+      lineinfile: dest=../.env create=yes mode=0600
                   regexp='^{{ item|upper }}='
                   line='{{ item|upper }}="{{ secret[item] }}"'
       with_items: '{{ secret.keys() | sort }}'
@@ -19,7 +21,8 @@
   gather_facts: false
   tags: install
   tasks:
-    - apt: pkg={{item}}
+    - name: install required os packages
+      apt: pkg={{item}}
       with_items:
         - gettext  # for translations
         - build-essential
@@ -36,19 +39,31 @@
   gather_facts: false
   tags: db
   tasks:
-    - postgresql_db: port={{postgres.port}} name={{postgres.database}}
+    - name: create django database
+      postgresql_db: port={{postgres.port}} name={{postgres.database}}
                      template='template0' encoding='UTF-8'
                      lc_collate='en_US.UTF-8' lc_ctype='en_US.UTF-8'
-    - postgresql_user: port={{postgres.port}} db={{postgres.database}}
+
+    - name: create database user
+      postgresql_user: port={{postgres.port}} db={{postgres.database}}
                        name={{postgres.username}} password={{postgres.password}}
+
+    - name: create test database
+      postgresql_db: port={{postgres.port}} name=test_{{postgres.database}}
+                     owner={{postgres.username}}
+                     template='template0' encoding='UTF-8'
+                     lc_collate='en_US.UTF-8' lc_ctype='en_US.UTF-8'
 
 - hosts: localhost
   gather_facts: false
   tags: npm
   tasks:
-    - apt: name=npm
+    - name: install npm binary
+      apt: name=npm
       become: true
-    - npm: name={{item}} global=yes
+
+    - name: install global npm packages
+      npm: name={{item}} global=yes
       with_items:
         - webpack
         - webpack-dev-server
@@ -56,8 +71,9 @@
         - eslint-config-google
         - sass-lint
       become: true
-    # install packages from package.json
-    - npm: path={{inventory_dir|dirname}}
+
+    - name: install local package.json packages
+      npm: path={{inventory_dir|dirname}}
       become: false
 
 - hosts: localhost
