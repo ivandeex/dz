@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponseForbidden, HttpResponseRedirect
@@ -10,13 +10,17 @@ from .. import models, helpers
 
 
 @login_required
-def list_view(request, Table, crawl_target=None):
+def list_view(request, Table, restricted=False, crawl_target=None):
+    is_admin = helpers.user_is_admin(request)
+    if restricted and not is_admin:
+        return HttpResponseForbidden('Forbidden')
+
     Model = Table.Meta.model
     table = Table(Model.objects.all())
     tables.RequestConfig(request).configure(table)
 
     allowed_models = [models.News, models.Tip]
-    if request.user.dz_user.is_admin:
+    if is_admin:
         allowed_models += [models.Crawl, models.User]
         if not settings.DZ_COMPAT:
             allowed_models.append(models.Schedule)
@@ -29,7 +33,7 @@ def list_view(request, Table, crawl_target=None):
             'name': model._meta.model_name,
         })
 
-    if helpers.user_is_admin(request):
+    if is_admin:
         # Translators: crawl label is one of "Crawl news now", "Crawl tips now"
         crawl_label = _('Crawl %s now' % crawl_target)
         if None:
@@ -62,7 +66,7 @@ def crawl_action_view(request):
             model_name in ('news', 'tip') and
             # crawl_target in models.Crawl.CRAWL_TARGETS and
             request.method == 'POST'):
-        return HttpResponseForbidden()
+        return HttpResponseForbidden('Forbidden')
 
     status = models.Crawl.add_manual_crawl(crawl_target)
     message = models.Crawl.get_status_message(status)

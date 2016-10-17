@@ -59,6 +59,7 @@ def _post_save_dz_user(sender, **kwargs):
     auth_user.is_active = auth_user.is_staff = True
 
     auth_user.is_superuser = dz_user.is_super
+    # Never override admin password
     if not dz_user.is_super:
         auth_user.set_password(dz_user.password)
 

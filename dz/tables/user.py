@@ -14,4 +14,4 @@ class UserTable(DzTable):
 
 
 def user_list_view(request):
-    return list_view(request, UserTable)
+    return list_view(request, UserTable, restricted=True)

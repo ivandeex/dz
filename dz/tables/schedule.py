@@ -14,4 +14,4 @@ class ScheduleTable(DzTable):
 
 
 def schedule_list_view(request):
-    return list_view(request, ScheduleTable)
+    return list_view(request, ScheduleTable, restricted=True)

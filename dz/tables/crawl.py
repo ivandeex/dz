@@ -34,4 +34,4 @@ class CrawlTable(DzTable):
 
 
 def crawl_list_view(request):
-    return list_view(request, CrawlTable)
+    return list_view(request, CrawlTable, restricted=True)
