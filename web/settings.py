@@ -45,15 +45,6 @@ STATICFILES_DIRS = [
 ]
 
 
-WEBPACK_SUBDIR = 'devel' if DEBUG else 'prod'
-WEBPACK_LOADER = {
-    'DEFAULT': {
-        'BUNDLE_DIR_NAME': '/' + WEBPACK_SUBDIR,
-        'STATS_FILE': root('stats-%s.json' % WEBPACK_SUBDIR)
-    }
-}
-
-
 USE_I18N = True
 LANGUAGE_CODE = 'en'
 LANGUAGE_COOKIE_NAME = 'lang'
@@ -217,6 +208,22 @@ LOGGING = {
         },
     },
 }
+
+
+# Webpack assets
+WEBPACK_SUBDIR = 'devel' if DEBUG else 'prod'
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': '/' + WEBPACK_SUBDIR,
+        'STATS_FILE': root('stats-%s.json' % WEBPACK_SUBDIR)
+    }
+}
+
+if True:
+    # Teach webpack loader to accept webpack files with hash query in path.
+    # This line must go *after* webpack loader settings to avoid circular import
+    from . import _patch_webpack_loader  # noqa
+
 
 # Time zone
 USE_TZ = True

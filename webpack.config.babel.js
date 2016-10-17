@@ -53,9 +53,9 @@ let config = {
 
   output: {
     path: path.resolve(__dirname, 'public', TARGET),
-    filename: `dz-[name]${MIN_EXT}.js`,
+    filename: `dz-[name]${MIN_EXT}.js?v=[chunkhash:6]`,
     library: ['dz', '[name]'],
-    chunkFilename: `_dz-[name]-[id]${MIN_EXT}.js`,
+    chunkFilename: `_dz-[name]-[id]${MIN_EXT}.js?v=[chunkhash:6]`,
     publicPath: DEV_SERVER ? `http://${DEV_HOST}:${DEV_PORT}/` : `/static/${TARGET}/`,
     pathinfo: !PRODUCTION
   },
@@ -159,7 +159,7 @@ let config = {
     }),
 
     new ExtractTextPlugin(
-      `dz-[name]${MIN_EXT}.css`, {
+      `dz-[name]${MIN_EXT}.css?v=[contenthash:6]`, {
         allChunks: true,
         disable: DEV_SERVER
       }
