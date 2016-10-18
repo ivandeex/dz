@@ -46,6 +46,11 @@ run_test()
   python manage.py test --keep --reverse --failfast --verbosity 2 $extra_args
 }
 
+liveserver_test()
+{
+  TEST_LIVESERVER=1 python manage.py test --keep --liveserver=0.0.0.0:8000 --tag liveserver $extra_args
+}
+
 run_lint()
 {
   flake8 && \
@@ -67,6 +72,9 @@ case "$action" in
   lint)
     run_lint
     ;;
+  liveserver)
+    liveserver_test
+    ;;
   prod)
     prepare_prod
     ;;
@@ -77,5 +85,5 @@ case "$action" in
     prepare_prod
     ;;
   *)
-    echo "usage: $0 all|prod|devel|lang|test|lint"
+    echo "usage: $0 all|prod|devel|lang|test|lint|liveserver"
 esac

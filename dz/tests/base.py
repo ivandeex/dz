@@ -1,9 +1,11 @@
 import pytz
+from datetime import time
 from contextlib import contextmanager
 from django.utils import timezone
 from django.conf import settings
 from django.test import TestCase, override_settings
-from .. import models
+from dz import models
+from . import factories
 
 
 TEST_USERS = [
@@ -12,6 +14,16 @@ TEST_USERS = [
     dict(name='follow', admin=True, follow=True),
     dict(name='simple', admin=False, follow=False),
 ]
+
+TEST_SCHEDULE = [
+    (time(11, 02), 'tips'),
+    (time(11, 46), 'tips'),
+    (time(12, 02), 'tips'),
+    (time(10, 00), 'news'),
+    (time(18, 30), 'news'),
+]
+
+MODEL_BATCH_SIZE = 20
 
 
 def get_pass(username):
@@ -30,6 +42,17 @@ class BaseDzTestsMixin(object):
                 username=user['name'], password=get_pass(user['name']),
                 is_admin=user['admin'], can_follow=user['follow']
             )
+
+        models.Schedule._verbose_update = False
+        for time_i, target_i in TEST_SCHEDULE:
+            models.Schedule.objects.create(time=time_i, target=target_i)
+        models.Schedule._verbose_update = False
+
+        factories.CrawlFactory.create_batch(MODEL_BATCH_SIZE)
+        factories.TipFactory.create_batch(MODEL_BATCH_SIZE)
+
+        # Linked NewsText objects will be created automatically.
+        factories.NewsFactory.create_batch(MODEL_BATCH_SIZE)
 
     @contextmanager
     def login_as(self, username):

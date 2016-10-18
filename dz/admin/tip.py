@@ -49,14 +49,8 @@ class TipAdmin(DzCrawlModelAdmin):
     def user_can_follow_links(self, auth_user):
         return (auth_user or self._request.user).has_perm('dz.follow_tips')
 
-    SUCCESS_CODE_MAP = {
-        'unknown': _('(success) unknown'),
-        'hit': _('(success) hit'),
-        'miss': _('(success) miss'),
-    }
-
     def success_str(self, obj):
-        return self.SUCCESS_CODE_MAP.get(obj.success, obj.success)
+        return models.Tip.SUCCESS_CODE_MAP.get(obj.success, obj.success)
     success_str.short_description = _('tip success (column)')
     success_str.admin_order_field = 'success'
 

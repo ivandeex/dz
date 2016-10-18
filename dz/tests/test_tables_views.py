@@ -5,6 +5,14 @@ from . import base, views
 
 @tag('views')
 class TableViewsTests(base.BaseDzTestCase, views.ListViewTestsMixin):
+    MODEL_TABLE_SIZES = {
+        'news': base.MODEL_BATCH_SIZE,  # created from factory batch
+        'tip': base.MODEL_BATCH_SIZE,  # created from factory batch
+        'crawl': base.MODEL_BATCH_SIZE,  # created from factory batch
+        'user': len(base.TEST_USERS),  # created from hardcoded list
+        'schedule': len(base.TEST_SCHEDULE)  # created from hardcoded list
+    }
+
     def test_unauthorized_request_should_redirect_to_login(self):
         for model_name in ('news', 'tip', 'crawl', 'user', 'schedule'):
             list_url = reverse('dz:%s-list' % model_name)
@@ -24,7 +32,8 @@ class TableViewsTests(base.BaseDzTestCase, views.ListViewTestsMixin):
         self.assertContains(response, '>{}</p>'.format(user_name),
                             msg_prefix='user name should be in the top menu' + info)
 
-        self.assertContains(response, 'List (',
+        expected_text = 'List (%d)' % self.MODEL_TABLE_SIZES[model_name]
+        self.assertContains(response, expected_text,
                             msg_prefix='table item count should be visible' + info)
 
         model_name_plural = model_name + ('' if model_name == 'news' else 's')

@@ -28,6 +28,7 @@ honcho==0.7.1
 gunicorn==19.6.0
 pymongo==3.3.0
 
+factory-boy==2.7.0
 flake8==3.0.4
 ipython==5.0.0
 ipdb==0.10.1

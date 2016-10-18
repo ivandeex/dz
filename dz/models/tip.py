@@ -7,6 +7,12 @@ from .base import CutStr
 
 @python_2_unicode_compatible
 class Tip(models.Model):
+    SUCCESS_CODE_MAP = {
+        'unknown': _('(success) unknown'),
+        'hit': _('(success) hit'),
+        'miss': _('(success) miss'),
+    }
+
     id = models.IntegerField(_('tip id (column)'), db_column='pk', primary_key=True)
     league = models.CharField(_('tip league (column)'), max_length=40, db_index=True)
     parties = models.CharField(_('tip parties (column)'), max_length=150, db_index=True)

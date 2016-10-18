@@ -23,6 +23,7 @@ DEBUG_SQL = env.bool('DEBUG_SQL', DEBUG)
 DEBUG_API = env.bool('DEBUG_API', DEBUG)
 
 TESTING = False
+TEST_LIVESERVER = env.bool('TEST_LIVESERVER', False)
 
 # ALLOWED_HOSTS is required by production mode
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost'])

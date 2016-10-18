@@ -8,3 +8,4 @@ makedevel: npm run makedevel
 devserver: npm run devserver
 test: ./prepare.sh test
 lint: ./prepare.sh lint
+liveserver: ./prepare.sh liveserver
