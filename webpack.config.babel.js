@@ -40,6 +40,10 @@ let babelSettings = {
   plugins: ['transform-runtime']
 };
 
+// Disable long caching in dev-server because hot reload supersedes it and in the
+// same time [chunkhash] triggers errors when webpack-dev-server is in HMR mode.
+const hashQuery = hash_key => DEV_SERVER ? '' : `?hash=[${hash_key}:6]`;
+
 let config = {
   context: path.resolve(__dirname, 'dz', 'assets'),
 
@@ -53,9 +57,9 @@ let config = {
 
   output: {
     path: path.resolve(__dirname, 'public', TARGET),
-    filename: `dz-[name]${MIN_EXT}.js?v=[chunkhash:6]`,
+    filename: `dz-[name]${MIN_EXT}.js` + hashQuery('chunkhash'),
     library: ['dz', '[name]'],
-    chunkFilename: `_dz-[name]-[id]${MIN_EXT}.js?v=[chunkhash:6]`,
+    chunkFilename: `_dz-[name]-[id]${MIN_EXT}.js` + hashQuery('chunkhash'),
     publicPath: DEV_SERVER ? `http://${DEV_HOST}:${DEV_PORT}/` : `/static/${TARGET}/`,
     pathinfo: !PRODUCTION
   },
@@ -159,7 +163,7 @@ let config = {
     }),
 
     new ExtractTextPlugin(
-      `dz-[name]${MIN_EXT}.css?v=[contenthash:6]`, {
+      `dz-[name]${MIN_EXT}.css` + hashQuery('contenthash'), {
         allChunks: true,
         disable: DEV_SERVER
       }
