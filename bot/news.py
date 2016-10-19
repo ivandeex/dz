@@ -12,6 +12,7 @@ class NewsSpider(BaseSpider):
 
     def __init__(self, env):
         self.seen_news = split_ranges(env.get('SEEN_NEWS', '').strip())
+        self.limit_news = int(env.get('LIMIT_NEWS', 0))
         self.single_id = int(env.get('NEWS_ID', 0))
         self.done_urls = set()
         self.todo = None
@@ -30,12 +31,17 @@ class NewsSpider(BaseSpider):
 
         self.click_menu('Najave')
 
+        count = 0
         while True:
             try:
                 url, pk = self.get_next_news()
                 if not url:
                     break
                 self.parse_news(url, pk)
+                count += 1
+                if 0 < self.limit_news <= count:
+                    logger.debug('News limit reached')
+                    break
 
                 logger.debug('Go back and sleep ~ %d sec', self.page_delay)
                 self.webdriver.back()
@@ -58,7 +64,7 @@ class NewsSpider(BaseSpider):
         random.shuffle(news_links)
         if self.todo is None:
             self.todo = len(news_links)
-            logger.info('Will crawl at most %d news', self.todo)
+            logger.info('Will crawl at most %d news (limit %d)', self.todo, self.limit_news)
 
         for link in news_links:
             url = link.get_attribute('href')

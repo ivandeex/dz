@@ -155,6 +155,7 @@ def api_crawl_job(request):
             resp['target'] = crawl.target
             resp['start_utc'] = time2api(crawl.started)
             resp['seen_news'] = seen_news
+            resp['limit_news'] = spider_config('LIMIT_NEWS')
             resp['page_delay'] = spider_config('PAGE_DELAY')
         return make_response(**resp)
 

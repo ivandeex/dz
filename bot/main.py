@@ -29,6 +29,7 @@ def main():
     getopt('userpass', 'USERPASS')
     getopt('images', 'LOAD_IMAGES')
     getopt('newsid', 'NEWS_ID')
+    getopt('maxnews', 'LIMIT_NEWS')
 
     if service:
         Service().run()

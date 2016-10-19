@@ -26,6 +26,7 @@ class Service(object):
                     env = {
                         'START_UTC': resp['start_utc'],
                         'SEEN_NEWS': resp['seen_news'],
+                        'LIMIT_NEWS': resp['limit_news'],
                         'PAGE_DELAY': resp['page_delay'],
                         'LOAD_IMAGES': resp['load_images'],
                         'USERPASS': (resp['userpass'] + '====').decode('base64'),

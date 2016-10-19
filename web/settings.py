@@ -260,6 +260,10 @@ CONSTANCE_CONFIG = {
         env.str('SPIDER_SECRET_KEY', 'please change me'),
         'spider secret key'
     ),
+    'SPIDER_LIMIT_NEWS': (
+        env.int('SPIDER_LIMIT_NEWS', 0),
+        'maximum number of news gathered in one go (0=unlimited)'
+    ),
     'SPIDER_PAGE_DELAY': (
         env.int('SPIDER_PAGE_DELAY', 50),
         'random delay betweeb news pages'
