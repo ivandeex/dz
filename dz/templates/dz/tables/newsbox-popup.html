@@ -8,8 +8,20 @@
   <title>{{ news.title }}</title>
   {% render_bundle 'common' 'css' %}
   {% render_bundle 'newsbox' 'css' %}
+  {% comment %}
+    Load js early because dev-server applies styles via scripts.
+
+    Disabling javascript in non-debug mode is simply an optimization,
+    since we know that in production mode all styles are extracted into
+    CSS and javascript does nothing.
+
+    Django`s debug context processor will set `debug` to true only if
+    the requestor`s IP address is in the INTERNAL_IPS setting, so absense
+    of custom styles can be used as indication that configuration is wrong.
+    Make sure that your browser's host IP is listed in INTERNAL_IPS and
+    your proxy server sends X-Real-IP and X-Forwarded-For headers to Django.
+  {% endcomment %}
   {% if debug %}
-    {# load js early because dev-server applies styles via js #}
     {% render_bundle 'common' 'js' %}
     {% render_bundle 'newsbox' 'js' %}
   {% endif %}

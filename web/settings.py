@@ -26,6 +26,9 @@ DEBUG_API = env.bool('DEBUG_API', DEBUG)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost'])
 
 # INTERNAL_IPS is required by debug toolbar and debug context processor
+# Please ensure that your browser's host IP is in this list and your
+# proxy server sends X-Real-IP and X-Forwarded-For headers to Django.
+# Else, the `if debug` sections in templates will be disabled.
 INTERNAL_IPS = env.list('INTERNAL_IPS', default=['127.0.0.1'])
 
 
@@ -99,6 +102,7 @@ if DZ_SKIN == 'bootstrap':
 
 
 MIDDLEWARE = [
+    'web.middleware.RealRemoteIPMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -123,7 +127,8 @@ if DEBUG and DEBUG_TOOLBAR_ENABLED:
     DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
     if django_ver < 110:
-        MIDDLEWARE_CLASSES.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
+        # Use index=1 to insert *after* RealRemoteIPMiddleware
+        MIDDLEWARE_CLASSES.insert(1, 'debug_toolbar.middleware.DebugToolbarMiddleware')
     else:
         from django.utils.deprecation import MiddlewareMixin
         from debug_toolbar.middleware import DebugToolbarMiddleware
@@ -131,7 +136,8 @@ if DEBUG and DEBUG_TOOLBAR_ENABLED:
         class Django110DebugToolbarMiddleware(MiddlewareMixin, DebugToolbarMiddleware):
             pass
 
-        MIDDLEWARE.insert(0, 'web.settings.Django110DebugToolbarMiddleware')
+        # Use index=1 to insert *after* RealRemoteIPMiddleware
+        MIDDLEWARE.insert(1, 'web.settings.Django110DebugToolbarMiddleware')
 
 
 TEMPLATES = [
