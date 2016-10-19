@@ -59,4 +59,28 @@
     # install packages from package.json
     - npm: path={{inventory_dir|dirname}}
       become: false
+
+- hosts: localhost
+  become: true
+  gather_facts: false
+  tags: phantomjs
+  vars:
+    phantomjs_version: 'phantomjs-2.1.1-linux-x86_64'
+  tasks:
+    - name: remove broken phantomjs .deb package
+      # see http://stackoverflow.com/questions/36770303/phantomjs-with-selenium-unable-to-load-atom-find-element#36800913
+      apt: name=phantomjs state=absent
+
+    - name: download phantomjs from official site
+      unarchive:
+        src: https://bitbucket.org/ariya/phantomjs/downloads/{{phantomjs_version}}.tar.bz2
+        dest: /usr/local
+        copy: no
+        creates: '/usr/local/{{phantomjs_version}}'
+
+    - name: create link to phantomjs binary
+      file:
+        state: link
+        src: ../{{phantomjs_version}}/bin/phantomjs
+        dest: /usr/local/bin/phantomjs
 ...
