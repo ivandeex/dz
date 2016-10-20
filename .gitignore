@@ -9,6 +9,8 @@
 *.mo
 /.env
 /.virtualenv/
+/.coverage
+/htmlcov/
 /static/
 /ansible/secret.yml
 /node_modules/

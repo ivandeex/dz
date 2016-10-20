@@ -46,6 +46,12 @@ run_test()
   python manage.py test --keep --reverse --failfast --verbosity 2 $extra_args
 }
 
+run_coverage()
+{
+  coverage run --source=. --omit='*/bot/*' manage.py test -k $extra_args
+  coverage report
+}
+
 liveserver_test()
 {
   TEST_LIVESERVER=1 python manage.py test --keep --liveserver=0.0.0.0:8000 --tag liveserver $extra_args
@@ -69,6 +75,9 @@ case "$action" in
   test)
     run_test
     ;;
+  coverage)
+    run_coverage
+    ;;
   lint)
     run_lint
     ;;
@@ -85,5 +94,5 @@ case "$action" in
     prepare_prod
     ;;
   *)
-    echo "usage: $0 all|prod|devel|lang|test|lint|liveserver"
+    echo "usage: $0 all|prod|devel|lang|test|lint|coverage|liveserver"
 esac
