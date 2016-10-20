@@ -179,6 +179,8 @@ if DEBUG:
     del TEMPLATES[0]['OPTIONS']['loaders']
 
 
+LOGIN_URL = 'dz-admin:login'
+
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},

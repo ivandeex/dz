@@ -8,12 +8,9 @@ class TableViewsTests(base.BaseDzTestCase, views.ListViewTestsMixin):
     def test_unauthorized_request_should_redirect_to_login(self):
         for model_name in ('news', 'tip', 'crawl', 'user', 'schedule'):
             list_url = reverse('dz:%s-list' % model_name)
+            login_url = '%s?next=%s' % (reverse('dz-admin:login'), list_url)
             response = self.client.get(list_url)
-            self.assertRedirects(
-                response,
-                '/accounts/login/?next=' + list_url,
-                fetch_redirect_response=False  # because it currently returns 404
-            )
+            self.assertRedirects(response, login_url)
 
     def _test_table_view(self, user_name, model_name, can_access=True, can_crawl=None):
         info = ' (user: {}, model: {})'.format(user_name, model_name)
