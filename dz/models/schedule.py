@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.db.models import signals
 from django.dispatch import receiver
 from threading import RLock
+from functools import wraps
 from .base import TARGET_CHOICES
 from ..config import spider_config
 
@@ -105,6 +106,23 @@ class Schedule(models.Model):
             printed_items = ['%02d:%02d->%s' % (utc.hour, utc.minute, target)
                              for utc, target in sorted(schedule.items())]
             logger.info('New schedule (UTC): %s', ', '.join(printed_items))
+
+    @staticmethod
+    def suspend_logging(method):
+        '''
+        This decorator suspends logging of schedule updates,
+        while update_schedule() is called from decorated method.
+        '''
+        @wraps(method)
+        def wrapper(*args, **kwargs):
+            try:
+                saved_flag = Schedule._verbose_update
+                Schedule._verbose_update = False
+                return method(*args, **kwargs)
+            finally:
+                Schedule._verbose_update = saved_flag
+
+        return wrapper
 
 
 @receiver(signals.post_save, sender=Schedule)

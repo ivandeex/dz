@@ -1,0 +1,42 @@
+[
+{
+  "model": "dz.schedule",
+  "pk": 36,
+  "fields": {
+    "time": "11:02:00",
+    "target": "tips"
+  }
+},
+{
+  "model": "dz.schedule",
+  "pk": 37,
+  "fields": {
+    "time": "11:46:00",
+    "target": "tips"
+  }
+},
+{
+  "model": "dz.schedule",
+  "pk": 38,
+  "fields": {
+    "time": "12:02:00",
+    "target": "tips"
+  }
+},
+{
+  "model": "dz.schedule",
+  "pk": 39,
+  "fields": {
+    "time": "10:00:00",
+    "target": "news"
+  }
+},
+{
+  "model": "dz.schedule",
+  "pk": 40,
+  "fields": {
+    "time": "18:30:00",
+    "target": "news"
+  }
+}
+]

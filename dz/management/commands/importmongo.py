@@ -1,6 +1,7 @@
 import sys
 import pytz
-from datetime import datetime, time
+from datetime import datetime
+from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.utils import timezone
@@ -11,14 +12,6 @@ from dz.config import spider_config
 
 class Command(BaseCommand):
     help = 'Migrates MongoDB data to Django database'
-
-    DEFAULT_SCHEDULE = [
-        (time(11, 02), 'tips'),
-        (time(11, 46), 'tips'),
-        (time(12, 02), 'tips'),
-        (time(10, 00), 'news'),
-        (time(18, 30), 'news'),
-    ]
 
     def convert_time(self, dt):
         if dt:
@@ -57,12 +50,11 @@ class Command(BaseCommand):
 
         self.mongodb.client.close()
 
+    @models.Schedule.suspend_logging
     def import_schedule(self):
-        models.Schedule._verbose_update = False
         models.Schedule.objects.all().delete()
-        for time_i, target_i in self.DEFAULT_SCHEDULE:
-            models.Schedule.objects.create(time=time_i, target=target_i)
-        print '%d schedule jobs imported' % len(self.DEFAULT_SCHEDULE)
+        call_command('loaddata', 'schedule.json', verbosity=1)
+        print 'schedule imported'
 
     def import_users(self):
         # The line below bulk-deletes dz.model.User`s without activating pre-/post-save
