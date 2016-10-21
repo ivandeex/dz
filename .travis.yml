@@ -20,4 +20,6 @@ before_script:
   - python manage.py collectstatic --noinput -v0
 script:
   # Use `-v2` to log individual tests. Unlike `prepare.sh`, don't use `--keep`.
-  - python manage.py test -v2
+  - coverage run --source=. --omit='*/bot/*' manage.py test -v2
+after_success:
+  - coveralls
