@@ -99,4 +99,18 @@
         state: link
         src: ../{{phantomjs_version}}/bin/phantomjs
         dest: /usr/local/bin/phantomjs
+
+- hosts: localhost
+  become: true
+  gather_facts: false
+  tags: travis
+  tasks:
+    - name: install ruby
+      apt: name={{item}}
+      with_items:
+        - ruby
+        - ruby-dev
+    - name: install travis client
+      command: gem install travis --no-rdoc --no-ri
+               creates=/usr/local/bin/travis
 ...

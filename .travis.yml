@@ -1,0 +1,23 @@
+language: python
+python:
+  - 2.7
+services:
+  - postgresql
+env:
+  global:
+    # Note: Django test will prepend database name "dz" with "test_".
+    - DATABASE_URL=postgres://postgres@localhost/dz
+cache: pip
+install:
+  # Upgrade preinstalled pip v6 to v8, which supports wheel caching:
+  - pip install -U pip==8.1.2 wheel==0.29.0
+  - pip install -r requirements-dev.txt
+before_script:
+  # As travis provides privileged postgres user, django test script can create
+  # and drop test databases, so `createdb -U postgres test_dz` is not needed.
+  - python manage.py compilemessages
+  # Use `-v0` to silence verbose whitenoise messages.
+  - python manage.py collectstatic --noinput -v0
+script:
+  # Use `-v2` to log individual tests. Unlike `prepare.sh`, don't use `--keep`.
+  - python manage.py test -v2
