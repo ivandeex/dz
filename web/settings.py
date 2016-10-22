@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-import django
 import environ
 from django.utils.translation import ugettext_lazy as _
+from django import VERSION as django_version  # it's a tuple # noqa
 
-
-django_ver = django.VERSION[0] * 100 + django.VERSION[1]
 root = environ.Path(__file__) - 2
 env = environ.Env()
 env.read_env(root('.env'))
@@ -118,29 +116,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-if django_ver < 110:
-    MIDDLEWARE_CLASSES = MIDDLEWARE
-
 
 DEBUG_TOOLBAR_ENABLED = env.bool('DEBUG_TOOLBAR', True)
 
 if DEBUG and DEBUG_TOOLBAR_ENABLED:
     INSTALLED_APPS += ['debug_toolbar']
     DEBUG_TOOLBAR_CONFIG = {'SHOW_COLLAPSED': True}
-    DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
-    if django_ver < 110:
-        # Use index=1 to insert *after* RealRemoteIPMiddleware
-        MIDDLEWARE_CLASSES.insert(1, 'debug_toolbar.middleware.DebugToolbarMiddleware')
-    else:
-        from django.utils.deprecation import MiddlewareMixin
-        from debug_toolbar.middleware import DebugToolbarMiddleware
-
-        class Django110DebugToolbarMiddleware(MiddlewareMixin, DebugToolbarMiddleware):
-            pass
-
-        # Use index=1 to insert *after* RealRemoteIPMiddleware
-        MIDDLEWARE.insert(1, 'web.settings.Django110DebugToolbarMiddleware')
+    # Use index=1 to insert *after* RealRemoteIPMiddleware
+    MIDDLEWARE.insert(1, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
 
 TEMPLATES = [
