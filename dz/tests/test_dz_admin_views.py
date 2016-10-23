@@ -11,7 +11,9 @@ class AdminTestsMixin(views.ListViewTestsMixin):
             response = self.client.get(list_url)
             self.assertRedirects(response, login_url)
 
-    def _test_table_view(self, user_name, model_name, can_access=True, can_crawl=None):
+    def _test_table_view(self, user_name, model_name,
+                         can_access=True, can_crawl=None,
+                         can_use_row_actions=None):
         info = ' (user: {}, model: {})'.format(user_name, model_name)
         list_url = reverse('dz-admin:dz_%s_changelist' % model_name)
         response = self.client.get(list_url)

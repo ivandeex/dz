@@ -20,7 +20,9 @@ class TableViewsTests(base.BaseDzTestCase, views.ListViewTestsMixin):
             response = self.client.get(list_url)
             self.assertRedirects(response, login_url)
 
-    def _test_table_view(self, user_name, model_name, can_access=True, can_crawl=None):
+    def _test_table_view(self, user_name, model_name,
+                         can_access=True, can_crawl=None,
+                         can_use_row_actions=None):
         info = ' (user: {}, model: {})'.format(user_name, model_name)
         list_url = reverse('dz:%s-list' % model_name)
         response = self.client.get(list_url)
@@ -41,6 +43,19 @@ class TableViewsTests(base.BaseDzTestCase, views.ListViewTestsMixin):
         if can_crawl is True:
             self.assertContains(response, crawl_button_text,
                                 msg_prefix='crawl button should be present' + info)
-        elif can_crawl is False:
+        if can_crawl is False:
             self.assertNotContains(response, crawl_button_text,
                                    msg_prefix='crawl button should not be present' + info)
+
+        row_selector_text = '<th class="col-row_selector">'
+        row_actions_text = '<th class="col-row_actions">'
+        if can_use_row_actions is True:
+            self.assertContains(response, row_selector_text,
+                                msg_prefix='row selector should be present' + info)
+            self.assertContains(response, row_actions_text,
+                                msg_prefix='row actions should be present' + info)
+        if can_use_row_actions is False:
+            self.assertNotContains(response, row_selector_text,
+                                   msg_prefix='row selector should be hidden' + info)
+            self.assertNotContains(response, row_actions_text,
+                                   msg_prefix='row actions should be hidden' + info)
