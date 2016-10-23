@@ -4,4 +4,4 @@ rules:
   camelcase: off
   require-jsdoc: off
   # set maximum line length and tab width
-  max-len: ['warn', 90, 4]
+  max-len: ['warn', 99, 4]

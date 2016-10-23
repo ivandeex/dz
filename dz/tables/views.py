@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
+from django.urls import reverse, NoReverseMatch
 from django.conf import settings
+from django.db.models import Model
 from django.contrib import messages
-from django.http import HttpResponseForbidden, HttpResponseRedirect
+from django.http import HttpResponseForbidden, HttpResponseBadRequest, HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 import django_tables2 as tables
 from .. import models, helpers
@@ -78,3 +79,55 @@ def crawl_action_view(request):
     if preserved_query:
         back_url += '?' + preserved_query
     return HttpResponseRedirect(back_url)
+
+
+@login_required
+def row_action_view(request):
+    # Verify user permissions
+    if not (helpers.user_is_admin(request) and
+            request.method == 'POST'):
+        return HttpResponseForbidden('Forbidden')
+
+    # Validate post parameters
+    try:
+        stage = 'action'
+        action = request.POST.get('action')
+        assert action in ('delete',)
+
+        stage = 'ids'
+        row_ids = request.POST.get('row_ids')
+        assert row_ids
+        # Conversion to integer can raise a ValueError.
+        row_ids = map(int, row_ids.split(','))
+
+        stage = 'model'
+        model_name = request.POST.get('model_name', '')
+        # We use a generic title-case check instead of hardcoded list of allowed models:
+        ModelClass = getattr(models, model_name.title())
+        assert ModelClass and issubclass(ModelClass, Model)
+
+        stage = 'url'
+        # Invalid model name will raise NoReverseMatch exception.
+        next_url = reverse('dz:%s-list' % model_name)
+        if request.POST.get('preserved_query'):
+            next_url += '?' + request.POST['preserved_query']
+    except (AssertionError, ValueError, AttributeError, NoReverseMatch):
+        return HttpResponseBadRequest('Bad request ' + stage)
+
+    # Perform actions
+    try:
+        count = 0
+        for pk in row_ids:
+            # Deleting records one by one to let signals emit.
+            try:
+                obj = ModelClass.objects.get(pk=pk)
+            except ModelClass.DoesNotExist:
+                continue
+            if action == 'delete':
+                obj.delete()
+            count += 1
+        messages.info(request, _('%(count)d record(s) deleted.') % {'count': count})
+    except Exception as err:
+        messages.error(request, _('Error deleting records: %(err)r') % {'err': err})
+
+    return HttpResponseRedirect(next_url)

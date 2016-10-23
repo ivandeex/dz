@@ -207,7 +207,8 @@ let config = {
   // === end of plugins ===
   ),
 
-  devtool: PRODUCTION ? null : 'cheap-inline-module-source-map',
+  // cheap mode triggered errors in firebug...
+  devtool: PRODUCTION ? null : 'inline-module-source-map',
 
   watchOptions: {aggregateTimeout: 100}
 };

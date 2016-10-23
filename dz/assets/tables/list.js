@@ -28,3 +28,34 @@ export function showNewsboxPopup(link, name) {
   win.focus();
   return false;  // prevent default action
 }
+
+export function runRowAction(action, row_ids, confirmation_msg) {
+  if (!row_ids) {
+    let checkboxes = document.querySelectorAll('input.dz-row-selector:checked');
+    row_ids = Array.prototype.map.call(checkboxes, el => el.value);
+  } else if (!Array.isArray(row_ids)) {
+    row_ids = [row_ids];
+  }
+
+  if (!row_ids.length) {
+    const message = document.getElementById('dz-msg-no-rows-selected').textContent;
+    window.alert(message); /* eslint no-alert: off */
+    return;
+  }
+
+  if (confirmation_msg) {
+    if (confirmation_msg === true) {
+      confirmation_msg = document.getElementById('dz-msg-confirm-action').textContent;
+      confirmation_msg = confirmation_msg.replace('[ACTION]', action);
+    }
+    if (!window.confirm(confirmation_msg)) { /* eslint no-alert: off */
+      return;
+    }
+  }
+
+  let form = document.forms['dz-row-action-form'];
+  form.elements.action.value = action;
+  form.elements.row_ids.value = row_ids.join(',');
+  form.submit();
+  return false;
+}

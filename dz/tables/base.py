@@ -10,6 +10,9 @@ class RowSelectorColumn(tables.CheckBoxColumn, AdminOnlyColumnMixin):
     def __init__(self, *args, **kwargs):
         super(RowSelectorColumn, self).__init__(
             empty_values=(),
+            checked=None,
+            accessor='pk',
+            attrs={'td__input': {'class': 'dz-row-selector'}},
             *args, **kwargs
         )
 

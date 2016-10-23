@@ -52,7 +52,7 @@
           </a>
           <ul class="dropdown-menu">
             <li>
-              <a href="javascript://">{% trans 'Delete' %}</a>
+              <a onclick="return dz.tables.runRowAction('delete', null, '{% trans "Are you sure you want to delete these rows?" %}');" href="javascript:void(0)">{% trans 'Delete' %}</a>
             </li>
           </ul>
         </li>
@@ -67,13 +67,29 @@
 {% endblock content %}
 
 
-{# reserve html block for tip modals #}
 {% block footer %}
-<div id="tipbox-popup" class="modal fade" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      {# dynamic content will be loaded here #}
+  {# reserve html form for row actions #}
+  {% block row_action_form %}
+    <form name="dz-row-action-form" class="hidden" method="post" action="{% url 'dz:row-action' %}">
+      {% csrf_token %}
+      <input type="hidden" name="preserved_query" value="{{preserved_query}}"/>
+      <input type="hidden" name="model_name" value="{{model_name}}"/>
+      <input type="hidden" name="action" value=""/>
+      <input type="hidden" name="row_ids" value=""/>
+      {# Poor-man's message catalog :) #}
+      <p id="dz-msg-no-rows-selected">{% trans 'Please select some rows!' %}</p>
+      <p id="dz-msg-confirm-action">{% trans 'Are you sure you want to [ACTION] this row?' %}</p>
+    </form>
+  {% endblock row_action_form %}
+
+  {# reserve html block for tip modals #}
+  {% block modal_target %}
+    <div id="tipbox-popup" class="modal fade" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          {# dynamic content will be loaded here #}
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+  {% endblock modal_target %}
 {% endblock footer %}

@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^tables/schedule/$', tables.schedule_list_view, name='schedule-list'),
 
     url(r'^tables/action/crawl/$', tables.crawl_action_view, name='crawl-action'),
+    url(r'^tables/action/row/$', tables.row_action_view, name='row-action'),
 
     url(r'^api/crawl/job/?$', api.api_crawl_job),
     url(r'^api/crawl/item/?$', api.api_crawl_item),

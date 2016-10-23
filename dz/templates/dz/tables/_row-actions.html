@@ -2,6 +2,6 @@
 <a title="{% trans 'Edit Record' %}" href="#">
   <i class="glyphicon glyphicon-pencil"></i>
 </a>
-<a title="{% trans 'Delete Record' %}" href="#">
+<a title="{% trans 'Delete Record' %}" href="javascript:void(0)" onclick="return dz.tables.runRowAction('delete', {{record.pk}}, true);">
   <i class="glyphicon glyphicon-trash"></i>
 </a>

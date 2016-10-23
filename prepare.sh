@@ -9,10 +9,10 @@ cd $project_dir
 
 ansible_tasks()
 {
-  cd $project_dir/ansible
+  cd ansible
   [ ./secret.yml -nt ./group_vars/all/vault.yml ] && ./update-secret.sh
   ansible-playbook -i hosts task-prepare.yml
-  cd $project_dir
+  cd ..
 }
 
 migrate_db()
@@ -23,7 +23,9 @@ migrate_db()
 
 make_messages()
 {
+  cd dz
   python ../manage.py makemessages -l en -l ru -l sl
+  cd ..
 }
 
 compile_messages()
