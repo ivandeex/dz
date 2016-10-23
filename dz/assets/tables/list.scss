@@ -1,13 +1,3 @@
-.table {
-  // FIXME workaround for strange font-size 16/18px
-  font-size: inherit;
-
-  // prevent wrapping of column headers
-  th {
-    white-space: nowrap;
-  }
-}
-
 .col-row_actions {
   white-space: nowrap;
 

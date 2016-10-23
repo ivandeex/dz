@@ -1,4 +1,6 @@
-{% load i18n admin_urls dz_extras %}
+{% load i18n admin_urls %}
+{% load strip_cut_tags from dz_extras %}
+
 <div class="dz-title">{{ tip.title }}</div>
 {% if tip.text_cut %}
 <div class="dz-body">

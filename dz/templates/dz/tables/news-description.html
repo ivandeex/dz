@@ -1,4 +1,6 @@
-{% load i18n admin_urls dz_extras %}
+{% load i18n admin_urls %}
+{% load strip_cut_tags from dz_extras %}
+
 <div class="dz-pre">{{ record.preamble_cut | striptags | strip_cut_tags }}</div>
 {% if record.content_cut %}
 <div class="dz-body">

@@ -33,8 +33,10 @@ compile_messages()
 
 prepare_prod()
 {
+  # Compile and bundle production javascript and css:
   npm run makeprod
-  python manage.py collectstatic --noinput
+  # Use `-v0` to silence verbose whitenoise messages:
+  python manage.py collectstatic --noinput -v0
 }
 
 run_test()
@@ -71,6 +73,7 @@ case "$action" in
   devel)
     migrate_db
     compile_messages
+    npm run makedevel
     ;;
   test)
     run_test

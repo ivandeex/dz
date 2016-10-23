@@ -1,0 +1,40 @@
+// override styles from base.css
+
+.news-title {
+  text-align: center !important;
+  margin-top: 20px !important;
+  margin-bottom: 5px !important;
+}
+
+.news-subtitle {
+  text-align: right;
+
+  color: #000 !important;
+  font-size: 18px !important;
+  font-style: italic !important;
+  padding-left: 20px !important;
+  padding-right: 40px !important;
+  margin-top: 10px !important;
+  margin-bottom: 5px !important;
+  padding-bottom: 9px !important;
+}
+
+.news-content {
+  a {
+    text-decoration: none !important;
+    color: #000 !important;
+    cursor: text !important;
+  }
+}
+
+#nlss_table {
+  display: none !important;
+}
+
+.najava_pic_wrap {
+  float: right !important;
+}
+
+body {
+  background-color: #fff !important;
+}

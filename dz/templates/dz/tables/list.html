@@ -1,5 +1,6 @@
 {% extends 'dz/tables/base.html' %}
-{% load i18n dz_extras %}
+{% load i18n %}
+{% load message_tag_to_bootstrap_class from dz_extras %}
 {% load render_table from django_tables2 %}
 
 
@@ -10,7 +11,7 @@
   {% if messages %}
     <div class="container dz-messages">
       {% for message in messages %}
-        <div class="alert alert-{{ message.tags|msg_tag_to_bs_class }} alert-dismissible fade in">
+        <div class="alert alert-{{ message.tags|message_tag_to_bootstrap_class }} alert-dismissible fade in">
           <button type="button" class="close" data-dismiss="alert">&times;</button>
           {{ message }}
         </div>
