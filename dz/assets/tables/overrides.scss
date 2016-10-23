@@ -9,3 +9,12 @@
     white-space: nowrap;
   }
 }
+
+.dz-pagination__ellipsis {
+  span {
+    // We use bootstrap class `disable` to disable clicking on continuation cells
+    // of paginator, but "not-allowed" cursor over them looks ugly and irrelevant.
+    cursor: default !important;
+    user-select: none;
+  }
+}

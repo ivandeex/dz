@@ -1,6 +1,7 @@
 {% extends 'django_tables2/bootstrap.html' %}
 {% load i18n %}
 {% load querystring title from django_tables2 %}
+{% load dz_paginator %}
 
 {% block table %}
   {# override: add the table-hover class and model class #}
@@ -39,3 +40,55 @@
     {% endblock table.tfoot %}
   </table>
 {% endblock table %}
+
+
+{# replace simple prev/next pager widget with a full bootstrap3 paginator #}
+{% block pagination %}
+  {% with page=table.page field=table.prefixed_page_field %}
+    <div class="text-center">
+      <ul class="pagination">
+        {% block pagination.previous %}
+          {% if page.has_previous %}
+            <li><a href="{% querystring field=1 %}">&laquo;</a></li>
+          {% else %}
+            <li class="disabled"><span>&laquo;</span></li>
+          {% endif %}
+        {% endblock pagination.previous %}
+
+        {% block pagination.current %}
+          {% if page.has_previous or page.has_next %}
+            {# The page_left_range filter returns a list of at most 3 #}
+            {# 1-based page numbers to the left of the active page. #}
+            {# If there are more left pages, add the "show more" marker #}
+            {% if page|paginator_left_has_more %}
+              <li class="disabled dz-pagination__ellipsis"><span>&hellip;</span></li>
+            {% endif %}
+            {% for number in page|paginator_left_range %}
+              <li><a href="{% querystring field=number %}">{{number}}</a></li>
+            {% endfor %}
+
+            <li class="active"><span>{{page.number}}</span></li>
+
+            {# The page_right_range filter returns a list of at most 3 #}
+            {# 1-based page numbers to the right of the active page. #}
+            {# If there are more right pages, add the "show more" marker #}
+            {% for number in page|paginator_right_range %}
+              <li><a href="{% querystring field=number %}">{{number}}</a></li>
+            {% endfor %}
+            {% if page|paginator_right_has_more %}
+              <li class="disabled dz-pagination__ellipsis"><span>&hellip;</span></li>
+            {% endif %}
+          {% endif %}
+        {% endblock pagination.current %}
+
+        {% block pagination.next %}
+          {% if page.has_next %}
+            <li><a href="{% querystring field=page.paginator.num_pages %}">&raquo;</a></li>
+          {% else %}
+            <li class="disabled"><span>&raquo;</span></li>
+          {% endif %}
+        {% endblock pagination.next %}
+      </ul>
+    </div>
+  {% endwith %}
+{% endblock pagination %}
