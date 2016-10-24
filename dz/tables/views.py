@@ -1,15 +1,20 @@
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 from django.urls import reverse, NoReverseMatch
 from django.conf import settings
 from django.db.models import Model
 from django.contrib import messages
-from django.http import HttpResponseForbidden, HttpResponseBadRequest, HttpResponseRedirect
+from django.contrib.auth.decorators import login_required, permission_required
+from django.views.decorators.http import require_safe, require_POST
+from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.utils.translation import ugettext_lazy as _
 import django_tables2 as tables
 from .. import models, helpers
 
 
+# The @require_safe decorator returns 405 if request is not of GET or HEAD type.
+# It can go before @login_required, because if the latter decorator redirects
+# to login view and back again, the last redirect is GET as required.
+@require_safe
 @login_required
 def list_view(request, TableClass, restricted=False, crawl_target=None):
     is_admin = helpers.user_is_admin(request)
@@ -58,36 +63,33 @@ def list_view(request, TableClass, restricted=False, crawl_target=None):
     return render(request, 'dz/tables/list.html', context)
 
 
+# The @require_POST decorator returns 405 for GET requests. It must go *after*
+# @login_required because the latter decorator might redirect to login form and
+# and back again. Having login form in response to POST would be confusing.
 @login_required
+@permission_required('dz.is_admin', raise_exception=True)
+@require_POST
 def crawl_action_view(request):
     model_name = request.POST.get('model_name')
-    crawl_target = request.POST.get('crawl_target')
-    preserved_query = request.POST.get('preserved_query')
+    if model_name not in ('news', 'tip'):
+        return HttpResponseBadRequest('Bad model')
 
-    if not (helpers.user_is_admin(request) and
-            model_name in ('news', 'tip') and
-            # crawl_target in models.Crawl.CRAWL_TARGETS and
-            request.method == 'POST'):
-        return HttpResponseForbidden('Forbidden')
-
-    status = models.Crawl.add_manual_crawl(crawl_target)
+    # add_manual_crawl() will validate crawl target
+    status = models.Crawl.add_manual_crawl(request.POST.get('crawl_target', ''))
     message = models.Crawl.get_status_message(status)
     level = messages.ERROR if status in ('refused',) else messages.INFO
     messages.add_message(request, level, message)
 
     back_url = reverse('dz:%s-list' % model_name)
-    if preserved_query:
-        back_url += '?' + preserved_query
-    return HttpResponseRedirect(back_url)
+    if request.POST.get('preserved_query'):
+        back_url += '?' + request.POST['preserved_query']
+    return redirect(back_url)
 
 
 @login_required
+@permission_required('dz.is_admin', raise_exception=True)
+@require_POST
 def row_action_view(request):
-    # Verify user permissions
-    if not (helpers.user_is_admin(request) and
-            request.method == 'POST'):
-        return HttpResponseForbidden('Forbidden')
-
     # Validate post parameters
     try:
         stage = 'action'
@@ -130,4 +132,4 @@ def row_action_view(request):
     except Exception as err:
         messages.error(request, _('Error deleting records: %(err)r') % {'err': err})
 
-    return HttpResponseRedirect(next_url)
+    return redirect(next_url)

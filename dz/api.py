@@ -6,6 +6,7 @@ import pytz
 from datetime import datetime
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from django.db.models import Q, F
 from django.utils import timezone
 from django.conf import settings
@@ -97,6 +98,7 @@ def get_model(target):
     return model_classes[target]
 
 
+@require_POST
 @csrf_exempt
 def api_crawl_job(request):
     try:
@@ -138,6 +140,7 @@ def api_crawl_job(request):
         return make_response(ok=False, found=False, error=repr(err))
 
 
+@require_POST
 @csrf_exempt
 def api_crawl_item(request):
     target = pk = None
@@ -170,6 +173,7 @@ def api_crawl_item(request):
         return make_response(ok=False, error=repr(err), pk=pk, target=target)
 
 
+@require_POST
 @csrf_exempt
 def api_crawl_complete(request):
     target = None

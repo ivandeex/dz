@@ -25,6 +25,10 @@ class User(models.Model):
     class Meta:
         verbose_name = _('dz user')
         verbose_name_plural = _('dz users')
+        permissions = [
+            ('is_admin', _('is dz administrator')),
+            ('can_follow', _('can follow dz links')),
+        ]
 
     @property
     def is_super(self):
@@ -72,7 +76,7 @@ def _post_save_dz_user(sender, **kwargs):
     if dz_user.is_admin:
         skip_perm_codes = ['add_crawl', 'add_news', 'add_tip', 'view_news', 'view_tips']
         if not dz_user.can_follow:
-            skip_perm_codes += ['follow_news', 'follow_tips']
+            skip_perm_codes += ['can_follow', 'follow_news', 'follow_tips']
         auth_perms.set(all_dz_perms.filter(~Q(codename__in=skip_perm_codes)))
     else:
         view_perm_codes = ['change_news', 'change_tip', 'view_news', 'view_tips']

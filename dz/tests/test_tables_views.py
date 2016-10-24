@@ -67,6 +67,7 @@ class RowActionFormTests(base.BaseDzTestCase):
     def test_simple_users_cannot_delete(self):
         with self.login_as('simple'):
             form_url = reverse('dz:row-action')
+
             for model_name in ('news', 'tip', 'crawl', 'user', 'schedule'):
                 data = dict(model_name=model_name, action='delete', row_ids='1')
                 response = self.client.post(form_url, data)
@@ -81,7 +82,8 @@ class RowActionFormTests(base.BaseDzTestCase):
             self.assertEquals(response.status_code, 400, msg=msg_base + description)
 
         with self.login_as('super'):
-            self.assertEquals(self.client.get(form_url).status_code, 403,
+            request = self.client.get(form_url)
+            self.assertEquals(request.status_code, 405,
                               msg=msg_base + 'GET request')
             assertFails({},
                         'empty post')
@@ -100,6 +102,7 @@ class RowActionFormTests(base.BaseDzTestCase):
     def test_admin_users_can_delete(self):
         with self.login_as('super'):
             form_url = reverse('dz:row-action')
+
             for model_name in ('news', 'tip', 'crawl', 'user', 'schedule'):
                 ModelClass = getattr(models, model_name.title())
                 list_url = reverse('dz:%s-list' % model_name)

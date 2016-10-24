@@ -2,11 +2,11 @@ from django.utils.html import format_html
 
 
 def user_is_admin(request):
-    return request.user.dz_user.is_admin
+    return request.user.has_perm('dz.is_admin')
 
 
 def user_can_follow(request):
-    return request.user.dz_user.can_follow
+    return request.user.has_perm('dz.can_follow')
 
 
 def format_external_link(request, link):
