@@ -64,6 +64,10 @@ def api_request(command, params):
     return resp
 
 
+def api_check_job():
+    return api_request('job', {})
+
+
 def api_send_item(target, start_utc, debug, item):
     try:
         data = item.copy()
@@ -74,6 +78,8 @@ def api_send_item(target, start_utc, debug, item):
         resp = api_request('item', dict(target=target, start_utc=start_utc, data=data))
         if not resp['ok']:
             logger.info('Server returned "item" failure: %s', resp['error'])
+        return resp
+
     except Exception as err:
         logger.info('Item sending failed: %r', err)
         if debug:
@@ -82,10 +88,12 @@ def api_send_item(target, start_utc, debug, item):
 
 def api_send_complete(target, start_utc, debug, ids):
     try:
-        str_ids = merge_ranges(sorted(ids))
+        str_ids = merge_ranges(ids)
         resp = api_request('complete', dict(target=target, start_utc=start_utc, ids=str_ids))
         if not resp['ok']:
             logger.info('Server returned "complete" failure: %s', resp['error'])
+        return resp
+
     except Exception as err:
         logger.info('Item sending failed: %r', err)
         if debug:

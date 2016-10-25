@@ -1,7 +1,7 @@
 def merge_ranges(data):
     res = []
     beg = end = None
-    for v in data:
+    for v in sorted(data):
         if end is None:
             beg = end = v
         elif v == end + 1:

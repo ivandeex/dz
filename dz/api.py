@@ -77,6 +77,12 @@ def parse_request(request, command):
     digest = hashlib.sha1(source + spider_config('SECRET_KEY')).hexdigest()
     assert digest == req['digest'], 'Invalid request digest'
 
+    # Real host name can be too long to fit in the model.
+    # As it is just for reference, we truncate it without hesitation.
+    max_len = models.Crawl._meta.get_field('host').max_length
+    if len(req['host']) > max_len:
+        req['host'] = req['host'][:max_len - 3] + '...'
+
     return req
 
 
@@ -169,7 +175,7 @@ def api_crawl_item(request):
     except Exception as err:
         if settings.DEBUG:
             raise
-        logger.info('Invalid item packet: %s', err)
+        logger.info('Invalid item packet: %r', err)
         return make_response(ok=False, error=repr(err), pk=pk, target=target)
 
 
@@ -199,5 +205,5 @@ def api_crawl_complete(request):
     except Exception as err:
         if settings.DEBUG:
             raise
-        logger.info('Invalid final packet: %s', err)
+        logger.info('Invalid final packet: %r', err)
         return make_response(ok=False, error=repr(err), target=target)

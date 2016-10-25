@@ -11,7 +11,7 @@ class TableViewsTests(base.BaseDzTestCase, views.ListViewTestsMixin):
         'tip': base.MODEL_BATCH_SIZE,  # created from factory batch
         'crawl': base.MODEL_BATCH_SIZE,  # created from factory batch
         'user': len(base.TEST_USERS),  # created from hardcoded list
-        'schedule': 5,  # created from fixture "schedule.json"
+        'schedule': base.SCHEDULE_FIXTURE_LENGTH,  # created from fixture "schedule.json"
     }
 
     def test_unauthorized_request_should_redirect_to_login(self):

@@ -19,7 +19,7 @@ urlpatterns = [
     url(r'^tables/action/crawl/$', tables.crawl_action_view, name='crawl-action'),
     url(r'^tables/action/row/$', tables.row_action_view, name='row-action'),
 
-    url(r'^api/crawl/job/?$', api.api_crawl_job),
-    url(r'^api/crawl/item/?$', api.api_crawl_item),
-    url(r'^api/crawl/complete/?$', api.api_crawl_complete),
+    url(r'^api/crawl/job/?$', api.api_crawl_job, name='api-job'),
+    url(r'^api/crawl/item/?$', api.api_crawl_item, name='api-item'),
+    url(r'^api/crawl/complete/?$', api.api_crawl_complete, name='api-complete'),
 ]

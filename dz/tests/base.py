@@ -15,6 +15,7 @@ TEST_USERS = [
 ]
 
 MODEL_BATCH_SIZE = 20
+SCHEDULE_FIXTURE_LENGTH = 5
 
 
 def get_pass(username):

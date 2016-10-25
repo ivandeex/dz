@@ -2,7 +2,7 @@ import os
 import logging
 from time import sleep
 from .utils import logger
-from .api import api_request
+from .api import api_check_job
 from .news import NewsSpider
 from .tips import TipsSpider
 
@@ -17,10 +17,10 @@ class Service(object):
 
     def run(self):
         logger.info('Service running')
-        while 1:
+        while True:
             sleep(self.poll_seconds)
             try:
-                resp = api_request('job', {})
+                resp = api_check_job()
                 logger.setLevel(logging.getLevelName(resp['log_level']))
                 if resp['found']:
                     env = {
