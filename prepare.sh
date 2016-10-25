@@ -41,7 +41,7 @@ prepare_prod()
 
 run_test()
 {
-  # We do not let django create testdatabase for security reasons.
+  # We do not let django create test database for security reasons.
   # Database is created manually by ansible, and here we supply the
   # `--keep` option telling django to skip creating and dropping.
   python manage.py check && \

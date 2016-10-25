@@ -48,6 +48,8 @@
       postgresql_user: port={{postgres.port}} db={{postgres.database}}
                        name={{postgres.username}} password={{postgres.password}}
 
+    # We do not let django tests create/drop test database for security reasons.
+    # The test database is created below:
     - name: create test database
       postgresql_db: port={{postgres.port}} name=test_{{postgres.database}}
                      owner={{postgres.username}}

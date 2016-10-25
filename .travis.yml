@@ -1,3 +1,9 @@
+# Note: Since 2015 newer travis repositories build on so called container
+#       environment without sudo support. That's fine, I don't need sudo but...
+# Beware: Travis YAML validator _may_ fail with "Error creating build script"
+#         even when it finds the "sudo" word *within yaml comments*!
+# See: https://docs.travis-ci.com/user/ci-environment/#Virtualization-environments
+
 language: python
 python:
   - 2.7

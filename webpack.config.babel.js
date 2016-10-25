@@ -58,10 +58,11 @@ let config = {
   output: {
     path: path.resolve(__dirname, 'public', TARGET),
     filename: `dz-[name]${MIN_EXT}.js` + hashQuery('chunkhash'),
-    library: ['dz', '[name]'],
     chunkFilename: `_dz-[name]-[id]${MIN_EXT}.js` + hashQuery('chunkhash'),
     publicPath: DEV_SERVER ? `http://${DEV_HOST}:${DEV_PORT}/` : `/static/${TARGET}/`,
-    pathinfo: !PRODUCTION
+    pathinfo: !PRODUCTION,
+    // Creates global module references, e.g. `window.dz.newsbox` (undocumented syntax).
+    library: ['dz', '[name]']
   },
 
   devServer: {
@@ -90,10 +91,13 @@ let config = {
         loader: ExtractTextPlugin.extract(
           'style',
           [].concat(
-            // This fix is only required in production mode, but triggers buggy behaviour
-            // in extract text plugin when it is effectively disabled in dev-server mode.
+            // The "whitenoise" fix is not needed in development, because `collectstatic`
+            // is activated only for production. Moreover in dev-server with HMR the fix
+            // triggers buggy behaviour of extract text plugin, in spite of this plugin
+            // being disabled (sic!) in dev-server.
             // Workaround: disable regexp-replace loader in dev-server mode.
             DEV_SERVER ? [] : ['regexp-replace?' + JSON.stringify(WHITENOICE_CSS_FIX)],
+
             ['css?sourceMap']
           )
         )
