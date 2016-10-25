@@ -10,13 +10,14 @@ from .. import models, helpers
 
 
 @login_required
-def list_view(request, Table, restricted=False, crawl_target=None):
+def list_view(request, TableClass, restricted=False, crawl_target=None):
     is_admin = helpers.user_is_admin(request)
     if restricted and not is_admin:
         return HttpResponseForbidden('Forbidden')
 
-    Model = Table.Meta.model
-    table = Table(Model.objects.all())
+    Model = TableClass.Meta.model
+    table = TableClass(Model.objects.all())
+    table.on_request(request)  # hide selector/actions columns for non-admins
     tables.RequestConfig(request).configure(table)
 
     allowed_models = [models.News, models.Tip]

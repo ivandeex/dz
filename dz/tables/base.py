@@ -44,26 +44,9 @@ class DzTable(tables.Table):
         classes_set.add('col-' + bound_column.name)
         return classes_set
 
-    # HACK:
-    # Selector and actions columns must be hidden if user is not admin.
-    # We need a `request` object to find out user permissions, but `Table`
-    # doesn't provide a trigger. We use the fact that the `render_table` tag
-    # sets `table.context` before rendering, and hook on the context setter.
-    def _set_context(self, value):
-        self._context = value
-        self._on_request(self._context['request'])
-
-    def _get_context(self):
-        return self._context
-
-    def _del_context(self):
-        del self._context
-
-    context = property(_get_context, _set_context, _del_context)
-
-    # This hook triggers on a new request. It hides selector
-    # and actions columns if requesting user is not admin.
-    def _on_request(self, request):
+    # This hook should be called once with a new request.
+    # It hides selector and actions columns if requesting user is not admin.
+    def on_request(self, request):
         is_admin = helpers.user_is_admin(request)
         for column in self.base_columns.values():
             if isinstance(column, AdminOnlyColumnMixin):
