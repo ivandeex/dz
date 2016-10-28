@@ -10,7 +10,7 @@ from datetime import datetime
 from dateutil.parser import parse as parse_datetime
 
 
-logger = logging.getLogger('dvoznak')
+logger = logging.getLogger('dz')
 
 
 class UnbufferedStreamWrapper(object):
@@ -36,7 +36,7 @@ def setup_logging(service, debug):
         log_dir = os.path.join(get_project_dir(), 'logs')
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
-        log_path = os.path.join(log_dir, 'dvoznak.log')
+        log_path = os.path.join(log_dir, 'dv.log')
         log_file = open(log_path, mode='w', buffering=1)
 
         if not debug:

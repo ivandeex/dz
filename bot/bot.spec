@@ -1,7 +1,7 @@
 # -*- mode: python -*-
 
-project = 'dvoznak'
-modules = ['../dvoznak/spider.py']
+project = 'dz'
+modules = ['../bot/__main__.py']
 datas = []
 upx_coll = True
 upx_exe = True

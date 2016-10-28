@@ -8,6 +8,7 @@ from .utils import logger, extract_datetime, first_text, randsleep, split_ranges
 
 class NewsSpider(BaseSpider):
     target = 'news'
+    news_url_fmt = '{0:s}?show=dogadjaj&id_dogadjaj={1:d}&id_vrsta_dogadjaja=1'
 
     def __init__(self, env):
         self.seen_news = split_ranges(env.get('SEEN_NEWS', '').strip())
@@ -21,10 +22,10 @@ class NewsSpider(BaseSpider):
         self.login()
 
         if self.single_id:
-            url_fmt = 'http://www.dvoznak.com/?show=dogadjaj&id_dogadjaj=%d&id_vrsta_dogadjaja=1'
-            url = url_fmt % self.single_id
+            url = self.news_url_fmt.format(self.home_url, self.single_id)
             self.webdriver.get(url)
             self.parse_news(url, self.single_id)
+            # don't call end()!
             return
 
         self.click_menu('Najave')

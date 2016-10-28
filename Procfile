@@ -4,5 +4,5 @@ devserver: npm run devserver
 makedevel: npm run makedevel
 makeprod: npm run makeprod
 botservice: python -m bot.main --service=1 --server=http://${DEV_HOST}${API_URL} --pollsec=20 --debug=${DEBUG}
-botlog: tail -F ~/.vanko/logs/dvoznak.log
+botlog: tail -F ~/.vanko/logs/dz.log
 prepare: ./prepare.sh full

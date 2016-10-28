@@ -12,7 +12,7 @@ DEFAULT_PAGE_DELAY = 50
 
 class BaseSpider(object):
     user_agent = 'Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'
-    home_url = 'http://www.dvoznak.com/'
+    home_url = ''.join(['http://', 'www.', 'dv', 'ozn', 'ak', '.com/'])
     timeout = 30
     target = None
 
