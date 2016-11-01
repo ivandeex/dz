@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
-from django.urls import reverse, NoReverseMatch
+from django.urls import reverse
 from django.conf import settings
-from django.db.models import Model
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.http import require_safe, require_POST
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.utils.translation import ugettext_lazy as _
 import django_tables2 as tables
+from .actions import RowActionForm, CrawlActionForm
 from .. import models, helpers
 
 
@@ -40,14 +40,28 @@ def list_view(request, TableClass, restricted=False, crawl_target=None):
             'name': model._meta.model_name,
         })
 
-    if is_admin:
+    row_action_form = RowActionForm(
+        initial={
+            'model_name': Model._meta.model_name,
+            'preserved_query': request.META['QUERY_STRING']
+        }
+    )
+
+    if crawl_target and is_admin:
+        crawl_form = CrawlActionForm(
+            initial={
+                'model_name': Model._meta.model_name,
+                'crawl_target': crawl_target,
+                'preserved_query': request.META['QUERY_STRING']
+            }
+        )
         # Translators: crawl label is one of "Crawl news now", "Crawl tips now"
-        crawl_label = _('Crawl %s now' % crawl_target)
+        crawl_form.crawl_label = _('Crawl %s now' % crawl_target)
         if None:
             _('Crawl news now')
             _('Crawl tips now')
     else:
-        crawl_target = crawl_label = None
+        crawl_form = None
 
     context = {
         'table': table,
@@ -55,9 +69,8 @@ def list_view(request, TableClass, restricted=False, crawl_target=None):
         'model_name': Model._meta.model_name,
         'verbose_name_plural': Model._meta.verbose_name_plural,
         'top_nav_links': top_nav_links,
-        'crawl_target': crawl_target,
-        'crawl_label': crawl_label,
-        'preserved_query': request.META['QUERY_STRING'],
+        'crawl_form': crawl_form,
+        'row_action_form': row_action_form,
     }
 
     return render(request, 'dz/tables/list.html', context)
@@ -70,66 +83,45 @@ def list_view(request, TableClass, restricted=False, crawl_target=None):
 @permission_required('dz.is_admin', raise_exception=True)
 @require_POST
 def crawl_action_view(request):
-    model_name = request.POST.get('model_name')
-    if model_name not in ('news', 'tip'):
-        return HttpResponseBadRequest('Bad model')
+    crawl_form = CrawlActionForm(request.POST)
+    if not crawl_form.is_valid():
+        return HttpResponseBadRequest(crawl_form.errors.as_text(),
+                                      content_type='text/plain')
+    data = crawl_form.cleaned_data
 
     # add_manual_crawl() will validate crawl target
-    status = models.Crawl.add_manual_crawl(request.POST.get('crawl_target', ''))
+    status = models.Crawl.add_manual_crawl(data['crawl_target'])
     message = models.Crawl.get_status_message(status)
     level = messages.ERROR if status in ('refused',) else messages.INFO
     messages.add_message(request, level, message)
 
-    back_url = reverse('dz:%s-list' % model_name)
-    if request.POST.get('preserved_query'):
-        back_url += '?' + request.POST['preserved_query']
-    return redirect(back_url)
+    return redirect(crawl_form.get_next_url())
 
 
 @login_required
 @permission_required('dz.is_admin', raise_exception=True)
 @require_POST
 def row_action_view(request):
-    # Validate post parameters
-    try:
-        stage = 'action'
-        action = request.POST.get('action')
-        assert action in ('delete',)
-
-        stage = 'ids'
-        row_ids = request.POST.get('row_ids')
-        assert row_ids
-        # Conversion to integer can raise a ValueError.
-        row_ids = map(int, row_ids.split(','))
-
-        stage = 'model'
-        model_name = request.POST.get('model_name', '')
-        # We use a generic title-case check instead of hardcoded list of allowed models:
-        ModelClass = getattr(models, model_name.title())
-        assert ModelClass and issubclass(ModelClass, Model)
-
-        stage = 'url'
-        # Invalid model name will raise NoReverseMatch exception.
-        next_url = reverse('dz:%s-list' % model_name)
-        if request.POST.get('preserved_query'):
-            next_url += '?' + request.POST['preserved_query']
-    except (AssertionError, ValueError, AttributeError, NoReverseMatch):
-        return HttpResponseBadRequest('Bad request ' + stage)
+    action_form = RowActionForm(request.POST)
+    if not action_form.is_valid():
+        return HttpResponseBadRequest(action_form.errors.as_text(),
+                                      content_type='text/plain')
+    data = action_form.cleaned_data
 
     # Perform actions
     try:
         count = 0
-        for pk in row_ids:
+        ModelClass = getattr(models, data['model_name'].title())
+        for record in ModelClass.objects.filter(pk__in=data['row_ids']):
             # Deleting records one by one to let signals emit.
-            try:
-                obj = ModelClass.objects.get(pk=pk)
-            except ModelClass.DoesNotExist:
-                continue
-            if action == 'delete':
-                obj.delete()
+            if data['action'] == 'delete':
+                record.delete()
+            else:
+                pass  # reserved for future extensions...
             count += 1
         messages.info(request, _('%(count)d record(s) deleted.') % {'count': count})
+
     except Exception as err:
         messages.error(request, _('Error deleting records: %(err)r') % {'err': err})
 
-    return redirect(next_url)
+    return redirect(action_form.get_next_url())
