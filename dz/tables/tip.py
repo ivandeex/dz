@@ -48,7 +48,8 @@ class TipTable(DzTable):
 
 
 def tip_list_view(request):
-    return list_view(request, TipTable, crawl_target='tips')
+    return list_view(request, TipTable, None,
+                     crawl_target='tips')
 
 
 def tipbox_view(request, pk):

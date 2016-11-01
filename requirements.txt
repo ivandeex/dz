@@ -7,6 +7,8 @@ django-webpack-loader==0.3.3
 django-grappelli==2.8.2
 django-bootstrap3==7.1.0
 django-tables2==1.2.6
+django-filter==0.15.3
+django-bootstrap-form==3.2.1
 
 # Official django-admin-bootstrapped is incompatible with Django 1.10+, so we use a github fork.
 git+https://github.com/hellpanderrr/django-admin-bootstrapped-1.9-compatible.git@master#egg=django_admin_bootstrapped

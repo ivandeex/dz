@@ -1,3 +1,4 @@
+import django_filters as filters
 from .base import DzTable
 from .views import list_view
 from .. import models
@@ -13,5 +14,12 @@ class UserTable(DzTable):
         )
 
 
+class UserFilters(filters.FilterSet):
+    class Meta:
+        model = models.User
+        fields = ('is_admin', 'can_follow')
+
+
 def user_list_view(request):
-    return list_view(request, UserTable, restricted=True)
+    return list_view(request, UserTable, UserFilters,
+                     restricted=True)

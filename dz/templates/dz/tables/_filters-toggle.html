@@ -1,0 +1,8 @@
+{% load i18n %}
+{% if filters is not None %}
+  <li>
+    <button type="button" class="btn btn-sm dz-crawl-form {% if filters.is_effective %}btn-primary{% else %}btn-default{% endif %}" data-toggle="collapse" data-target="#dz-filter-block">
+      {% trans 'Filters' %} <i class="caret"></i>
+    </button>
+  </li>
+{% endif %}

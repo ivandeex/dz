@@ -78,6 +78,7 @@ INSTALLED_APPS = [
 
     'django_tables2',
     'bootstrap3',
+    'bootstrapform',
     'import_export',
     'webpack_loader',
     'constance',
@@ -162,6 +163,23 @@ if DEBUG:
     # Activate app_directories loader and remove caching loader, when in debug mode:
     TEMPLATES[0]['APP_DIRS'] = True
     del TEMPLATES[0]['OPTIONS']['loaders']
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'dz-locmem',
+        'TIMEOUT': 60 if DEBUG else 300,
+        'OPTIONS': {
+            'MAX_ENTRIES': 100,
+        },
+    }
+}
+
+# The below django_filters setting FILTERS_HELP_TEXT_FILTER is pending
+# deprecation in favor of FILTERS_DISABLE_HELP_TEXT in future v1.0.
+# See: https://github.com/carltongibson/django-filter/pull/437
+FILTERS_HELP_TEXT_FILTER = False
 
 
 LOGIN_URL = 'dz-admin:login'

@@ -16,13 +16,30 @@ from .. import models, helpers
 # to login view and back again, the last redirect is GET as required.
 @require_safe
 @login_required
-def list_view(request, TableClass, restricted=False, crawl_target=None):
+def list_view(request, TableClass, FiltersClass,
+              restricted=False, crawl_target=None):
     is_admin = helpers.user_is_admin(request)
     if restricted and not is_admin:
         return HttpResponseForbidden('Forbidden')
 
     Model = TableClass.Meta.model
-    table = TableClass(Model.objects.all())
+    model_name = Model._meta.model_name
+    qs_all = Model.objects.all()
+    query_string = request.META['QUERY_STRING']
+
+    if FiltersClass:
+        filters = FiltersClass(request.GET, queryset=qs_all, prefix='flt')
+        queryset = filters.qs
+
+        # Detect wether filters would really change queryset population:
+        sql_all = qs_all.query.get_compiler(qs_all.db).as_sql()
+        sql_qs = queryset.query.get_compiler(queryset.db).as_sql()
+        filters.is_effective = sql_all != sql_qs
+    else:
+        filters = None
+        queryset = qs_all
+
+    table = TableClass(queryset)
     table.on_request(request)  # hide selector/actions columns for non-admins
     tables.RequestConfig(request).configure(table)
 
@@ -42,17 +59,17 @@ def list_view(request, TableClass, restricted=False, crawl_target=None):
 
     row_action_form = RowActionForm(
         initial={
-            'model_name': Model._meta.model_name,
-            'preserved_query': request.META['QUERY_STRING']
+            'model_name': model_name,
+            'preserved_query': query_string,
         }
     )
 
     if crawl_target and is_admin:
         crawl_form = CrawlActionForm(
             initial={
-                'model_name': Model._meta.model_name,
+                'model_name': model_name,
                 'crawl_target': crawl_target,
-                'preserved_query': request.META['QUERY_STRING']
+                'preserved_query': query_string,
             }
         )
         # Translators: crawl label is one of "Crawl news now", "Crawl tips now"
@@ -66,9 +83,10 @@ def list_view(request, TableClass, restricted=False, crawl_target=None):
     context = {
         'table': table,
         # wrap _meta because django templates prohibits underscored property names
-        'model_name': Model._meta.model_name,
+        'model_name': model_name,
         'verbose_name_plural': Model._meta.verbose_name_plural,
         'top_nav_links': top_nav_links,
+        'filters': filters,
         'crawl_form': crawl_form,
         'row_action_form': row_action_form,
     }

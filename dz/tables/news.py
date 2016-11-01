@@ -40,7 +40,8 @@ class NewsTable(DzTable):
 
 
 def news_list_view(request):
-    return list_view(request, NewsTable, crawl_target='news')
+    return list_view(request, NewsTable, None,
+                     crawl_target='news')
 
 
 def newsbox_view(request, pk):
