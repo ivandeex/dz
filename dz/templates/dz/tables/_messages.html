@@ -1,0 +1,11 @@
+{% load message_tag_to_bootstrap_class from dz_extras %}
+{% if messages %}
+  <div class="container dz-messages">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags|message_tag_to_bootstrap_class }} alert-dismissible fade in">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

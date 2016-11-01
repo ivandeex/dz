@@ -1,6 +1,5 @@
 {% extends 'dz/tables/base.html' %}
 {% load i18n %}
-{% load message_tag_to_bootstrap_class from dz_extras %}
 {% load render_table from django_tables2 %}
 
 
@@ -8,16 +7,7 @@
 
 
 {% block messages %}
-  {% if messages %}
-    <div class="container dz-messages">
-      {% for message in messages %}
-        <div class="alert alert-{{ message.tags|message_tag_to_bootstrap_class }} alert-dismissible fade in">
-          <button type="button" class="close" data-dismiss="alert">&times;</button>
-          {{ message }}
-        </div>
-      {% endfor %}
-    </div>
-  {% endif %}
+  {% include './_messages.html' %}
 {% endblock messages %}
 
 
@@ -25,36 +15,21 @@
 <div class="container-fluid">
   {% block table-tools %}
     <ul class="nav nav-tabs table-tools">
-      <li class="active">
-        <a href="javascript:void(0);">
-          {% blocktrans with size=table.data|length %}List ({{size}}){% endblocktrans %}
-        </a>
-      </li>
-
-      {% block crawl-tool %}
-        {% if crawl_form %}
-          <li>
-            <form class="form-inline dz-crawl-form" name="submit-crawl" method="post" action="{% url 'dz:crawl-action' %}">
-              {% csrf_token %}
-              {{ crawl_form.as_hidden }}
-              <button type="submit" class="btn btn-default btn-sm">{{ crawl_form.crawl_label }}</button>
-            </form>
-          </li>
-        {% endif %}
-      {% endblock crawl-tool %}
-
-      {% block row-actions %}
-        <li class="dropdown">
-          <a class="btn dropdown-toggle" data-toggle="dropdown" href="javascript://">
-            {% trans 'With selected' %} <i class="caret"></i>
+      {% block list-total %}
+        <li class="active">
+          <a href="javascript:void(0);">
+            {% blocktrans with size=table.data|length %}List ({{size}}){% endblocktrans %}
           </a>
-          <ul class="dropdown-menu">
-            <li>
-              <a onclick="return dz.tables.runRowAction('delete', null, '{% trans "Are you sure you want to delete these rows?" %}');" href="javascript:void(0)">{% trans 'Delete' %}</a>
-            </li>
-          </ul>
         </li>
-      {% endblock row-actions %}
+      {% endblock list-total %}
+
+      {% block crawl-form %}
+        {% include './_crawl-form.html' %}
+      {% endblock crawl-form %}
+
+      {% block row-action-menu %}
+        {% include './_row-action-menu.html' %}
+      {% endblock row-action-menu %}
     </ul>
   {% endblock table-tools %}
 
@@ -68,13 +43,7 @@
 {% block footer %}
   {# reserve html form for row actions #}
   {% block row_action_form %}
-    <form name="dz-row-action-form" class="hidden" method="post" action="{% url 'dz:row-action' %}">
-      {% csrf_token %}
-      {{ row_action_form.as_hidden }}
-      {# Poor-man's message catalog :) #}
-      <p id="dz-msg-no-rows-selected">{% trans 'Please select some rows!' %}</p>
-      <p id="dz-msg-confirm-action">{% trans 'Are you sure you want to [ACTION] this row?' %}</p>
-    </form>
+    {% include './_row-action-form.html' %}
   {% endblock row_action_form %}
 
   {# reserve html block for tip modals #}

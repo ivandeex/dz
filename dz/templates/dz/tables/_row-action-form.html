@@ -1,0 +1,9 @@
+{% load i18n %}
+<form name="dz-row-action-form" class="hidden" method="post" action="{% url 'dz:row-action' %}">
+  {% csrf_token %}
+  {{ row_action_form.as_hidden }}
+
+  {# Poor-man's message catalog :) #}
+  <p id="dz-msg-no-rows-selected">{% trans 'Please select some rows!' %}</p>
+  <p id="dz-msg-confirm-action">{% trans 'Are you sure you want to [ACTION] this row?' %}</p>
+</form>

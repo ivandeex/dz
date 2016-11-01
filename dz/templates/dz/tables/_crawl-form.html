@@ -1,0 +1,9 @@
+{% if crawl_form %}
+  <li>
+    <form class="form-inline dz-crawl-form" name="submit-crawl" method="post" action="{% url 'dz:crawl-action' %}">
+      {% csrf_token %}
+      {{ crawl_form.as_hidden }}
+      <button type="submit" class="btn btn-default btn-sm">{{ crawl_form.crawl_label }}</button>
+    </form>
+  </li>
+{% endif %}

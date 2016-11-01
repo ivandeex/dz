@@ -1,0 +1,11 @@
+{% load i18n %}
+<li class="dropdown">
+  <a class="btn dropdown-toggle" data-toggle="dropdown" href="javascript://">
+    {% trans 'With selected' %} <i class="caret"></i>
+  </a>
+  <ul class="dropdown-menu">
+    <li>
+      <a onclick="return dz.tables.runRowAction('delete', null, '{% trans "Are you sure you want to delete these rows?" %}');" href="javascript:void(0)">{% trans 'Delete' %}</a>
+    </li>
+  </ul>
+</li>
