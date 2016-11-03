@@ -2,7 +2,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.shortcuts import render, get_object_or_404
 import django_tables2 as tables
-from .base import DzTable
+import django_filters as filters
+from .base import DzTable, DzArchivedFilter
 from .views import list_view
 from .. import models, helpers
 
@@ -47,8 +48,16 @@ class TipTable(DzTable):
         )
 
 
+class TipFilters(filters.FilterSet):
+    archived = DzArchivedFilter()
+
+    class Meta:
+        model = models.News
+        fields = ()
+
+
 def tip_list_view(request):
-    return list_view(request, TipTable, None,
+    return list_view(request, TipTable, TipFilters,
                      crawl_target='tips')
 
 

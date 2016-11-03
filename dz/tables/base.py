@@ -1,4 +1,6 @@
+from django.utils.translation import ugettext_lazy as _
 import django_tables2 as tables
+import django_filters as filters
 from .. import helpers
 
 
@@ -56,3 +58,27 @@ class DzTable(tables.Table):
                 # We are safe to directly modify column properties, because
                 # Table constructor creates their local copies on the table.
                 column.visible = is_admin
+
+
+class DzArchivedFilter(filters.ChoiceFilter):
+    CHOICES = (
+        ('fresh', _('Fresh')),
+        ('archived', _('Archived')),
+        ('all', _('All')),        # The "All" choice is not default
+    )
+
+    def __init__(self, *args, **user_kwargs):
+        kwargs = {
+            'name':'archived',
+            'choices': self.CHOICES,
+            'label': _('archive (filter)'),
+        }
+        kwargs.update(user_kwargs)
+        super(DzArchivedFilter, self).__init__(*args, **kwargs)
+
+    def filter(self, qs, value):
+        # When filter is not set, we get `value` as an empty string,
+        # which is equivalent to 'fresh'.
+        if value in ('', 'fresh', 'archived'):
+            qs = qs.filter(archived=(value == 'archived'))
+        return qs

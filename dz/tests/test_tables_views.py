@@ -28,7 +28,7 @@ class TableViewsTests(base.BaseDzTestCase, views.ListViewTestsMixin):
                          can_use_row_actions=None):
         info = ' (user: {}, model: {})'.format(user_name, model_name)
         list_url = reverse('dz:%s-list' % model_name)
-        response = self.client.get(list_url)
+        response = self.client.get(list_url + '?flt-archived=all')
 
         if not can_access:
             self.assertEquals(response.status_code, 403)

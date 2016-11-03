@@ -4,7 +4,8 @@ from django.http import HttpResponsePermanentRedirect
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 import django_tables2 as tables
-from .base import DzTable
+import django_filters as filters
+from .base import DzTable, DzArchivedFilter
 from .views import list_view
 from .. import models, helpers
 
@@ -39,8 +40,16 @@ class NewsTable(DzTable):
         )
 
 
+class NewsFilters(filters.FilterSet):
+    archived = DzArchivedFilter()
+
+    class Meta:
+        model = models.News
+        fields = ()
+
+
 def news_list_view(request):
-    return list_view(request, NewsTable, None,
+    return list_view(request, NewsTable, NewsFilters,
                      crawl_target='news')
 
 
