@@ -73,6 +73,7 @@ class CrawlFilters(filters.FilterSet):
         model = models.Crawl
         fields = ()
 
+
 def crawl_list_view(request):
     return list_view(request, CrawlTable, CrawlFilters,
                      restricted=True)

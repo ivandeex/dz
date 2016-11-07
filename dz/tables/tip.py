@@ -49,7 +49,14 @@ class TipTable(base.DzTable):
         )
 
 
-class TipFilters(filters.FilterSet):
+class TipFilters(base.FilterSetWithSearch):
+
+    search = filters.CharFilter(
+        label=lazy_i18n_title('search'),
+        method='filter_search',
+        name='parties title text',
+    )
+
     archived = base.DzArchivedFilter(label=lazy_i18n_title('archived (column)'))
     tipster = base.AllValuesCachingFilter(label=lazy_i18n_title('tipster (column)'))
     league = base.AllValuesCachingFilter(label=lazy_i18n_title('tip league (column)'))

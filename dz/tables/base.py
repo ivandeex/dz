@@ -1,3 +1,6 @@
+import functools
+import operator
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.core.cache import cache
 from django.conf import settings
@@ -112,3 +115,14 @@ class AllValuesCachingFilter(filters.ChoiceFilter):
         choices = cache.get_or_set(cache_key, self._make_choices, self.cache_timeout)
         self.extra['choices'] = choices
         return super(AllValuesCachingFilter, self).field
+
+
+class FilterSetWithSearch(filters.FilterSet):
+    def filter_search(self, queryset, name, value):
+        value = value.strip()
+        if value:
+            fields = name if isinstance(name, (list, tuple)) else name.split()
+            for term in value.split():
+                or_queries = [Q(**{'%s__icontains' % field: term}) for field in fields]
+                queryset = queryset.filter(functools.reduce(operator.or_, or_queries))
+        return queryset

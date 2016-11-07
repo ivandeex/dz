@@ -41,7 +41,14 @@ class NewsTable(base.DzTable):
         )
 
 
-class NewsFilters(filters.FilterSet):
+class NewsFilters(base.FilterSetWithSearch):
+
+    search = filters.CharFilter(
+        label=lazy_i18n_title('Search'),
+        method='filter_search',
+        name='parties title newstext__preamble newstext__content',
+    )
+
     sport = base.AllValuesCachingFilter(label=lazy_i18n_title('sport (column)'))
     league = base.AllValuesCachingFilter(label=lazy_i18n_title('league (column)'))
     archived = base.DzArchivedFilter(label=lazy_i18n_title('archived (column)'))
