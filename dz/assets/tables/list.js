@@ -11,11 +11,24 @@ function onReady() {
   // Let user select all rows at once by clicking on the row_selector header.
   let globalCheckbox = document.querySelector('th.col-row_selector [type="checkbox"]');
   if (globalCheckbox) {
-    globalCheckbox.addEventListener('click', function() {
+    globalCheckbox.addEventListener('click', () => {
       let checkboxes = document.querySelectorAll('td > .dz-row-selector[type="checkbox"]');
       Array.prototype.forEach.call(checkboxes, function(element) {
         element.checked = globalCheckbox.checked;
       });
+    });
+  }
+
+  // Keep visible state of the filter block in a cookie.
+  let filterBlock = document.getElementById('dz-filter-block');
+  let filterToggle = document.querySelector('button[data-target="#dz-filter-block"]');
+  if (filterBlock && filterToggle) {
+    let match = /(^|;\s*)showfilter=([^;]+)(;|$)/.exec(document.cookie);
+    if (match && match[2] === 'true') {
+      filterBlock.classList.add('in');
+    }
+    filterToggle.addEventListener('click', () => {
+      document.cookie = 'showfilter=' + !filterBlock.classList.contains('in');
     });
   }
 }

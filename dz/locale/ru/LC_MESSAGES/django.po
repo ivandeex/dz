@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-24 20:59+0200\n"
+"POT-Creation-Date: 2016-11-02 03:14+0100\n"
 "PO-Revision-Date: 2016-09-01A 12:00+0300\n"
 "Last-Translator: ivandeex <ivandeex@gmail.com>\n"
 "Language-Team: ivandeex <ivandeex@gmail.com>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #: admin/__init__.py:28 admin/__init__.py:29 templates/dz/tables/base.html:37
-#: templates/dz/tables/list.html:7
+#: templates/dz/tables/list.html:6
 msgid "D.Z."
 msgstr "D.Z."
 
@@ -36,12 +36,12 @@ msgstr "архив"
 msgid "All"
 msgstr "Всё"
 
-#: admin/base.py:30 admin/news.py:71 admin/tip.py:57 tables/news.py:29
+#: admin/base.py:30 admin/news.py:72 admin/tip.py:58 tables/news.py:28
 #: tables/tip.py:35
 msgid "Archived"
 msgstr "Из архива"
 
-#: admin/base.py:31 admin/news.py:71 admin/tip.py:57 tables/news.py:29
+#: admin/base.py:31 admin/news.py:72 admin/tip.py:58 tables/news.py:28
 #: tables/tip.py:35
 msgid "Fresh"
 msgstr "Текущее"
@@ -72,24 +72,24 @@ msgstr "неизвестно"
 msgid "crawl type (str column)"
 msgstr "способ активации"
 
-#: admin/news.py:67 tables/news.py:20
+#: admin/news.py:68 tables/news.py:19
 msgid "news cut (column)"
 msgstr "описание"
 
-#: admin/news.py:72 admin/tip.py:58 models/news.py:22 models/tip.py:41
+#: admin/news.py:73 admin/tip.py:59 models/news.py:22 models/tip.py:41
 msgid "archived (column)"
 msgstr "архивное?"
 
-#: admin/news.py:80 models/news.py:14
+#: admin/news.py:81 models/news.py:14
 msgid "news link (column)"
 msgstr "ссылка"
 
 #. Translators: Success (Uspje\u0161nost)
-#: admin/tip.py:53 models/tip.py:34
+#: admin/tip.py:54 models/tip.py:34
 msgid "tip success (column)"
 msgstr "успех"
 
-#: admin/tip.py:64 models/tip.py:40
+#: admin/tip.py:65 models/tip.py:40
 msgid "tip link (column)"
 msgstr "ссылка"
 
@@ -377,25 +377,25 @@ msgid "dz users"
 msgstr "пользователи"
 
 #. Translators: crawl label is one of "Crawl news now", "Crawl tips now"
-#: tables/views.py:41
+#: tables/views.py:76
 #, python-format
 msgid "Crawl %s now"
 msgstr ""
 
-#: tables/views.py:43
+#: tables/views.py:78
 msgid "Crawl news now"
 msgstr "Обновить Новости"
 
-#: tables/views.py:44
+#: tables/views.py:79
 msgid "Crawl tips now"
 msgstr "Обновить Ставки"
 
-#: tables/views.py:124
+#: tables/views.py:140
 #, python-format
 msgid "%(count)d record(s) deleted."
 msgstr "Удалено %(count)d записей."
 
-#: tables/views.py:126
+#: tables/views.py:143
 #, python-format
 msgid "Error deleting records: %(err)r"
 msgstr "Ошибка при удалении записей: %(err)r"
@@ -492,6 +492,38 @@ msgstr "Фильтры"
 msgid " By %(filter_title)s "
 msgstr " Фильтр: %(filter_title)s "
 
+#: templates/dz/tables/_filters-form.html:10
+msgid "Submit"
+msgstr "Применить"
+
+#: templates/dz/tables/_filters-form.html:11
+msgid "Reset"
+msgstr "Сбросить"
+
+#: templates/dz/tables/_filters-toggle.html:5
+msgid "Filters"
+msgstr "Фильтры"
+
+#: templates/dz/tables/_row-action-form.html:7
+msgid "Please select some rows!"
+msgstr "Сначала пометьте строки в таблице!"
+
+#: templates/dz/tables/_row-action-form.html:8
+msgid "Are you sure you want to [ACTION] this row?"
+msgstr "Вы уверены, что хотите \"[ACTION]\" эту запись?"
+
+#: templates/dz/tables/_row-action-menu.html:4
+msgid "With selected"
+msgstr "С отмеченным…"
+
+#: templates/dz/tables/_row-action-menu.html:8
+msgid "Are you sure you want to delete these rows?"
+msgstr "Вы уверены, что хотите удалить записи?"
+
+#: templates/dz/tables/_row-action-menu.html:8
+msgid "Delete"
+msgstr "Удалить"
+
 #: templates/dz/tables/_row-actions.html:2
 msgid "Edit Record"
 msgstr "Редактировать запись"
@@ -500,30 +532,10 @@ msgstr "Редактировать запись"
 msgid "Delete Record"
 msgstr "Удалить запись"
 
-#: templates/dz/tables/list.html:30
+#: templates/dz/tables/list.html:21
 #, python-format
 msgid "List (%(size)s)"
 msgstr "Всего (%(size)s)"
-
-#: templates/dz/tables/list.html:51
-msgid "With selected"
-msgstr "С отмеченным…"
-
-#: templates/dz/tables/list.html:55
-msgid "Are you sure you want to delete these rows?"
-msgstr "Вы уверены, что хотите удалить записи?"
-
-#: templates/dz/tables/list.html:55
-msgid "Delete"
-msgstr "Удалить"
-
-#: templates/dz/tables/list.html:80
-msgid "Please select some rows!"
-msgstr "Сначала пометьте строки в таблице!"
-
-#: templates/dz/tables/list.html:81
-msgid "Are you sure you want to [ACTION] this row?"
-msgstr "Вы уверены, что хотите \"[ACTION]\" эту запись?"
 
 #: templates/dz/tables/newsbox-popup.html:32
 msgid "close"

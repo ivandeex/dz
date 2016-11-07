@@ -30,8 +30,16 @@
       {% block row-action-menu %}
         {% include './_row-action-menu.html' %}
       {% endblock row-action-menu %}
+
+      {% block filters-toggle %}
+        {% include './_filters-toggle.html' %}
+      {% endblock filters-toggle %}
     </ul>
   {% endblock table-tools %}
+
+  {% block filters-form %}
+    {% include './_filters-form.html' %}
+  {% endblock filters-form %}
 
   {% block results %}
     {% render_table table 'dz/tables/_table.html' %}

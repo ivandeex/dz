@@ -1,3 +1,5 @@
+from parsel import Selector
+from urllib import urlencode
 from django.test import tag
 from django.urls import reverse
 from dz import models
@@ -26,7 +28,7 @@ class TableViewsTests(base.BaseDzTestCase, views.ListViewTestsMixin):
                          can_use_row_actions=None):
         info = ' (user: {}, model: {})'.format(user_name, model_name)
         list_url = reverse('dz:%s-list' % model_name)
-        response = self.client.get(list_url)
+        response = self.client.get(list_url + '?flt-archived=all')
 
         if not can_access:
             self.assertEquals(response.status_code, 403)
@@ -127,3 +129,60 @@ class RowActionFormTests(base.BaseDzTestCase):
                 msg = '{:d} {} objects should be deleted'.format(len(del_ids), model_name)
                 count_after = ModelClass.objects.count()
                 self.assertEquals(count_after, count_before - len(del_ids), msg=msg)
+
+
+@tag('filters')
+class TableFiltersTests(base.BaseDzTestCase):
+    def get_parsed_html(self, url=None, query=None, username='super'):
+        self.client.login(username=username, password=base.get_pass(username))
+        if url is None:
+            url = reverse('dz:user-list')
+        if query is not None and query != '':
+            url += '?' + urlencode(query)
+        response = self.client.get(url)
+        self.assertEquals(response.status_code, 200)
+        text = response.content.decode(response.charset)
+        select = Selector(text)
+        return select
+
+    def test_the_filter_word_is_not_among_filter_form_help_strings(self):
+        select = self.get_parsed_html(query='')
+        help_blocks = select.css('#dz-filter-block .help-block::text')
+        help_strings = set(text.strip() for text in help_blocks.extract())
+        self.assertNotIn('Filter', help_strings)
+
+    def test_filter_reset_button_must_be_disabled_without_query(self):
+        select = self.get_parsed_html(query='')
+        reset_button = select.css('#dz-filter-block button:contains("Reset")')
+        self.assertEquals(len(reset_button.extract()), 1)
+        disabled = reset_button.css('::attr(disabled)').extract_first()
+        self.assertEquals(disabled, 'disabled')
+
+    def test_filter_reset_button_must_be_enabled_when_there_is_query(self):
+        select = self.get_parsed_html(query={'flt-can_follow': 1})
+        reset_button = select.css('#dz-filter-block button:contains("Reset")')
+        self.assertEquals(len(reset_button.extract()), 1)
+        disabled = reset_button.css('::attr(disabled)').extract_first()
+        self.assertIsNone(disabled)
+
+    def test_filter_button_must_be_white_if_filter_is_identity(self):
+        query1 = ''
+        query2 = {'flt-is_admin': 1, 'flt-can_follow': 1}
+        for query in (query1, query2):
+            select = self.get_parsed_html(query=query)
+            button = select.css('.table-tools button:contains("Filters")')
+            self.assertEquals(len(button.extract()), 1)
+            classes = button.css('::attr(class)').extract_first().split()
+            self.assertIn('btn-default', classes)
+            self.assertNotIn('btn-primary', classes)
+
+    def test_filter_button_must_be_blue_if_filter_is_effective(self):
+        for admin_choice in (2, 3):
+            for follow_choice in (2, 3):
+                query = {'flt-is_admin': admin_choice, 'flt-can_follow': follow_choice}
+                select = self.get_parsed_html(query=query)
+                button = select.css('.table-tools button:contains("Filters")')
+                self.assertEquals(len(button.extract()), 1)
+                classes = button.css('::attr(class)').extract_first().split()
+                self.assertNotIn('btn-default', classes)
+                self.assertIn('btn-primary', classes)

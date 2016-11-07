@@ -2,12 +2,14 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.shortcuts import render, get_object_or_404
 import django_tables2 as tables
-from .base import DzTable
+import django_filters as filters
+from . import base
 from .views import list_view
+from .utils import lazy_i18n_title
 from .. import models, helpers
 
 
-class TipTable(DzTable):
+class TipTable(base.DzTable):
 
     published = tables.DateTimeColumn(short=False)
     updated = tables.DateTimeColumn(short=False)
@@ -39,7 +41,7 @@ class TipTable(DzTable):
         model = models.Tip
         order_by = ('-published', '-id')
 
-        fields = DzTable.Meta.fields + (
+        fields = base.DzTable.Meta.fields + (
             'id', 'published', 'league', 'parties', 'description',
             'result', 'tipster', 'odds', 'min_odds',
             'stake', 'earnings', 'spread', 'bookmaker', 'success',
@@ -47,8 +49,27 @@ class TipTable(DzTable):
         )
 
 
+class TipFilters(base.FilterSetWithSearch):
+
+    search = filters.CharFilter(
+        label=lazy_i18n_title('search'),
+        method='filter_search',
+        name='parties title text',
+    )
+
+    archived = base.DzArchivedFilter(label=lazy_i18n_title('archived (column)'))
+    tipster = base.AllValuesCachingFilter(label=lazy_i18n_title('tipster (column)'))
+    league = base.AllValuesCachingFilter(label=lazy_i18n_title('tip league (column)'))
+    parties = base.AllValuesCachingFilter(label=lazy_i18n_title('tip parties (column)'))
+
+    class Meta:
+        model = models.Tip
+        fields = ()
+
+
 def tip_list_view(request):
-    return list_view(request, TipTable, crawl_target='tips')
+    return list_view(request, TipTable, TipFilters,
+                     crawl_target='tips')
 
 
 def tipbox_view(request, pk):

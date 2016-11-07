@@ -4,12 +4,14 @@ from django.http import HttpResponsePermanentRedirect
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 import django_tables2 as tables
-from .base import DzTable
+import django_filters as filters
+from . import base
 from .views import list_view
+from .utils import lazy_i18n_title
 from .. import models, helpers
 
 
-class NewsTable(DzTable):
+class NewsTable(base.DzTable):
 
     published = tables.DateTimeColumn(short=False)
     updated = tables.DateTimeColumn(short=False)
@@ -32,15 +34,34 @@ class NewsTable(DzTable):
         model = models.News
         order_by = ('-published', '-id')
 
-        fields = DzTable.Meta.fields + (
+        fields = base.DzTable.Meta.fields + (
             'id', 'published', 'sport', 'league',
             'parties', 'title', 'description',
             'updated', 'crawled', 'link', 'archived'
         )
 
 
+class NewsFilters(base.FilterSetWithSearch):
+
+    search = filters.CharFilter(
+        label=lazy_i18n_title('Search'),
+        method='filter_search',
+        name='parties title newstext__preamble newstext__content',
+    )
+
+    sport = base.AllValuesCachingFilter(label=lazy_i18n_title('sport (column)'))
+    league = base.AllValuesCachingFilter(label=lazy_i18n_title('league (column)'))
+    archived = base.DzArchivedFilter(label=lazy_i18n_title('archived (column)'))
+    updated = filters.DateRangeFilter(label=lazy_i18n_title('updated (column)'))
+
+    class Meta:
+        model = models.News
+        fields = ()
+
+
 def news_list_view(request):
-    return list_view(request, NewsTable, crawl_target='news')
+    return list_view(request, NewsTable, NewsFilters,
+                     crawl_target='news')
 
 
 def newsbox_view(request, pk):
