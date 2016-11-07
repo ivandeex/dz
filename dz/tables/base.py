@@ -88,10 +88,12 @@ class DzArchivedFilter(filters.ChoiceFilter):
 
 class AllValuesCachingFilter(filters.ChoiceFilter):
     empty_label = _('All')
+    cache_timeout = settings.CHOICES_CACHE_TIMEOUT
     titlecase = False
 
     def __init__(self, *args, **kwargs):
         self.empty_label = kwargs.pop('empty_label', type(self).empty_label)
+        self.cache_timeout = kwargs.pop('cache_timeout', type(self).cache_timeout)
         super(AllValuesCachingFilter, self).__init__(*args, **kwargs)
 
     def _make_choices(self):
@@ -107,7 +109,6 @@ class AllValuesCachingFilter(filters.ChoiceFilter):
         cache_key = 'filter-choices::%(app)s:%(model)s.%(field)s' % {
             'app': 'dz', 'model': self.model._meta.model_name, 'field': self.name
         }
-        cache_timeout = settings.CHOICES_CACHE_TIMEOUT
-        choices = cache.get_or_set(cache_key, self._make_choices, cache_timeout)
+        choices = cache.get_or_set(cache_key, self._make_choices, self.cache_timeout)
         self.extra['choices'] = choices
         return super(AllValuesCachingFilter, self).field

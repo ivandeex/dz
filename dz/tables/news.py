@@ -7,6 +7,7 @@ import django_tables2 as tables
 import django_filters as filters
 from . import base
 from .views import list_view
+from .utils import lazy_i18n_title
 from .. import models, helpers
 
 
@@ -41,9 +42,9 @@ class NewsTable(base.DzTable):
 
 
 class NewsFilters(filters.FilterSet):
-    sport = base.AllValuesCachingFilter()
-    league = base.AllValuesCachingFilter()
-    archived = base.DzArchivedFilter()
+    sport = base.AllValuesCachingFilter(label=lazy_i18n_title('sport (column)'))
+    league = base.AllValuesCachingFilter(label=lazy_i18n_title('league (column)'))
+    archived = base.DzArchivedFilter(label=lazy_i18n_title('archived (column)'))
 
     class Meta:
         model = models.News

@@ -5,6 +5,7 @@ import django_tables2 as tables
 import django_filters as filters
 from . import base
 from .views import list_view
+from .utils import lazy_i18n_title
 from .. import models, helpers
 
 
@@ -49,10 +50,10 @@ class TipTable(base.DzTable):
 
 
 class TipFilters(filters.FilterSet):
-    archived = base.DzArchivedFilter()
-    tipster = base.AllValuesCachingFilter()
-    league = base.AllValuesCachingFilter()
-    parties = base.AllValuesCachingFilter()
+    archived = base.DzArchivedFilter(label=lazy_i18n_title('archived (column)'))
+    tipster = base.AllValuesCachingFilter(label=lazy_i18n_title('tipster (column)'))
+    league = base.AllValuesCachingFilter(label=lazy_i18n_title('tip league (column)'))
+    parties = base.AllValuesCachingFilter(label=lazy_i18n_title('tip parties (column)'))
 
     class Meta:
         model = models.Tip
