@@ -186,13 +186,3 @@ class TableFiltersTests(base.BaseDzTestCase):
                 classes = button.css('::attr(class)').extract_first().split()
                 self.assertNotIn('btn-default', classes)
                 self.assertIn('btn-primary', classes)
-
-    def test_tip_filters_should_cache_selections(self):
-        username = 'simple'
-        url = reverse('dz:tip-list')
-        self.client.login(username=username, password=base.get_pass(username))
-        with self.assertNumQueries(10):
-            self.client.get(url)
-        # Now selections are cached, less queries must be done.
-        with self.assertNumQueries(6):
-            self.client.get(url)
