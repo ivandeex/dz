@@ -45,6 +45,7 @@ class NewsFilters(filters.FilterSet):
     sport = base.AllValuesCachingFilter(label=lazy_i18n_title('sport (column)'))
     league = base.AllValuesCachingFilter(label=lazy_i18n_title('league (column)'))
     archived = base.DzArchivedFilter(label=lazy_i18n_title('archived (column)'))
+    updated = filters.DateRangeFilter(label=lazy_i18n_title('updated (column)'))
 
     class Meta:
         model = models.News
