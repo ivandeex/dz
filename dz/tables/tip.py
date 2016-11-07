@@ -3,12 +3,12 @@ from django.utils.safestring import mark_safe
 from django.shortcuts import render, get_object_or_404
 import django_tables2 as tables
 import django_filters as filters
-from .base import DzTable, DzArchivedFilter
+from . import base
 from .views import list_view
 from .. import models, helpers
 
 
-class TipTable(DzTable):
+class TipTable(base.DzTable):
 
     published = tables.DateTimeColumn(short=False)
     updated = tables.DateTimeColumn(short=False)
@@ -40,7 +40,7 @@ class TipTable(DzTable):
         model = models.Tip
         order_by = ('-published', '-id')
 
-        fields = DzTable.Meta.fields + (
+        fields = base.DzTable.Meta.fields + (
             'id', 'published', 'league', 'parties', 'description',
             'result', 'tipster', 'odds', 'min_odds',
             'stake', 'earnings', 'spread', 'bookmaker', 'success',
@@ -49,10 +49,13 @@ class TipTable(DzTable):
 
 
 class TipFilters(filters.FilterSet):
-    archived = DzArchivedFilter()
+    archived = base.DzArchivedFilter()
+    tipster = base.AllValuesCachingFilter()
+    league = base.AllValuesCachingFilter()
+    parties = base.AllValuesCachingFilter()
 
     class Meta:
-        model = models.News
+        model = models.Tip
         fields = ()
 
 

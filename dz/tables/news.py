@@ -5,12 +5,12 @@ from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 import django_tables2 as tables
 import django_filters as filters
-from .base import DzTable, DzArchivedFilter
+from . import base
 from .views import list_view
 from .. import models, helpers
 
 
-class NewsTable(DzTable):
+class NewsTable(base.DzTable):
 
     published = tables.DateTimeColumn(short=False)
     updated = tables.DateTimeColumn(short=False)
@@ -33,7 +33,7 @@ class NewsTable(DzTable):
         model = models.News
         order_by = ('-published', '-id')
 
-        fields = DzTable.Meta.fields + (
+        fields = base.DzTable.Meta.fields + (
             'id', 'published', 'sport', 'league',
             'parties', 'title', 'description',
             'updated', 'crawled', 'link', 'archived'
@@ -41,7 +41,9 @@ class NewsTable(DzTable):
 
 
 class NewsFilters(filters.FilterSet):
-    archived = DzArchivedFilter()
+    sport = base.AllValuesCachingFilter()
+    league = base.AllValuesCachingFilter()
+    archived = base.DzArchivedFilter()
 
     class Meta:
         model = models.News

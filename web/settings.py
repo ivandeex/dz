@@ -255,6 +255,7 @@ MONGODB_URL = env.str('MONGODB_URL', '')
 
 # DZ - Custom settings
 FIELD_CUT_LENGTH = 120
+CHOICES_CACHE_TIMEOUT = 120
 
 # DZ - Spider settings
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'

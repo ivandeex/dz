@@ -1,4 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
+from django.core.cache import cache
+from django.conf import settings
 import django_tables2 as tables
 import django_filters as filters
 from .. import helpers
@@ -69,9 +71,9 @@ class DzArchivedFilter(filters.ChoiceFilter):
 
     def __init__(self, *args, **user_kwargs):
         kwargs = {
-            'name':'archived',
+            'name': 'archived',
             'choices': self.CHOICES,
-            'label': _('archive (filter)'),
+            'label': _('archive (filter)').title(),
         }
         kwargs.update(user_kwargs)
         super(DzArchivedFilter, self).__init__(*args, **kwargs)
@@ -82,3 +84,30 @@ class DzArchivedFilter(filters.ChoiceFilter):
         if value in ('', 'fresh', 'archived'):
             qs = qs.filter(archived=(value == 'archived'))
         return qs
+
+
+class AllValuesCachingFilter(filters.ChoiceFilter):
+    empty_label = _('All')
+    titlecase = False
+
+    def __init__(self, *args, **kwargs):
+        self.empty_label = kwargs.pop('empty_label', type(self).empty_label)
+        super(AllValuesCachingFilter, self).__init__(*args, **kwargs)
+
+    def _make_choices(self):
+        qs = self.model._default_manager.distinct().order_by(self.name)
+        choices = [(val, val) for val in qs.values_list(self.name, flat=True)
+                   if val not in (None, '')]
+        if self.empty_label is not None:
+            choices.insert(0, (None, self.empty_label))
+        return choices
+
+    @property
+    def field(self):
+        cache_key = 'filter-choices::%(app)s:%(model)s.%(field)s' % {
+            'app': 'dz', 'model': self.model._meta.model_name, 'field': self.name
+        }
+        cache_timeout = settings.CHOICES_CACHE_TIMEOUT
+        choices = cache.get_or_set(cache_key, self._make_choices, cache_timeout)
+        self.extra['choices'] = choices
+        return super(AllValuesCachingFilter, self).field
