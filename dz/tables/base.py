@@ -57,12 +57,12 @@ class DzTable(tables.Table):
     # This hook should be called once with a new request.
     # It hides selector and actions columns if requesting user is not admin.
     def on_request(self, request):
-        is_admin = helpers.user_is_admin(request)
+        self.is_admin = helpers.user_is_admin(request)
         for column in self.base_columns.values():
             if isinstance(column, AdminOnlyColumnMixin):
                 # We are safe to directly modify column properties, because
                 # Table constructor creates their local copies on the table.
-                column.visible = is_admin
+                column.visible = self.is_admin
 
 
 class DzArchivedFilter(filters.ChoiceFilter):

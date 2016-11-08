@@ -8,13 +8,30 @@ urlpatterns = [
     url(r'^tables/news/$', tables.news_list_view, name='news-list'),
     url(r'^tables/newsbox/(?P<pk>\d+)/$', tables.newsbox_view, name='newsbox-popup'),
     url(r'^tables/newsbox/\d+/img/(?P<path>.*)$', tables.newsbox_img_redirect),
+    url(r'^tables/news/(?P<pk>\d+)/$', tables.form_view,
+        {'form_class': tables.NewsForm, 'next': 'news-list', 'admin_only': False},
+        name='news-form'),
 
     url(r'^tables/tip/$', tables.tip_list_view, name='tip-list'),
     url(r'^tables/tipbox/(?P<pk>\d+)/$', tables.tipbox_view, name='tipbox-popup'),
+    url(r'^tables/tip/(?P<pk>\d+)/$', tables.form_view,
+        {'form_class': tables.TipForm, 'next': 'tip-list', 'admin_only': False},
+        name='tip-form'),
 
     url(r'^tables/crawl/$', tables.crawl_list_view, name='crawl-list'),
+    url(r'^tables/crawl/(?P<pk>\d+)/$', tables.form_view,
+        {'form_class': tables.CrawlForm, 'next': 'crawl-list', 'admin_only': True},
+        name='crawl-form'),
+
     url(r'^tables/user/$', tables.user_list_view, name='user-list'),
+    url(r'^tables/user/(?P<pk>\d+)/$', tables.form_view,
+        {'form_class': tables.UserForm, 'next': 'user-list', 'admin_only': True},
+        name='user-form'),
+
     url(r'^tables/schedule/$', tables.schedule_list_view, name='schedule-list'),
+    url(r'^tables/schedule/(?P<pk>\d+)/$', tables.form_view,
+        {'form_class': tables.ScheduleForm, 'next': 'schedule-list', 'admin_only': True},
+        name='schedule-form'),
 
     url(r'^tables/action/crawl/$', tables.crawl_action_view, name='crawl-action'),
     url(r'^tables/action/row/$', tables.row_action_view, name='row-action'),

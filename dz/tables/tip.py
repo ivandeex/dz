@@ -1,6 +1,8 @@
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
+from django import forms
 import django_tables2 as tables
 import django_filters as filters
 from . import base
@@ -36,6 +38,15 @@ class TipTable(base.DzTable):
     def render_archived(self, value):
         return _('Archived') if value else _('Fresh')
 
+    def render_id(self, value):
+        if self.is_admin:
+            return value
+        context = self.context
+        form_url = reverse(context['form_url'], kwargs={'pk': value})
+        if context['preserved_query']:
+            form_url += '?' + context['preserved_query']
+        return mark_safe('<a href="{}">{}</a>'.format(form_url, value))
+
     class Meta:
         default = mark_safe('<span class="text-muted">&hellip;</span>')
         model = models.Tip
@@ -67,8 +78,14 @@ class TipFilters(base.FilterSetWithSearch):
         fields = ()
 
 
+class TipForm(forms.ModelForm):
+    class Meta:
+        model = models.Tip
+        fields = '__all__'
+
+
 def tip_list_view(request):
-    return list_view(request, TipTable, TipFilters,
+    return list_view(request, TipTable, TipFilters, 'tip-form',
                      crawl_target='tips')
 
 

@@ -1,4 +1,5 @@
 from django.utils.translation import ugettext_lazy as _
+from django import forms
 import django_tables2 as tables
 import django_filters as filters
 from . import base
@@ -74,6 +75,12 @@ class CrawlFilters(filters.FilterSet):
         fields = ()
 
 
+class CrawlForm(forms.ModelForm):
+    class Meta:
+        model = models.Crawl
+        fields = '__all__'
+
+
 def crawl_list_view(request):
-    return list_view(request, CrawlTable, CrawlFilters,
+    return list_view(request, CrawlTable, CrawlFilters, 'crawl-form',
                      restricted=True)

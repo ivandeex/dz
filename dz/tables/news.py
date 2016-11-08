@@ -2,7 +2,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.http import HttpResponsePermanentRedirect
 from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
 from django.conf import settings
+from django import forms
 import django_tables2 as tables
 import django_filters as filters
 from . import base
@@ -22,6 +24,15 @@ class NewsTable(base.DzTable):
         template_name='dz/tables/news-description.html',
         order_by='newstext__preamble',
     )
+
+    def render_id(self, value):
+        if self.is_admin:
+            return value
+        context = self.context
+        form_url = reverse(context['form_url'], kwargs={'pk': value})
+        if context['preserved_query']:
+            form_url += '?' + context['preserved_query']
+        return mark_safe('<a href="{}">{}</a>'.format(form_url, value))
 
     def render_link(self, value):
         return helpers.format_external_link(self.context.request, value)
@@ -59,8 +70,14 @@ class NewsFilters(base.FilterSetWithSearch):
         fields = ()
 
 
+class NewsForm(forms.ModelForm):
+    class Meta:
+        model = models.News
+        fields = '__all__'
+
+
 def news_list_view(request):
-    return list_view(request, NewsTable, NewsFilters,
+    return list_view(request, NewsTable, NewsFilters, 'news-form',
                      crawl_target='news')
 
 

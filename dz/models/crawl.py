@@ -28,13 +28,13 @@ class Crawl(models.Model):
                               choices=TARGET_CHOICES, db_index=True)
     manual = models.NullBooleanField(_('crawl type (bool column)'), db_index=True)
     status = models.CharField(_('crawl status (column)'), max_length=10,
-                              choices=STATUS_CHOICES, db_index=True, null=True)
-    started = models.DateTimeField(_('started at (column)'), null=True)
-    ended = models.DateTimeField(_('ended at (column)'), null=True)
+                              choices=STATUS_CHOICES, db_index=True, null=True, blank=True)
+    started = models.DateTimeField(_('started at (column)'), null=True, blank=True)
+    ended = models.DateTimeField(_('ended at (column)'), null=True, blank=True)
     count = models.SmallIntegerField(_('no. of items (column)'), default=0)
-    host = models.CharField(_('hostname (column)'), max_length=24, db_index=True)
+    host = models.CharField(_('hostname (column)'), max_length=24, db_index=True, blank=True)
     # Translators: PID
-    pid = models.CharField(_('crawler pid (column)'), max_length=6)
+    pid = models.CharField(_('crawler pid (column)'), max_length=6, blank=True)
 
     class Meta:
         verbose_name = _('crawl (table)')

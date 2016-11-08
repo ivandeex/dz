@@ -1,3 +1,4 @@
+import random
 from parsel import Selector
 from urllib import urlencode
 from django.test import tag
@@ -186,3 +187,51 @@ class TableFiltersTests(base.BaseDzTestCase):
                 classes = button.css('::attr(class)').extract_first().split()
                 self.assertNotIn('btn-default', classes)
                 self.assertIn('btn-primary', classes)
+
+
+@tag('forms')
+class TableFormTests(base.BaseDzTestCase):
+    def get_random_pk(self, model_name):
+        ModelClass = getattr(models, model_name.title())
+        pk_list = ModelClass.objects.values_list('pk', flat=True)
+        return random.choice(pk_list)
+
+    def get_random_form_url(self, model_name, pk=None):
+        if pk is None:
+            pk = self.get_random_pk(model_name)
+        return reverse('dz:%s-form' % model_name, kwargs={'pk': pk})
+
+    def test_unauthorized_request_should_redirect_to_login(self):
+        for model_name in ('news', 'tip', 'crawl', 'user', 'schedule'):
+            form_url = self.get_random_form_url(model_name)
+            login_url = '%s?next=%s' % (reverse('dz-admin:login'), form_url)
+            response = self.client.get(form_url)
+            self.assertRedirects(response, login_url)
+
+    def test_simple_user_cannot_access_elevated_forms(self):
+        with self.login_as('simple'):
+            for model_name in ('crawl', 'user', 'schedule'):
+                form_url = self.get_random_form_url(model_name)
+                response = self.client.get(form_url)
+                self.assertEquals(response.status_code, 403)
+
+    def test_simple_user_cannot_post_simple_forms(self):
+        with self.login_as('simple'):
+            for model_name in ('news', 'tip'):
+                pk = self.get_random_pk(model_name)
+                form_url = self.get_random_form_url(model_name, pk)
+                response = self.client.get(form_url)
+                self.assertEquals(response.status_code, 200)
+                response = self.client.post(form_url, {'id': pk})
+                self.assertEquals(response.status_code, 403)
+
+    def test_admin_user_can_post_all_forms(self):
+        with self.login_as('super'):
+            for model_name in ('news', 'tip', 'crawl', 'user', 'schedule'):
+                pk = self.get_random_pk(model_name)
+                form_url = self.get_random_form_url(model_name, pk)
+                response = self.client.get(form_url)
+                self.assertEquals(response.status_code, 200)
+                response = self.client.post(form_url, {'id': pk})
+                self.assertEquals(response.status_code, 200)
+                self.assertContains(response, '<div class="form-group has-error">')

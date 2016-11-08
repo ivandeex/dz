@@ -1,3 +1,4 @@
+from django import forms
 import django_filters as filters
 from .base import DzTable
 from .views import list_view
@@ -20,6 +21,12 @@ class UserFilters(filters.FilterSet):
         fields = ('is_admin', 'can_follow')
 
 
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = models.User
+        fields = '__all__'
+
+
 def user_list_view(request):
-    return list_view(request, UserTable, UserFilters,
+    return list_view(request, UserTable, UserFilters, 'user-form',
                      restricted=True)

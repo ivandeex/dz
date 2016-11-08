@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.conf import settings
 from django.contrib import messages
@@ -16,7 +16,7 @@ from .. import models, helpers
 # to login view and back again, the last redirect is GET as required.
 @require_safe
 @login_required
-def list_view(request, TableClass, FiltersClass,
+def list_view(request, TableClass, FiltersClass, form_url,
               restricted=False, crawl_target=None):
     is_admin = helpers.user_is_admin(request)
     if restricted and not is_admin:
@@ -42,20 +42,6 @@ def list_view(request, TableClass, FiltersClass,
     table = TableClass(queryset)
     table.on_request(request)  # hide selector/actions columns for non-admins
     tables.RequestConfig(request).configure(table)
-
-    allowed_models = [models.News, models.Tip]
-    if is_admin:
-        allowed_models += [models.Crawl, models.User]
-        if not settings.DZ_COMPAT:
-            allowed_models.append(models.Schedule)
-
-    top_nav_links = []
-    for model in allowed_models:
-        top_nav_links.append({
-            'text': model._meta.verbose_name_plural.title(),
-            'link': reverse('dz:%s-list' % model._meta.model_name),
-            'name': model._meta.model_name,
-        })
 
     row_action_form = RowActionForm(
         initial={
@@ -85,10 +71,12 @@ def list_view(request, TableClass, FiltersClass,
         # wrap _meta because django templates prohibits underscored property names
         'model_name': model_name,
         'verbose_name_plural': Model._meta.verbose_name_plural,
-        'top_nav_links': top_nav_links,
+        'top_nav_links': get_top_nav_links(is_admin),
         'filters': filters,
+        'form_url': 'dz:' + form_url,
         'crawl_form': crawl_form,
         'row_action_form': row_action_form,
+        'preserved_query': query_string,
     }
 
     return render(request, 'dz/tables/list.html', context)
@@ -143,3 +131,60 @@ def row_action_view(request):
         messages.error(request, _('Error deleting records: %(err)r') % {'err': err})
 
     return redirect(action_form.get_next_url())
+
+
+@login_required
+def form_view(request, pk, form_class, next, admin_only):
+    is_admin = request.user.has_perm('dz.is_admin')
+    if (request.method == 'POST' or admin_only) and not is_admin:
+        return HttpResponseForbidden('Not authorized')
+
+    model_class = form_class._meta.model
+    verbose_name = model_class._meta.verbose_name
+    obj = get_object_or_404(model_class, pk=int(pk))
+
+    next_url = reverse('dz:%s' % next)
+    query_string = request.META['QUERY_STRING']
+    action = ''
+    if query_string:
+        next_url += '?' + query_string
+        action += '?' + query_string
+
+    if request.method == 'POST':
+        form = form_class(request.POST, instance=obj)
+        if form.is_valid():
+            form.save()
+            context = {'model_name': verbose_name.title(), 'pk': pk}
+            messages.info(request, _('%(model_name)s #%(pk)s saved.') % context)
+            return redirect(next_url)
+    else:
+        form = form_class(instance=obj)
+
+    context = {
+        'form': form,
+        'action': action,
+        'next_url': next_url,
+        'verbose_name': verbose_name,
+        'pk': pk,
+        'is_admin': is_admin,
+        'top_nav_links': get_top_nav_links(is_admin),
+    }
+    return render(request, 'dz/tables/form.html', context)
+
+
+def get_top_nav_links(is_admin):
+    allowed_models = [models.News, models.Tip]
+    if is_admin:
+        allowed_models += [models.Crawl, models.User]
+        if not settings.DZ_COMPAT:
+            allowed_models.append(models.Schedule)
+
+    top_nav_links = []
+    for model in allowed_models:
+        top_nav_links.append({
+            'text': model._meta.verbose_name_plural.title(),
+            'link': reverse('dz:%s-list' % model._meta.model_name),
+            'name': model._meta.model_name,
+        })
+
+    return top_nav_links
