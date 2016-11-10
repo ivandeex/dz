@@ -6,6 +6,7 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
 
     url(r'^tables/news/$', tables.news_list_view, name='news-list'),
+    url(r'^tables/news/export/$', tables.news_export_view, name='news-export'),
     url(r'^tables/newsbox/(?P<pk>\d+)/$', tables.newsbox_view, name='newsbox-popup'),
     url(r'^tables/newsbox/\d+/img/(?P<path>.*)$', tables.newsbox_img_redirect),
     url(r'^tables/news/(?P<pk>\d+)/$', tables.form_view,
@@ -13,6 +14,7 @@ urlpatterns = [
         name='news-form'),
 
     url(r'^tables/tip/$', tables.tip_list_view, name='tip-list'),
+    url(r'^tables/tip/export/$', tables.tip_export_view, name='tip-export'),
     url(r'^tables/tipbox/(?P<pk>\d+)/$', tables.tipbox_view, name='tipbox-popup'),
     url(r'^tables/tip/(?P<pk>\d+)/$', tables.form_view,
         {'form_class': tables.TipForm, 'next': 'tip-list', 'admin_only': False},

@@ -10,6 +10,8 @@ import django_tables2 as tables
 from .actions import RowActionForm, CrawlActionForm
 from .. import models, helpers
 
+FILTER_QUERY_PREFIX = 'flt'
+
 
 # The @require_safe decorator returns 405 if request is not of GET or HEAD type.
 # It can go before @login_required, because if the latter decorator redirects
@@ -17,7 +19,7 @@ from .. import models, helpers
 @require_safe
 @login_required
 def list_view(request, TableClass, FiltersClass, form_url,
-              restricted=False, crawl_target=None):
+              export_url=None, restricted=False, crawl_target=None):
     is_admin = helpers.user_is_admin(request)
     if restricted and not is_admin:
         return HttpResponseForbidden('Forbidden')
@@ -28,7 +30,7 @@ def list_view(request, TableClass, FiltersClass, form_url,
     query_string = request.META['QUERY_STRING']
 
     if FiltersClass:
-        filters = FiltersClass(request.GET, queryset=qs_all, prefix='flt')
+        filters = FiltersClass(request.GET, queryset=qs_all, prefix=FILTER_QUERY_PREFIX)
         queryset = filters.qs
 
         # Detect wether filters would really change queryset population:
@@ -76,6 +78,7 @@ def list_view(request, TableClass, FiltersClass, form_url,
         'top_nav_links': get_top_nav_links(is_admin),
         'filters': filters,
         'form_url': 'dz:' + form_url,
+        'export_url': 'dz:' + export_url if export_url else None,
         'crawl_form': crawl_form,
         'row_action_form': row_action_form,
         'preserved_query': query_string,

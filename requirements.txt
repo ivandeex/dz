@@ -13,6 +13,7 @@ django-bootstrap-form==3.2.1
 # Official django-admin-bootstrapped is incompatible with Django 1.10+, so we use a github fork.
 git+https://github.com/hellpanderrr/django-admin-bootstrapped-1.9-compatible.git@master#egg=django_admin_bootstrapped
 
+XlsxWriter==0.9.3
 whitenoise==3.2.2
 jinja2==2.8
 pytz==2016.7

@@ -7,6 +7,7 @@ import django_tables2 as tables
 import django_filters as filters
 from . import base
 from .views import list_view
+from .export import export_view
 from .utils import lazy_i18n_title
 from .. import models, helpers
 
@@ -86,7 +87,11 @@ class TipForm(forms.ModelForm):
 
 def tip_list_view(request):
     return list_view(request, TipTable, TipFilters, 'tip-form',
-                     crawl_target='tips')
+                     export_url='tip-export', crawl_target='tips')
+
+
+def tip_export_view(request):
+    return export_view(request, TipTable, TipFilters)
 
 
 def tipbox_view(request, pk):

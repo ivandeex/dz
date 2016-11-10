@@ -27,6 +27,14 @@
         {% include './_crawl-form.html' %}
       {% endblock crawl-form %}
 
+      {% block export-link %}
+        {% if export_url %}
+          <li>
+            <a href="{% url export_url %}?{{ preserved_query }}">{% trans 'Export' %}</a>
+          </li>
+        {% endif %}
+      {% endblock export-link %}
+
       {% block row-action-menu %}
         {% include './_row-action-menu.html' %}
       {% endblock row-action-menu %}

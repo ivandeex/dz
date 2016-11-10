@@ -9,6 +9,7 @@ import django_tables2 as tables
 import django_filters as filters
 from . import base
 from .views import list_view
+from .export import export_view
 from .utils import lazy_i18n_title
 from .. import models, helpers
 
@@ -78,7 +79,11 @@ class NewsForm(forms.ModelForm):
 
 def news_list_view(request):
     return list_view(request, NewsTable, NewsFilters, 'news-form',
-                     crawl_target='news')
+                     export_url='news-export', crawl_target='news')
+
+
+def news_export_view(request):
+    return export_view(request, NewsTable, NewsFilters)
 
 
 def newsbox_view(request, pk):

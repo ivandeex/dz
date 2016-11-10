@@ -257,6 +257,10 @@ MONGODB_URL = env.str('MONGODB_URL', '')
 FIELD_CUT_LENGTH = 120
 CHOICES_CACHE_TIMEOUT = 120
 
+NGINX_SENDFILE_ROOT = root('temp')
+NGINX_SENDFILE_URL = env.str('NGINX_SENDFILE_URL', '')
+
+
 # DZ - Spider settings
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 CONSTANCE_SUPERUSER_ONLY = False

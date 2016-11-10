@@ -1,7 +1,9 @@
 {% load i18n %}
-<a title="{% trans 'Edit Record' %}" href="{% url form_url pk=record.pk %}{% if preserved_query %}?{{ preserved_query }}{% endif %}">
-  <i class="glyphicon glyphicon-pencil"></i>
-</a>
+{% if form_url %}
+  <a title="{% trans 'Edit Record' %}" href="{% url form_url pk=record.pk %}{% if preserved_query %}?{{ preserved_query }}{% endif %}">
+    <i class="glyphicon glyphicon-pencil"></i>
+  </a>
+{% endif %}
 <a title="{% trans 'Delete Record' %}" href="javascript:void(0)" onclick="return dz.tables.runRowAction('delete', {{record.pk}}, true);">
   <i class="glyphicon glyphicon-trash"></i>
 </a>
