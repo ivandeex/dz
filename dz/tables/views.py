@@ -32,6 +32,8 @@ def list_view(request, TableClass, FiltersClass, form_url,
         queryset = filters.qs
 
         # Detect wether filters would really change queryset population:
+        if model_name in ('news', 'tip'):
+            qs_all = qs_all.filter(archived=False)
         sql_all = qs_all.query.get_compiler(qs_all.db).as_sql()
         sql_qs = queryset.query.get_compiler(queryset.db).as_sql()
         filters.is_effective = sql_all != sql_qs
