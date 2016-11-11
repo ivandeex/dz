@@ -1,0 +1,26 @@
+{% extends 'dz/tables/base.html' %}
+{% load bootstrap i18n %}
+
+
+{% block title %}{% trans 'Log in' %} | {% trans 'D.Z.' %}{% endblock %}
+
+
+{% block messages %}
+  {% include './_messages.html' %}
+{% endblock messages %}
+
+
+{% block content %}
+<div class="container">
+  <h2 class="text-muted">{% trans 'D.Z.' %}</h2>
+  <div class="well">
+    <form class="form" method="post" action="">
+      {% csrf_token %}
+      {{ form|bootstrap }}
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary">{% trans 'Log in' %}</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}

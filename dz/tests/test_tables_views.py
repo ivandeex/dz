@@ -6,6 +6,8 @@ from django.urls import reverse
 from dz import models
 from . import base, views
 
+NORMAL_LOGIN_URL = 'dz:login'
+
 
 @tag('views')
 class TableViewsTests(base.BaseDzTestCase, views.ListViewTestsMixin):
@@ -20,7 +22,7 @@ class TableViewsTests(base.BaseDzTestCase, views.ListViewTestsMixin):
     def test_unauthorized_request_should_redirect_to_login(self):
         for model_name in ('news', 'tip', 'crawl', 'user', 'schedule'):
             list_url = reverse('dz:%s-list' % model_name)
-            login_url = '%s?next=%s' % (reverse('dz-admin:login'), list_url)
+            login_url = '%s?next=%s' % (reverse(NORMAL_LOGIN_URL), list_url)
             response = self.client.get(list_url)
             self.assertRedirects(response, login_url)
 
@@ -212,7 +214,7 @@ class TableFormTests(base.BaseDzTestCase):
     def test_unauthorized_request_should_redirect_to_login(self):
         for model_name in ('news', 'tip', 'crawl', 'user', 'schedule'):
             form_url = self.get_random_form_url(model_name)
-            login_url = '%s?next=%s' % (reverse('dz-admin:login'), form_url)
+            login_url = '%s?next=%s' % (reverse(NORMAL_LOGIN_URL), form_url)
             response = self.client.get(form_url)
             self.assertRedirects(response, login_url)
 

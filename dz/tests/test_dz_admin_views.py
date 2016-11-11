@@ -2,12 +2,14 @@ from django.urls import reverse
 from django.test import override_settings, tag
 from . import base, views
 
+ADMIN_LOGIN_URL = 'dz-admin:login'
+
 
 class AdminTestsMixin(views.ListViewTestsMixin):
     def test_unauthorized_request_should_redirect_to_login(self):
         for model_name in ('news', 'tip', 'crawl', 'user', 'schedule'):
             list_url = reverse('dz-admin:dz_%s_changelist' % model_name)
-            login_url = '%s?next=%s' % (reverse('dz-admin:login'), list_url)
+            login_url = '%s?next=%s' % (reverse(ADMIN_LOGIN_URL), list_url)
             response = self.client.get(list_url)
             self.assertRedirects(response, login_url)
 

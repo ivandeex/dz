@@ -182,7 +182,9 @@ CACHES = {
 FILTERS_HELP_TEXT_FILTER = False
 
 
-LOGIN_URL = 'dz-admin:login'
+LOGIN_URL = 'dz:login'
+LOGIN_REDIRECT_URL = 'dz:tip-list'
+LOGOUT_REDIRECT_URL = LOGIN_URL
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},

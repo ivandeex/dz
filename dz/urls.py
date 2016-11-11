@@ -1,9 +1,12 @@
 from django.conf.urls import url
+from django.contrib.auth import views as auth_views
 from . import views, tables, api
 
 app_name = 'dz'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^login/$', auth_views.login,
+        {'template_name': 'dz/tables/login.html'}, name='login'),
 
     url(r'^tables/news/$', tables.news_list_view, name='news-list'),
     url(r'^tables/news/export/$', tables.news_export_view, name='news-export'),
