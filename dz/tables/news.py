@@ -42,6 +42,7 @@ class NewsTable(base.DzTable):
         return _('Archived') if value else _('Fresh')
 
     class Meta:
+        per_page = 50
         default = mark_safe('<span class="text-muted">&hellip;</span>')
         model = models.News
         order_by = ('-published', '-id')

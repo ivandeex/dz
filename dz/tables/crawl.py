@@ -28,6 +28,7 @@ class CrawlTable(base.DzTable):
             return _('scheduled (crawl type)')
 
     class Meta:
+        per_page = 20
         model = models.Crawl
         order_by = '-id'
 

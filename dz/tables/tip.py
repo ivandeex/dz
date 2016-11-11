@@ -49,6 +49,7 @@ class TipTable(base.DzTable):
         return mark_safe('<a href="{}">{}</a>'.format(form_url, value))
 
     class Meta:
+        per_page = 50
         default = mark_safe('<span class="text-muted">&hellip;</span>')
         model = models.Tip
         order_by = ('-published', '-id')
