@@ -6,7 +6,7 @@ import re
 from webpack_loader import __version__
 from webpack_loader.loader import WebpackLoader
 
-if '0.3.1' <= __version__ <= '0.3.3':
+if '0.3.1' <= __version__ <= '0.4.1':
     def patch__load_assets(old__load_assets):
         def new__load_assets(self):
             assets = old__load_assets(self)

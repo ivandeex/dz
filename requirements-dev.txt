@@ -4,10 +4,10 @@ django-debug-toolbar==1.6
 ipython==5.1.0
 ipdb==0.10.1
 
-ansible==2.1.2
+ansible==2.2.0
 honcho==0.7.1
 gunicorn==19.6.0
-pymongo==3.3.0
+pymongo==3.3.1
 
 # mock is a part of standard library as unittest.mock since python 3.3
 mock ~= 2.0.0 ; python_version < '3.3'

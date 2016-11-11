@@ -30,7 +30,9 @@ make_messages()
 
 compile_messages()
 {
+  cd dz
   python manage.py compilemessages
+  cd ..
 }
 
 prepare_prod()
