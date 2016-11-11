@@ -18,6 +18,24 @@ class ListViewTestsMixin(object):
                 for model_name in ('news', 'tip', 'crawl', 'user', 'schedule'):
                     self._test_table_view(username, model_name, can_use_row_actions=True)
 
+    def test_admin_users_can_export_news_and_tips(self):
+        for username in ('super', 'follow'):
+            with self.login_as(username):
+                for model_name in ('news', 'tip'):
+                    self._test_table_view(username, model_name, can_export=True)
+
+    def test_admin_users_cannot_export_other_models(self):
+        for username in ('super', 'follow'):
+            with self.login_as(username):
+                for model_name in ('crawl', 'user', 'schedule'):
+                    self._test_table_view(username, model_name, can_export=False)
+
+    def test_simple_users_can_export_news_and_tips(self):
+        for username in ('simple',):
+            with self.login_as(username):
+                for model_name in ('news', 'tip'):
+                    self._test_table_view(username, model_name, can_export=True)
+
     def test_simple_users_cannot_crawl_news_and_tips(self):
         for username in ('simple',):
             with self.login_as(username):

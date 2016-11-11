@@ -12,7 +12,7 @@ class AdminTestsMixin(views.ListViewTestsMixin):
             self.assertRedirects(response, login_url)
 
     def _test_table_view(self, user_name, model_name,
-                         can_access=True, can_crawl=None,
+                         can_access=True, can_crawl=None, can_export=None,
                          can_use_row_actions=None):
         info = ' (user: {}, model: {})'.format(user_name, model_name)
         list_url = reverse('dz-admin:dz_%s_changelist' % model_name)
@@ -33,9 +33,17 @@ class AdminTestsMixin(views.ListViewTestsMixin):
         if can_crawl is True:
             self.assertContains(response, crawl_button_text,
                                 msg_prefix='crawl button should be present' + info)
-        elif can_crawl is False:
+        if can_crawl is False:
             self.assertNotContains(response, crawl_button_text,
                                    msg_prefix='crawl button should not be present' + info)
+
+        export_button_text = '>Export</'
+        if can_export is True:
+            self.assertContains(response, export_button_text,
+                                msg_prefix='export button should be present' + info)
+        if can_export is False:
+            self.assertNotContains(response, export_button_text,
+                                   msg_prefix='export button should not be present' + info)
 
 
 @tag('admin')

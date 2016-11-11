@@ -27,9 +27,9 @@ class NewsTable(base.DzTable):
     )
 
     def render_id(self, value):
-        if self.is_admin:
-            return value
         context = self.context
+        if self.is_admin or 'form_url' not in context:
+            return value
         form_url = reverse(context['form_url'], kwargs={'pk': value})
         if context['preserved_query']:
             form_url += '?' + context['preserved_query']

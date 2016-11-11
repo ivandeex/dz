@@ -25,7 +25,7 @@ class TableViewsTests(base.BaseDzTestCase, views.ListViewTestsMixin):
             self.assertRedirects(response, login_url)
 
     def _test_table_view(self, user_name, model_name,
-                         can_access=True, can_crawl=None,
+                         can_access=True, can_crawl=None, can_export=None,
                          can_use_row_actions=None):
         info = ' (user: {}, model: {})'.format(user_name, model_name)
         list_url = reverse('dz:%s-list' % model_name)
@@ -50,6 +50,14 @@ class TableViewsTests(base.BaseDzTestCase, views.ListViewTestsMixin):
         if can_crawl is False:
             self.assertNotContains(response, crawl_button_text,
                                    msg_prefix='crawl button should not be present' + info)
+
+        export_button_text = '>Export</'
+        if can_export is True:
+            self.assertContains(response, export_button_text,
+                                msg_prefix='export button should be present' + info)
+        if can_export is False:
+            self.assertNotContains(response, export_button_text,
+                                   msg_prefix='export button should not be present' + info)
 
         row_selector_text = '<th class="col-row_selector">'
         row_actions_text = '<th class="col-row_actions">'
@@ -235,3 +243,21 @@ class TableFormTests(base.BaseDzTestCase):
                 response = self.client.post(form_url, {'id': pk})
                 self.assertEquals(response.status_code, 200)
                 self.assertContains(response, '<div class="form-group has-error">')
+
+
+@tag('export')
+class TableExportTests(base.BaseDzTestCase):
+    CONTENT_TYPE_XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+
+    def test_users_can_export_news_and_tips(self):
+        for username in ('simple', 'super'):
+            with self.login_as(username):
+                for model_name in ('news', 'tip'):
+                    list_url = reverse('dz:%s-list' % model_name)
+                    response = self.client.get(list_url)
+                    self.assertContains(response, '>Export</')
+
+                    export_url = reverse('dz:%s-export' % model_name)
+                    response = self.client.get(export_url)
+                    self.assertEquals(response.status_code, 200)
+                    self.assertEquals(response['Content-Type'], self.CONTENT_TYPE_XLSX)
