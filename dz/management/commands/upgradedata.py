@@ -4,7 +4,7 @@ from django.db.models import Q
 from dz import models
 
 
-class Command(BaseCommand):
+class Command(BaseCommand):  # pragma: no cover
     help = 'Upgrade data in the database'
 
     def add_arguments(self, parser):

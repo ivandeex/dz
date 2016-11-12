@@ -10,7 +10,7 @@ from dz import models
 from dz.config import spider_config
 
 
-class Command(BaseCommand):
+class Command(BaseCommand):  # pragma: no cover
     help = 'Migrates MongoDB data to Django database'
 
     def convert_time(self, dt):

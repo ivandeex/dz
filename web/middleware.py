@@ -1,8 +1,4 @@
-try:
-    from django.utils.deprecation import MiddlewareMixin
-except ImportError:
-    # if django < 1.10
-    MiddlewareMixin = object
+from django.utils.deprecation import MiddlewareMixin
 
 
 class RealRemoteIPMiddleware(MiddlewareMixin):
