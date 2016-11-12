@@ -75,7 +75,7 @@ def list_view(request, TableClass, FiltersClass, form_url,
         # wrap _meta because django templates prohibits underscored property names
         'model_name': model_name,
         'verbose_name_plural': Model._meta.verbose_name_plural,
-        'top_nav_links': get_top_nav_links(is_admin),
+        'top_nav_links': get_top_nav_links(request),
         'filters': filters,
         'form_url': 'dz:' + form_url,
         'export_url': 'dz:' + export_url if export_url else None,
@@ -172,14 +172,14 @@ def form_view(request, pk, form_class, next, admin_only):
         'verbose_name': verbose_name,
         'pk': pk,
         'is_admin': is_admin,
-        'top_nav_links': get_top_nav_links(is_admin),
+        'top_nav_links': get_top_nav_links(request),
     }
     return render(request, 'dz/tables/form.html', context)
 
 
-def get_top_nav_links(is_admin):
+def get_top_nav_links(request):
     allowed_models = [models.News, models.Tip]
-    if is_admin:
+    if request.user.has_perm('dz.is_admin'):
         allowed_models += [models.Crawl, models.User]
         if not settings.DZ_COMPAT:
             allowed_models.append(models.Schedule)
@@ -190,6 +190,13 @@ def get_top_nav_links(is_admin):
             'text': model._meta.verbose_name_plural.title(),
             'link': reverse('dz:%s-list' % model._meta.model_name),
             'name': model._meta.model_name,
+        })
+
+    if request.user.has_perm('constance.change_config'):
+        top_nav_links.append({
+            'text': _('Settings'),
+            'link': reverse('admin:constance_config_changelist'),
+            'name': 'settings',
         })
 
     return top_nav_links

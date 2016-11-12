@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-08 18:50+0100\n"
+"POT-Creation-Date: 2016-11-12 15:20+0100\n"
 "PO-Revision-Date: 2016-09-01A 12:00+0300\n"
 "Last-Translator: ivandeex <ivandeex@gmail.com>\n"
 "Language-Team: ivandeex <ivandeex@gmail.com>\n"
@@ -18,6 +18,7 @@ msgstr ""
 
 #: admin/__init__.py:28 admin/__init__.py:29 templates/dz/tables/base.html:37
 #: templates/dz/tables/form.html:5 templates/dz/tables/list.html:6
+#: templates/dz/tables/login.html:5 templates/dz/tables/login.html:15
 msgid "D.Z."
 msgstr "D.Z."
 
@@ -30,39 +31,39 @@ msgstr "Index:"
 msgid "archive (filter)"
 msgstr "archived/current"
 
-#: admin/base.py:29 tables/base.py:72 tables/base.py:93 tables/crawl.py:41
+#: admin/base.py:29 tables/base.py:72 tables/base.py:93 tables/crawl.py:42
 msgid "All"
 msgstr "All"
 
 #: admin/base.py:30 admin/news.py:72 admin/tip.py:58 tables/base.py:71
-#: tables/news.py:31 tables/tip.py:38
+#: tables/news.py:42 tables/tip.py:40
 msgid "Archived"
 msgstr "archived"
 
 #: admin/base.py:31 admin/news.py:72 admin/tip.py:58 tables/base.py:70
-#: tables/news.py:31 tables/tip.py:38
+#: tables/news.py:42 tables/tip.py:40
 msgid "Fresh"
 msgstr "fresh"
 
 #. Translators: don't translate this, use translation from Django
 #: admin/crawl.py:14
 msgid "Yes"
-msgstr ""
+msgstr "Yes"
 
 #. Translators: don't translate this, use translation from Django
 #: admin/crawl.py:16
 msgid "No"
-msgstr ""
+msgstr "No"
 
-#: admin/crawl.py:21 admin/crawl.py:48 tables/crawl.py:26 tables/crawl.py:46
+#: admin/crawl.py:21 admin/crawl.py:48 tables/crawl.py:26 tables/crawl.py:47
 msgid "manual (crawl type)"
 msgstr "manual"
 
-#: admin/crawl.py:23 admin/crawl.py:50 tables/crawl.py:28 tables/crawl.py:45
+#: admin/crawl.py:23 admin/crawl.py:50 tables/crawl.py:28 tables/crawl.py:46
 msgid "scheduled (crawl type)"
 msgstr "scheduled"
 
-#: admin/crawl.py:46 tables/crawl.py:24 tables/crawl.py:44
+#: admin/crawl.py:46 tables/crawl.py:24 tables/crawl.py:45
 msgid "orphan (crawl type)"
 msgstr "unknown"
 
@@ -70,7 +71,7 @@ msgstr "unknown"
 msgid "crawl type (str column)"
 msgstr "type"
 
-#: admin/news.py:68 tables/news.py:22
+#: admin/news.py:68 tables/news.py:24
 msgid "news cut (column)"
 msgstr "content"
 
@@ -92,7 +93,7 @@ msgstr "success"
 msgid "tip link (column)"
 msgstr "link"
 
-#: admin/tip.py:78 tables/tip.py:20
+#: admin/tip.py:78 tables/tip.py:22
 msgid "tip cut (column)"
 msgstr "tip"
 
@@ -171,7 +172,7 @@ msgstr "crawls"
 #: models/crawl.py:55
 #, python-format
 msgid "Crawling %s!"
-msgstr ""
+msgstr "Crawling %s!"
 
 #: models/crawl.py:57
 msgid "Crawling refused!"
@@ -266,15 +267,15 @@ msgstr "job"
 msgid "schedule (table)"
 msgstr "schedule"
 
-#: models/tip.py:11 tables/tip.py:26
+#: models/tip.py:11 tables/tip.py:28
 msgid "(success) unknown"
 msgstr "unknown"
 
-#: models/tip.py:12 tables/tip.py:27
+#: models/tip.py:12 tables/tip.py:29
 msgid "(success) hit"
 msgstr "hit"
 
-#: models/tip.py:13 tables/tip.py:28
+#: models/tip.py:13 tables/tip.py:30
 msgid "(success) miss"
 msgstr "miss"
 
@@ -377,33 +378,37 @@ msgid "dz users"
 msgstr "users"
 
 #. Translators: crawl label is one of "Crawl news now", "Crawl tips now"
-#: tables/views.py:63
+#: tables/views.py:66
 #, python-format
 msgid "Crawl %s now"
-msgstr ""
+msgstr "Crawl %s now"
 
-#: tables/views.py:65
+#: tables/views.py:68
 msgid "Crawl news now"
 msgstr "Crawl News Now"
 
-#: tables/views.py:66
+#: tables/views.py:69
 msgid "Crawl tips now"
 msgstr "Crawl Tips Now"
 
-#: tables/views.py:129
+#: tables/views.py:133
 #, python-format
 msgid "%(count)d record(s) deleted."
 msgstr "%(count)d record(s) deleted."
 
-#: tables/views.py:132
+#: tables/views.py:136
 #, python-format
 msgid "Error deleting records: %(err)r"
 msgstr "Error deleting records: %(err)r"
 
-#: tables/views.py:157
+#: tables/views.py:163
 #, python-format
 msgid "%(model_name)s #%(pk)s saved."
 msgstr "%(model_name)s #%(pk)s saved."
+
+#: tables/views.py:197
+msgid "Settings"
+msgstr "Settings"
 
 #: templates/admin/base_site.html:5
 msgid "Django site admin"
@@ -455,7 +460,7 @@ msgstr "Jump to"
 
 #: templates/admin/dz-bootstrap/change_list.html:71
 #: templates/admin/dz-grappelli/change_list.html:83
-#: templates/admin/dz-plus/change_list.html:29
+#: templates/admin/dz-plus/change_list.html:29 templates/dz/tables/list.html:33
 msgid "Export"
 msgstr "Export"
 
@@ -530,11 +535,11 @@ msgstr "Are you sure you want to delete these rows?"
 msgid "Delete"
 msgstr "Delete"
 
-#: templates/dz/tables/_row-actions.html:2
+#: templates/dz/tables/_row-actions.html:3
 msgid "Edit Record"
 msgstr "Edit Record"
 
-#: templates/dz/tables/_row-actions.html:5
+#: templates/dz/tables/_row-actions.html:7
 msgid "Delete Record"
 msgstr "Delete Record"
 
@@ -547,6 +552,10 @@ msgstr "Edit %(verbose_name)s #%(pk)s"
 #, python-format
 msgid "List (%(size)s)"
 msgstr "List (%(size)s)"
+
+#: templates/dz/tables/login.html:5 templates/dz/tables/login.html:21
+msgid "Log in"
+msgstr "Log in"
 
 #: templates/dz/tables/newsbox-popup.html:32
 msgid "close"

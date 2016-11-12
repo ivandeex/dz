@@ -102,6 +102,9 @@ if DZ_SKIN == 'bootstrap':
         messages.ERROR: 'alert-danger error'
     }
 
+if DEBUG:
+    INSTALLED_APPS.append('django_extensions')
+
 
 MIDDLEWARE = [
     'web.middleware.RealRemoteIPMiddleware',
