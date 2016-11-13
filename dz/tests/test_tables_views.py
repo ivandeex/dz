@@ -37,6 +37,8 @@ class TableViewsTests(base.BaseDzTestCase, views.ListViewTestsMixin):
             self.assertEquals(response.status_code, 403)
             return
 
+        self._page_should_load_custom_js_css(response, info, 'prod', 'tables')
+
         self.assertContains(response, '>{}</p>'.format(user_name),
                             msg_prefix='user name should be in the top menu' + info)
 

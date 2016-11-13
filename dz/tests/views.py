@@ -53,3 +53,18 @@ class ListViewTestsMixin(object):
             with self.login_as(username):
                 for model_name in ('crawl', 'user', 'schedule'):
                     self._test_table_view(username, model_name, can_access=False)
+
+    def _page_should_load_custom_js_css(self, response, info, target, skin):
+        msg = 'the page must load custom js/css' + info
+
+        for bundle in ('common', skin):
+            if target == 'prod':
+                bundle += '.min'
+
+            link_css = ('<link type="text/css" href="/static/%s/dz-%s.css?hash='
+                        % (target, bundle))
+            self.assertContains(response, link_css, msg_prefix=msg)
+
+            link_js = ('<script type="text/javascript" src="/static/%s/dz-%s.js?hash='
+                       % (target, bundle))
+            self.assertContains(response, link_js, msg_prefix=msg)
