@@ -1,0 +1,34 @@
+---
+- name: install bot package
+  tags: install-bot
+  hosts: windows-prod
+  vars:
+    dist_files:
+      - dz-bot-dist.zip
+      - dz-bot-install.ps1
+      - unzip.exe
+
+  tasks:
+    - name: verify that distribution is ready
+      delegate_to: localhost
+      stat: path="{{local_dist_dir}}/{{item}}"
+      with_items: "{{ dist_files }}"
+      register: _stat_dist
+
+    - assert:
+        that: _stat_dist.results|selectattr('stat.exists')|list|length == dist_files|length
+        msg: you must prepare bot distribution beforehand
+
+    - win_file: path="{{win_setup_dir}}" state=directory
+
+    - name: upload distribution files
+      win_copy: src="{{local_dist_dir}}/{{item}}" dest="{{win_setup_dir}}"
+      with_items: "{{ dist_files }}"
+
+    - name: run install script
+      script: "{{local_dist_dir}}/dz-bot-install.ps1"
+      register: _run_install
+
+    # The `replace` trick filters out junk unicode mixed in by remote powershell.
+    - debug: msg="{{ _run_install.stdout_lines | map('replace', '\u0000', '') | list }}"
+...

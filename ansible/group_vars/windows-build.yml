@@ -1,8 +1,7 @@
 ---
-reset: false
-
 bot_sources: inst scripts requirements bot dz
 win_build_dir: 'C:\abyss\build\dz'
+win_setup_dir: 'C:\abyss\temp'
 
 win_path_sep: "{{ '\\\\'[0] }}"  # '\\\\'[0] - returns single backslash, works around ansible yaml bug
 win_temp_dir: "{{ ansible_env.TEMP }}"

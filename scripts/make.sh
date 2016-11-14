@@ -100,6 +100,9 @@ case "$action" in
   build-bot)
     run_ansible task-build-bot
     ;;
+  install-bot)
+    run_ansible task-install-bot
+    ;;
   all)
     run_ansible task-prepare
     migrate_db
@@ -107,5 +110,5 @@ case "$action" in
     prepare_prod
     ;;
   *)
-    echo "usage: $0 {all prod devel lang build-bot test lint coverage liveserver}"
+    echo "usage: $0 {all prod devel lang test lint coverage liveserver build-bot install-bot}"
 esac

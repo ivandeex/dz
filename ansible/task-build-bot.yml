@@ -128,6 +128,9 @@
     - name: create local directory for distribution
       file: path={{local_dist_dir}} state=directory
 
+    - name: download unzip executable
+      get_url: url={{unzip_url}} dest={{local_dist_dir}}/ force=no
+
     - name: download nssm archive, if needed
       get_url: url={{nssm_url}} dest={{nssm_zip_path}} force=no
       register: _download_nssm
@@ -180,6 +183,10 @@
     - name: remove build files
       file: path="{{local_work_dir}}/_bot-dist.zip" state=absent
       when: _repack_dist|success and reset|bool
+
+    - name: create installer script
+      template: src=../scripts/install-bot.ps1.j2
+                dest={{local_dist_dir}}/dz-bot-install.ps1
 
   handlers:
     - name: clear local temp

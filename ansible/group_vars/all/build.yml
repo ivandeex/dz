@@ -1,4 +1,9 @@
 ---
+# Setting "-e reset=1" on command line force clean build and upgrades.
+reset: false
+
+win_setup_dir: 'C:\abyss\temp'
+
 local_src_dir: "{{ inventory_dir|dirname }}"
 local_dist_dir: "{{ local_src_dir }}/dist"
 local_work_dir: "{{ local_src_dir }}/temp"
@@ -11,4 +16,6 @@ nssm_zip_path: "{{ local_dist_dir }}/{{ nssm_url|basename }}"
 phantomjs_url: https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-windows.zip
 phantomjs_zip_name: "{{ phantomjs_url | basename | splitext | first }}"
 phantomjs_zip_path: "{{ local_dist_dir }}/{{ phantomjs_url|basename }}"
+
+unzip_url: http://www.stahlworks.com/dev/unzip.exe
 ...
