@@ -1,18 +1,18 @@
 {% load i18n %}
 <h3>{% blocktrans with filter_title=title %} By {{filter_title}} {% endblocktrans %}</h3>
 {% if choices|length > 5 %}
-<form>
-<select id="filter-{{ title|escape }}" onchange="window.location=this.value">
-{% for choice in choices %}
-    <option{% if choice.selected %} class="selected" selected="selected"{% endif %} value="{{ choice.query_string|iriencode }}">{{ choice.display }}</option>
-{% endfor %}
-</select>
-</form>
+  <form>
+  <select id="filter-{{ title|escape }}" onchange="window.location=this.value">
+    {% for choice in choices %}
+      <option{% if choice.selected %} class="selected" selected="selected"{% endif %} value="{{ choice.query_string|iriencode }}">{{ choice.display }}</option>
+    {% endfor %}
+  </select>
+  </form>
 {% else %}
 <ul>
-{% for choice in choices %}
+  {% for choice in choices %}
     <li{% if choice.selected %} class="selected"{% endif %}>
     <a href="{{ choice.query_string|iriencode }}">{{ choice.display }}</a></li>
-{% endfor %}
+  {% endfor %}
 </ul>
 {% endif %}

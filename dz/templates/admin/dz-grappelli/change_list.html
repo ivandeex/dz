@@ -76,10 +76,15 @@
   {{ block.super }}
 
   {% if can_crawl %}
-    <li><a href="crawl/{{ cl.get_query_string }}" class="grp-add-link grp-state-focus">{% blocktrans with target=cl.opts.verbose_name_plural %}Crawl {{target}}{% endblocktrans %}</a></li>
+    {% blocktrans asvar crawl_text with target=cl.opts.verbose_name_plural %}Crawl {{target}}{% endblocktrans %}
+    <li>
+      <a href="crawl/{{ cl.get_query_string }}" class="grp-add-link grp-state-focus">{{ crawl_text }}</a>
+    </li>
   {% endif %}
 
   {% if can_export %}
-    <li><a href="export/{{ cl.get_query_string }}" class="grp-add-link grp-state-focus">{% trans "Export" %}</a></li>
+    <li>
+      <a href="export/{{ cl.get_query_string }}" class="grp-add-link grp-state-focus">{% trans "Export" %}</a>
+    </li>
   {% endif %}
 {% endblock %}

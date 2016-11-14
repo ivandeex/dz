@@ -1,46 +1,66 @@
 {% extends "admin/change_list.html" %}
 {% load i18n admin_urls admin_list %}
 
+
 {% block breadcrumbs %}
-{% if not is_popup %}
-<div class="breadcrumbs">
-<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
-&rsaquo; <a href="{% url 'admin:app_list' app_label=cl.opts.app_label %}">{{ cl.opts.app_config.verbose_name }}</a>
-&rsaquo; {{ cl.opts.verbose_name_plural|capfirst }}
-<p class="dz-server-time"><span>{% trans 'Server time' %} ({{ server_time|date:"e" }}):</span><br/><span>{{ server_time|date:"Y-m-d H:i" }}</span></p>
-</div>
-{% endif %}
-{% endblock %}
+  {% if not is_popup %}
+    <div class="breadcrumbs">
+      <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+      &rsaquo;
+      <a href="{% url 'admin:app_list' app_label=cl.opts.app_label %}">
+        {{ cl.opts.app_config.verbose_name }}
+      </a>
+      &rsaquo;
+      {{ cl.opts.verbose_name_plural|capfirst }}
+      <p class="dz-server-time">
+        <span>{% trans 'Server time' %} ({{ server_time|date:"e" }}):</span>
+        <br/>
+        <span>{{ server_time|date:"Y-m-d H:i" }}</span>
+      </p>
+    </div>
+  {% endif %}
+{% endblock breadcrumbs %}
+
 
 {% block userlinks %}
   <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
 {% endblock %}
 
+
 {% block object-tools %}
-<ul class="object-tools">
-  {% block object-tools-items %}
-    {% if has_add_permission %}
-      {{ block.super }}
-    {% endif %}
-    {% if can_crawl %}
-      <li><a href="crawl/{{ cl.get_query_string }}" class="golink">{% blocktrans with target=cl.opts.verbose_name_plural %}Crawl {{target}}{% endblocktrans %}</a></li>
-    {% endif %}
-    {% if can_export %}
-      <li><a href="export/{{ cl.get_query_string }}" class="export_link">{% trans "Export" %}</a></li>
-    {% endif %}
-  {% endblock %}
-</ul>
-{% endblock %}
+  <ul class="object-tools">
+    {% block object-tools-items %}
+      {% if has_add_permission %}
+        {{ block.super }}
+      {% endif %}
+      {% if can_crawl %}
+        {% blocktrans asvar crawl_text with target=cl.opts.verbose_name_plural %}Crawl {{target}}{% endblocktrans %}
+        <li>
+          <a href="crawl/{{ cl.get_query_string }}" class="golink">{{ crawl_text }}</a>
+        </li>
+      {% endif %}
+      {% if can_export %}
+        <li>
+          <a href="export/{{ cl.get_query_string }}" class="export_link">{% trans "Export" %}</a>
+        </li>
+      {% endif %}
+    {% endblock %}
+  </ul>
+{% endblock object-tools %}
+
 
 {% block search %}
 {% endblock %}
+
 
 {% block filters %}
   {% if cl.has_filters %}
     <div id="changelist-filter">
       <h2>{% trans 'Filter' %}</h2>
       {% search_form cl %}
-      {% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
+      {% for spec in cl.filter_specs %}
+        {% admin_list_filter cl spec %}
+      {% endfor %}
     </div>
   {% endif %}
-{% endblock %}
+{% endblock filters %}

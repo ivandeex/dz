@@ -50,10 +50,14 @@
   {# top dz navigation #}
   {% block dz-top-nav %}
   <li class="dropdown">
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Jump to' %} <b class="caret"></b></a>
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+      {% trans 'Jump to' %} <i class="caret"></i>
+    </a>
     <ul class="dropdown-menu scrollable-dropdown-menu dz-top-nav">
       {% for model in dz_models %}
-        <li class="dz-top-nav__item"><a href="{{ model.url }}">{{ model.name }}</a></li>
+        <li class="dz-top-nav__item">
+          <a href="{{ model.url }}">{{ model.name }}</a>
+        </li>
       {% endfor %}
     </ul>
   </li>
@@ -66,18 +70,19 @@
   {{ block.super }}
   {% if can_export %}
     <li>
-    <a role="button" href="export/{{ cl.get_query_string }}" class="btn btn-default navbar-btn">
-    <i class="glyphicon glyphicon-th-list"></i>
-    {% trans "Export" %}
-    </a>
+      <a role="button" href="export/{{ cl.get_query_string }}" class="btn btn-default navbar-btn">
+        <i class="glyphicon glyphicon-th-list"></i>
+        <span>{% trans "Export" %}</span>
+      </a>
     </li>
   {% endif %}
   {% if can_crawl %}
+    {% blocktrans asvar crawl_text with target=cl.opts.verbose_name_plural %}Crawl {{target}}{% endblocktrans %}
     <li>
-    <a role="button" href="crawl/{{ cl.get_query_string }}" class="btn btn-primary navbar-btn">
-      <i class="glyphicon glyphicon-refresh"></i>
-      {% blocktrans with target=cl.opts.verbose_name_plural %}Crawl {{target}}{% endblocktrans %}
-    </a>
+      <a role="button" href="crawl/{{ cl.get_query_string }}" class="btn btn-primary navbar-btn">
+        <i class="glyphicon glyphicon-refresh"></i>
+        <span>{{ crawl_text }}</span>
+      </a>
     </li>
   {% endif %}
 {% endblock %}
