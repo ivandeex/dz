@@ -22,8 +22,11 @@ before_script:
   # As travis provides privileged postgres user, django test script can create
   # and drop test databases, so `createdb -U postgres test_dz` is not needed.
   - python manage.py compilemessages
+  # Prepare static assets for all skins under test.
   # Use `-v0` to silence verbose whitenoise messages.
-  - python manage.py collectstatic --noinput -v0
+  - env DZ_SKIN=plus      python manage.py collectstatic --noinput -v0
+  - env DZ_SKIN=grappelli python manage.py collectstatic --noinput -v0
+  - env DZ_SKIN=bootstrap python manage.py collectstatic --noinput -v0
 script:
   # Use `-v2` to log individual tests. Unlike `prepare.sh`, don't use `--keep`.
   - coverage run --source=. --omit='*/bot/*' manage.py test -v2

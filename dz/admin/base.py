@@ -58,12 +58,6 @@ class DzModelAdmin(admin.ModelAdmin):
     def user_can_follow_links(self, auth_user):
         return False
 
-    def __init__(self, *args, **kwargs):
-        skin = settings.DZ_SKIN
-        if skin in ('plus', 'grappelli', 'bootstrap'):
-            self.change_list_template = 'admin/dz-%s/change_list.html' % skin
-        super(DzModelAdmin, self).__init__(*args, **kwargs)
-
     def get_list_display_links(self, request, list_display):
         if self.user_is_readonly(request.user):
             return None
@@ -102,6 +96,12 @@ class DzModelAdmin(admin.ModelAdmin):
         # As a workararound, here we save a reference to request object
         # on the admin view instance.
         self._request = request
+
+        # We change template name lazily here, not in the class constructor
+        # because of unit tests, which use to change skins on the fly.
+        skin = settings.DZ_SKIN
+        if skin in ('plus', 'grappelli', 'bootstrap'):
+            self.change_list_template = 'admin/dz-%s/change_list.html' % skin
 
         template_response = super(DzModelAdmin, self).changelist_view(request, extra_context)
         # FIXME: explain when context_data can be missing

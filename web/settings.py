@@ -85,8 +85,21 @@ INSTALLED_APPS = [
     'constance.backends.database',
 ]
 
+
+# --- REORDER INSTALLED APPS ---
+#
+# When DZ admin skin is 'django' or 'plus', the 'dz' application
+# must be the first so that our 'base_site.html' takes over.
+# When the skin is 'grappelli' or 'bootstrap', we prepend them in
+# the INSTALLED_APPS list, and their respective 'base_site.html'
+# takes precedence.
+#
+# Unit tests manipulate skin on the fly and therefore take special
+# care about application order.
+#
+# See also: `class override_dz_skin` in `test_dz_admin_views.py`
+
 if DZ_SKIN == 'grappelli':
-    # override dz's admin templates, in particular base_site.html
     INSTALLED_APPS.insert(0, 'grappelli')
     GRAPPELLI_ADMIN_TITLE = _('D.Z.')
 
@@ -101,6 +114,7 @@ if DZ_SKIN == 'bootstrap':
         messages.WARNING: 'alert-warning warning',
         messages.ERROR: 'alert-danger error'
     }
+
 
 if DEBUG:
     INSTALLED_APPS.append('django_extensions')

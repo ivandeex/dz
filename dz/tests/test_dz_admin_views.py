@@ -54,25 +54,59 @@ class AdminTestsMixin(views.ListViewTestsMixin):
                                    msg_prefix='export button should not be present' + info)
 
 
+class override_dz_skin(override_settings):
+    """
+    When DZ admin skin is 'django' or 'plus', the 'dz' application must
+    be the first so that our 'base_site' template takes precendence.
+    When the skin is 'grappelli' or 'bootstrap', the code in `settings.py`
+    prepend them in the INSTALLED_APPS list, and their 'base_site.html'
+    takes over.
+
+    Since we manipulate skin on the fly, we must amend INSTALLED_APPS
+    and refix application order when a test case starts.
+    The base `override_settings` will take care of such low level tasks
+    clearing app directories and other caches.
+
+    See also: `REORDER INSTALLED APPS` in `settings.py`
+    """
+    def __init__(self, **kwargs):
+        DZ_SKIN = kwargs['DZ_SKIN']
+        INSTALLED_APPS = settings.INSTALLED_APPS[:]
+
+        if INSTALLED_APPS[0] != 'dz':
+            assert INSTALLED_APPS[1] == 'dz'
+            assert INSTALLED_APPS[0] in ('grappelli', 'django_admin_bootstrapped')
+            del INSTALLED_APPS[0]
+        if DZ_SKIN == 'grappelli':
+            INSTALLED_APPS.insert(0, 'grappelli')
+        if DZ_SKIN == 'bootstrap':
+            INSTALLED_APPS.insert(0, 'django_admin_bootstrapped')
+
+        if INSTALLED_APPS != settings.INSTALLED_APPS:
+            kwargs['INSTALLED_APPS'] = INSTALLED_APPS
+
+        super(override_dz_skin, self).__init__(**kwargs)
+
+
 @tag('admin')
-@override_settings(DZ_SKIN='django')
+@override_dz_skin(DZ_SKIN='django')
 class DjangoSkinAdminTests(base.BaseDzTestCase, AdminTestsMixin):
     pass
 
 
 @tag('admin')
-@override_settings(DZ_SKIN='plus')
+@override_dz_skin(DZ_SKIN='plus')
 class PlusSkinAdminTests(base.BaseDzTestCase, AdminTestsMixin):
     pass
 
 
 @tag('admin')
-@override_settings(DZ_SKIN='grappelli')
+@override_dz_skin(DZ_SKIN='grappelli')
 class GrappelliSkinAdminTests(base.BaseDzTestCase, AdminTestsMixin):
     pass
 
 
 @tag('admin')
-@override_settings(DZ_SKIN='bootstrap')
+@override_dz_skin(DZ_SKIN='bootstrap')
 class BootstrapSkinAdminTests(base.BaseDzTestCase, AdminTestsMixin):
     pass
