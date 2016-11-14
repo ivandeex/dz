@@ -18,7 +18,7 @@
 }
 
 #result_list {
-  .field-link_str {  // sass-lint:disable-line force-element-nesting no-qualifying-elements
+  .field-link_str {
     @include field-link;
   }
 }
