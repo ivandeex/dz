@@ -1,30 +1,27 @@
 ---
 - name: setup honcho environment
-  hosts: linux-build
+  hosts: linux-devel
   tags: env
-  become: false
-  gather_facts: false
+  gather_facts: true
   tasks:
-    - name: add public settings to .env
-      lineinfile: dest=../.env create=yes mode=0600
+    - name: add settings to .env
+      lineinfile: dest={{dz_code_dir}}/.env create=yes mode=0600
                   regexp='^{{ item|upper }}='
-                  line='{{ item|upper }}="{{ public[item] }}"'
-      with_items: '{{ public.keys() | sort }}'
-
-    - name: add non-public settings to .env
-      lineinfile: dest=../.env create=yes mode=0600
-                  regexp='^{{ item|upper }}='
-                  line='{{ item|upper }}="{{ secret[item] }}"'
-      with_items: '{{ secret.keys() | sort }}'
+                  line='{{ item|upper }}="{{ settings[item] }}"'
+      with_items: '{{ settings.keys() | sort }}'
 
 
 - name: o/s packages
-  hosts: linux-build
+  hosts: linux-devel
   tags: install
-  become: true
-  gather_facts: false
+  become: false
+  gather_facts: true
   tasks:
+    - setup:
+
     - name: install required o/s packages
+      when: ansible_distribution == 'Ubuntu'
+      become: true
       apt: pkg={{item}}
       with_items:
         - gettext  # for translations
@@ -38,7 +35,7 @@
 
 
 - name: setup database
-  hosts: linux-build
+  hosts: linux-devel
   tags: db
   become: true
   become_user: postgres
@@ -62,11 +59,15 @@
                      lc_collate='en_US.UTF-8' lc_ctype='en_US.UTF-8'
 
 
-- name: node.js packages
-  hosts: linux-build
-  tags: npm
-  gather_facts: false
+- name: npm and pip packages
+  hosts: linux-devel
+  tags: pkg
+  gather_facts: true
   tasks:
+    - name: install pip packages
+      pip: virtualenv={{dz_venv_dir}}
+           requirements={{dz_code_dir}}/requirements/devel.txt
+
     - name: install npm binary
       apt: name=npm
       become: true
@@ -82,12 +83,26 @@
       become: true
 
     - name: install local package.json packages
-      npm: path={{inventory_dir|dirname}}
+      npm: path={{dz_code_dir}}
       become: false
 
+- name: configure nginx
+  hosts: linux-devel
+  tags: nginx
+  become: true
+  gather_facts: false
+  tasks:
+    - name: nginx location
+      template: src=../templates/dz.nginx.conf.j2
+                dest="{{nginx_site_dir}}/{{dz_name}}.conf"
+      notify: restart nginx
+  handlers:
+    - name: restart nginx
+      become: true
+      service: name=nginx state=restarted
 
 - name: install phantomjs
-  hosts: linux-build
+  hosts: linux-devel
   tags: phantomjs
   become: true
   gather_facts: false
@@ -113,7 +128,7 @@
 
 
 - name: install travis client
-  hosts: linux-build
+  hosts: linux-devel
   tags: travis
   become: true
   gather_facts: false

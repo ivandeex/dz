@@ -1,0 +1,15 @@
+---
+ansible_connection: local
+
+dz_name: "{{ secret.hosts.uxen1_devel.dz_name }}"
+
+nginx_site_dir: /etc/nginx/sites-enabled
+nginx_base_url: "{{ secret.hosts.uxen1_devel.nginx_base_url }}"
+
+postgres: "{{ secret.hosts.uxen1_devel.postgres }}"
+
+host_settings:
+  wsgi_port: 8000
+  internal_ips: "{{ secret.hosts.uxen1_devel.internal_ips }}"
+  mongodb_url: "{{ secret.hosts.uxen1_devel.mongodb_url }}"
+...

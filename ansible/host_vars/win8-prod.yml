@@ -1,0 +1,13 @@
+---
+ansible_host: "{{ secret.hosts.win8.hostname }}"
+ansible_user: "{{ secret.hosts.win8.username }}"
+ansible_password: "{{ secret.hosts.win8.password }}"
+ansible_connection: winrm
+ansible_port: 5986
+ansible_winrm_server_cert_validation: ignore
+
+# per-host bot settings:
+bot_server_name: "{{ secret.hosts.uxen1_prod.dz_name }}.{{ secret.hosts.uxen1_prod.nginx_base_url }}"
+bot_api_url: "{{ secret.settings.api_url }}"
+bot_secret_key: "{{ secret.settings.spider_secret_key }}"
+...

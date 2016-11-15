@@ -1,0 +1,32 @@
+---
+- name: backup database
+  hosts:
+    - linux-devel
+    - linux-prod
+
+  tasks:
+    - name: take nd compress postgres dump
+      shell: pg_dump --host={{postgres.host}} --port={{postgres.port}}
+                     --username={{postgres.username}}
+                     --no-owner --clean --if-exists {{postgres.database}} |
+             gzip --rsyncable > {{local_temp}}.pgdump.gz
+      environment:
+        PGPASSWORD: "{{postgres.password}}"
+      notify: clear temp
+
+    - file: path={{backup_dir}} state=directory
+      delegate_to: localhost
+
+    - name: download compressed dump
+      # `fetch` runs checksum checker consuming a lot of memory
+      synchronize: mode=pull src={{local_temp}}.pgdump.gz
+                   dest={{backup_dir}}/{{dump_file}}
+
+    - name: harden permissions on dump file
+      file: path={{backup_dir}}/{{dump_file}} mode=0640
+      delegate_to: localhost
+
+  handlers:
+    - name: clear temp
+      shell: rm -rf {{local_temp}}*
+...

@@ -2,11 +2,11 @@
 Set-PSDebug -Trace 1
 $DebugPreference = "Continue"
 
-$bot_opts="--service=1 --server={{ bot.scheme }}://{{ bot.server_name }}{{ bot.api_url }} --secret={{ secret.spider_secret_key }} {{ bot.extra_args }}"
+$bot_opts="--service=1 --server={{ bot_scheme }}://{{ bot_server_name }}{{ bot_api_url }} --secret={{ bot_secret_key }} {{ bot_extra_args }}"
 
-$svc="{{ bot.service }}"
-$exe_dir="{{ bot.run_dir }}"
-$log_dir="{{ bot.log_dir }}"
+$svc="{{ bot_service }}"
+$exe_dir="{{ bot_run_dir }}"
+$log_dir="{{ bot_log_dir }}"
 
 $nssm="$exe_dir\bot\nssm.exe"
 $unzip="{{ win_setup_dir }}\unzip.exe"
@@ -19,7 +19,7 @@ sc.exe delete $svc
 if (test-path $exe_dir) { rm -recurse $exe_dir }
 new-item $exe_dir -itemType directory
 
-if (-not (test-path $log_dir)) { new-item $log_dir -itemType directory }
+if (!(test-path $log_dir)) { new-item $log_dir -itemType directory }
 
 & $unzip $dist_zip -d $exe_dir
 
@@ -30,6 +30,7 @@ if (-not (test-path $log_dir)) { new-item $log_dir -itemType directory }
 & $nssm set $svc AppStderr $log_dir\$svc.out
 & $nssm set $svc AppRotateFiles 0
 & $nssm start $svc
+sc.exe config $svc start= auto
 
 $DebugPreference = "SilentlyContinue"
 write-host "done!"

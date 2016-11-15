@@ -1,7 +1,7 @@
 ---
 - name: install python 2
   tags: install
-  hosts: windows-build
+  hosts: windows-devel
 
   tasks:
     - name: install o/s packages
@@ -37,7 +37,7 @@
 
 - name: upload bot sources
   tags: upload-src
-  hosts: windows-build
+  hosts: windows-devel
 
   tasks:
     - name: create tarball with source code
@@ -71,7 +71,7 @@
 
 - name: build the bot
   tags: build-bot
-  hosts: windows-build
+  hosts: windows-devel
 
   tasks:
     - name: install python requirements
@@ -94,15 +94,15 @@
 
 - name: download build files
   tags: fetch-build
-  hosts: windows-build
+  hosts: windows-devel
 
   tasks:
-    - name: create partial distribution
+    - name: create tarball with build results
       win_command: 7z a "{{win_temp}}.bot-dist.zip" bot
                    chdir="{{win_build_dir}}/dist"
       notify: clear win temp
 
-    - name: fetch partial distribution
+    - name: fetch build results
       fetch: src="{{win_temp}}.bot-dist.zip"
              dest="{{local_work_dir}}/_bot-dist.zip"
              flat=yes
@@ -114,7 +114,7 @@
 
 - name: add nssm and phantomjs to the build
   tags: make-dist
-  hosts: linux-build
+  hosts: linux-devel
 
   tasks:
     - name: verify that build files are ready
@@ -123,7 +123,7 @@
 
     - assert:
         that: _stat_build_files.stat.exists
-        msg: you must build and download build files in advance
+        msg: You must build and download build files in advance
 
     - name: create local directory for distribution
       file: path={{local_dist_dir}} state=directory
@@ -184,11 +184,18 @@
       file: path="{{local_work_dir}}/_bot-dist.zip" state=absent
       when: _repack_dist|success and reset|bool
 
-    - name: create installer script
-      template: src=../scripts/install-bot.ps1.j2
-                dest={{local_dist_dir}}/dz-bot-install.ps1
-
   handlers:
     - name: clear local temp
       shell: rm -rf {{local_temp}}*
+
+
+- name: create installer script
+  tags: make-script
+  hosts: windows-prod
+  vars:
+    install_script: dz-bot-install.{{inventory_hostname}}.ps1
+  tasks:
+    - template: src=../templates/install-bot.ps1.j2
+                dest={{local_dist_dir}}/{{install_script}}
+      delegate_to: localhost
 ...

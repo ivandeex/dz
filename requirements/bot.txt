@@ -10,7 +10,7 @@ lxml==3.6.0  # rq.filter: !=3.6.*
 # See: http://stackoverflow.com/a/28793874
 # Solution #1: https://github.com/kennethreitz/requests/issues/2465#issuecomment-252934005
 # Solution #2 (for Queue): https://github.com/pyinstaller/pyinstaller/issues/1939#issuecomment-213165667
-requests==2.11.1
+requests==2.12.0
 
 # Actually pyinstaller is required only to build bot on Windows.
 pyinstaller==3.2

@@ -17,26 +17,25 @@
 D.Z.
 ====
 
-`DZ` is an app for Django coupled with a site scraper
-built on top of the scraping framework `Scrapy`.
+`DZ` is a Django application coupled with a site scraper built on top of
+the `Scrapy` framework.
 
-Installation
-============
+Developer environment
+=====================
 
 D.Z. can be installed by cloning this github repository::
 
     $ git clone https://github.com/ivandeex/dz.git
 
-Then create virtual environment and run ``scripts/make.sh``
-to install python requirements and setup database::
+Then run ``scripts/make.sh``, which will create a virtual environment,
+install python and `node.js` requirements and setup database::
 
     $ cd dz
-    $ virtualenv venv
-    $ source ./venv/bin/activate
-    $ ./scripts/make.sh all
+    $ ./scripts/make.sh setup-devel
+    $ ./scripts/make.sh prepare
 
-Running
-=======
+Running development server
+==========================
 
 To run a live server with fake data, type::
 
@@ -51,9 +50,22 @@ To run production web server and schedule crawl jobs, type::
 Testing
 =======
 
-DZ has somewhat incomplete test suite powered by Django. To run it, type this::
+DZ has a Django-powered test suite, which can be run as::
 
     $ ./scripts/make.sh test
+
+Installing on production
+========================
+
+First, build and install bot executable on a Windows box::
+
+    $ cd dz
+    $ ./scripts/make.sh build-bot
+    $ ./scripts/make.sh install-bot
+
+Then install backend and configure nginx on a Linux production server::
+
+    $ ./scripts/make.sh install-web
 
 License
 =======

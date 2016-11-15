@@ -1,0 +1,18 @@
+# service: {{dz_name}}
+# ansible-managed
+
+[Unit]
+Description={{dz_name}}.service
+Wants=network.target
+After=network.target
+
+[Service]
+WorkingDirectory={{dz_code_dir}}
+# PYTHONUNBUFFERED: make gunicorn emit django stdout without delays
+Environment=PYTHONUNBUFFERED=1
+ExecStart={{dz_venv_dir}}/bin/gunicorn -w 2 -b :{{host_settings.wsgi_port}} -e DEBUG=0 --log-file - web.wsgi:application
+Restart=always
+User={{ansible_user_id}}
+
+[Install]
+WantedBy=multi-user.target

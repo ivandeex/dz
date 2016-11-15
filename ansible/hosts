@@ -1,11 +1,11 @@
-[linux-build]
-localhost
+[linux-devel]
+uxen1-devel
 
-[windows-build]
-win8
-
-[windows-prod]
-win8
+[windows-devel]
+win8-devel
 
 [linux-prod]
-top
+uxen1-prod
+
+[windows-prod]
+win8-prod

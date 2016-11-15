@@ -1,0 +1,133 @@
+---
+- name: install dz server
+  tags: install-web
+  hosts: linux-prod
+
+  tasks:
+    - setup:
+
+    - name: ubuntu packages
+      when: ansible_distribution == 'Ubuntu'
+      become: true
+      apt: pkg={{item}}
+      with_items:
+        - gettext  # for translations
+        - build-essential
+        - libpython-dev
+        - libffi-dev
+        - libssl-dev
+        - libjpeg-dev
+        - libxml2-dev
+        - libxslt1-dev
+        - nginx
+
+    - name: project directory
+      file: path={{dz_code_dir}} state=directory
+
+    - name: checkout project
+      git: repo={{dz_repo_url}} version=master
+           dest={{dz_code_dir}} update=yes
+      notify: restart service
+
+    - name: virtual environment
+      pip: virtualenv={{dz_venv_dir}}
+           requirements={{dz_code_dir}}/requirements/prod.txt
+      notify: restart service
+
+    - name: create db user
+      tags: db
+      become: true
+      become_user: postgres
+      postgresql_user: port={{postgres.port}}
+                       name={{postgres.username}} password={{postgres.password}}
+      register: _pg_user
+      notify: restart service
+
+    - name: create database
+      tags: db
+      become: true
+      become_user: postgres
+      postgresql_db: port={{postgres.port}}
+                     name={{postgres.database}} owner={{postgres.username}}
+                     template='template0' encoding='UTF-8'
+                     lc_collate='en_US.UTF-8' lc_ctype='en_US.UTF-8'
+      register: _pg_db
+      notify: restart service
+
+    - name: upload database data
+      tags: db
+      when: _pg_db|changed or _pg_user|changed or reset|bool
+      copy: src={{backup_dir}}/{{dump_file}}
+            dest={{local_temp}}.pgdump.gz
+      register: _upload_db
+      notify: clear temp
+
+    - name: db user must be owner of public schema to prevent restore warnings
+      tags: db
+      when: _upload_db|changed
+      become: true
+      become_user: postgres
+      shell: psql {{postgres.database}} -c "ALTER SCHEMA public OWNER TO {{postgres.username}};"
+      environment:
+        PGPASSWORD: "{{postgres.password}}"
+
+    - name: restore database data
+      tags: db
+      when: _upload_db|changed
+      # Ordinary user cannot modify extensions. The `grep` below prevents error messages.
+      shell: zcat {{local_temp}}.pgdump.gz |
+             grep -E -v '^(DROP EXTENSION|CREATE EXTENSION|COMMENT ON EXTENSION)' |
+             psql -h {{postgres.host}} -p {{postgres.port}}
+                     -U {{postgres.username}} {{postgres.database}}
+      environment:
+        PGPASSWORD: "{{postgres.password}}"
+
+    - name: add settings to .env
+      lineinfile: dest={{dz_code_dir}}/.env create=yes mode=0600
+                  regexp='^{{ item|upper }}='
+                  line='{{ item|upper }}="{{ settings[item] }}"'
+      with_items: "{{ settings.keys() | sort }}"
+      notify: restart service
+
+    - name: prepare environment
+      shell: "{{dz_code_dir}}/scripts/make.sh prepare"
+      changed_when: false
+
+    - name: configure service
+      become: true
+      template: src=../templates/dz.service.j2
+                dest=/etc/systemd/system/{{dz_name}}.service
+                mode=0644
+      register: _configure_service
+      notify: restart service
+
+    - name: reload systemd
+      become: true
+      when: _configure_service|changed
+      command: systemctl daemon-reload
+
+    - name: enable service
+      become: true
+      service: name={{dz_name}} state=started enabled=yes
+
+    - name: nginx location
+      become: true
+      template: src=../templates/dz.nginx.conf.j2
+                dest="{{nginx_site_dir}}/{{dz_name}}.conf"
+      notify: restart nginx
+
+    - name: create protected nginx directory
+      file: path={{dz_code_dir}}/temp state=directory
+
+  handlers:
+    - name: clear temp
+      shell: rm -rf {{local_temp}}*
+
+    - name: restart nginx
+      become: true
+      service: name=nginx state=restarted
+
+    - name: restart service
+      become: true
+      service: name={{dz_name}} state=restarted
+...

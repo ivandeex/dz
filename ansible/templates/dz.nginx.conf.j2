@@ -1,0 +1,18 @@
+upstream {{ dz_name|replace('-', '_') }} {
+  server 127.0.0.1:{{settings.web_port}};
+}
+
+server {
+  server_name {{dz_name}}.{{nginx_base_url}};
+  listen 80;
+  location / {
+    proxy_pass http://{{ dz_name|replace('-', '_') }};
+    proxy_set_header Host            $http_host;
+    proxy_set_header X-Real-IP       $remote_addr;
+    proxy_set_header X-Forwared-For  $proxy_add_x_forwarded_for;
+  }
+  location /protected/ {
+    internal;
+    alias {{dz_code_dir}}/temp/;
+  }
+}

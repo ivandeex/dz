@@ -1,0 +1,42 @@
+---
+postgres_url: "postgres://{{postgres.username}}:{{postgres.password}}@{{postgres.host}}:{{postgres.port}}/{{postgres.database}}?{{postgres.options}}"
+
+dz_code_dir: "{{ inventory_dir|dirname }}"
+dz_venv_dir: "{{ ansible_env.HOME }}/vens/dz"
+
+
+settings:
+  dz_skin: grappelli
+  dz_compat: "false"
+  secret_key: "{{ secret.settings.secret_key }}"
+  spider_secret_key: "{{ secret.settings.spider_secret_key }}"
+  database_url: "{{ postgres_url }}"
+  # for django in production mode
+  nginx_sendfile_url: /protected/
+  allowed_hosts: "{{dz_name}}.{{nginx_base_url}}"
+  port: "{{ host_settings.wsgi_port }}"
+  web_port: "{{ host_settings.wsgi_port }}"
+
+  # development settings
+  dev_host: "{{dz_name}}.{{nginx_base_url}}"
+  dev_port: 33333
+  api_url: "{{ secret.settings.api_url }}"
+  # for django debug toolbar et al
+  internal_ips: "{{ host_settings.internal_ips }}"
+  mongodb_url: "{{ host_settings.mongodb_url }}"
+
+  debug: 0
+  test_liveserver: 0
+  # make gunicorn emit django stdout without delays
+  pythonunbuffered: 1
+
+nssm_url: http://nssm.cc/release/nssm-2.24.zip
+nssm_zip_name: "{{ nssm_url | basename | splitext | first }}"
+nssm_zip_path: "{{ local_dist_dir }}/{{ nssm_url|basename }}"
+
+phantomjs_url: https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-windows.zip
+phantomjs_zip_name: "{{ phantomjs_url | basename | splitext | first }}"
+phantomjs_zip_path: "{{ local_dist_dir }}/{{ phantomjs_url|basename }}"
+
+unzip_url: http://www.stahlworks.com/dev/unzip.exe
+...

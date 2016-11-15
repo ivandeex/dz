@@ -12,14 +12,14 @@ run_ansible()
   playbook="$1"
   ./scripts/update-secrets.sh
   cd ansible
-  ansible-playbook $playbook.yml $extra_args
+  ansible-playbook plays/$playbook.yml $extra_args
   cd ..
 }
 
 migrate_db()
 {
   python manage.py makemigrations --noinput --exit && \
-    python manage.py migrate --noinput
+  python manage.py migrate --noinput
 }
 
 make_messages()
@@ -36,34 +36,6 @@ compile_messages()
   cd ..
 }
 
-prepare_prod()
-{
-  # Compile and bundle production javascript and css:
-  npm run makeprod
-  # Use `-v0` to silence verbose whitenoise messages:
-  python manage.py collectstatic --noinput -v0
-}
-
-run_test()
-{
-  # We do not let django create test database for security reasons.
-  # Database is created manually by ansible, and here we supply the
-  # `--keep` option telling django to skip creating and dropping.
-  python manage.py check && \
-  python manage.py test --keep --reverse --failfast --verbosity 2 $extra_args
-}
-
-run_coverage()
-{
-  coverage run --source=. --omit='*/bot/*' manage.py test -k $extra_args
-  coverage report
-}
-
-liveserver_test()
-{
-  TEST_LIVESERVER=1 python manage.py test --keep --liveserver=0.0.0.0:8000 --tag liveserver $extra_args
-}
-
 run_linters()
 {
   flake8 && \
@@ -76,6 +48,11 @@ case "$action" in
   lang)
     make_messages
     ;;
+  prod)
+    run_linters
+    # Compile and bundle production javascript and css:
+    npm run makeprod
+    ;;
   devel)
     pip -q install -r requirements/devel.txt
     migrate_db
@@ -83,32 +60,35 @@ case "$action" in
     npm run makedevel
     ;;
   test)
-    run_test
+    # We do not let django create test database for security reasons.
+    # Database is created manually by ansible, and here we supply the
+    # `--keep` option telling django to skip creating and dropping.
+    python manage.py check && \
+    python manage.py test --keep --reverse --failfast --verbosity 2 $extra_args
     ;;
   coverage)
-    run_coverage
+    coverage run --source=. --omit='*/bot/*' manage.py test -k $extra_args
+    coverage report
     ;;
   lint)
     run_linters
     ;;
   liveserver)
-    liveserver_test
+    TEST_LIVESERVER=1 python manage.py test --keep --liveserver=0.0.0.0:8000 --tag liveserver $extra_args
     ;;
-  prod)
-    prepare_prod
+  setup-devel|backup-db|build-bot|install-bot|install-web)
+    run_ansible $action
     ;;
-  build-bot)
-    run_ansible task-build-bot
-    ;;
-  install-bot)
-    run_ansible task-install-bot
-    ;;
-  all)
-    run_ansible task-prepare
+  prepare)
     migrate_db
     compile_messages
-    prepare_prod
+    # Use `-v0` to silence verbose whitenoise messages:
+    python manage.py collectstatic --noinput -v0
     ;;
   *)
-    echo "usage: $0 {all prod devel lang test lint coverage liveserver build-bot install-bot}"
+    set +x
+    echo "usage: $0 ACTION|PLAYBOOK"
+    echo "  ACTIONS:   prepare prod devel lang test lint coverage liveserver"
+    echo "  PLAYBOOKS: setup-devel backup-db build-bot install-bot install-web"
+    exit 1
 esac

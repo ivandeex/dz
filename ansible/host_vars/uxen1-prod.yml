@@ -1,0 +1,14 @@
+---
+ansible_connection: local
+
+dz_name: "{{ secret.hosts.uxen1_prod.dz_name }}"
+
+nginx_site_dir: /etc/nginx/sites-enabled
+nginx_base_url: "{{ secret.hosts.uxen1_prod.nginx_base_url }}"
+
+postgres: "{{ secret.hosts.uxen1_prod.postgres }}"
+postgres_url: "postgres://{{postgres.username}}:{{postgres.password}}@localhost:{{postgres.port}}/{{postgres.database}}?conn_max_age=600"
+
+host_settings:
+  wsgi_port: "{{ secret.hosts.uxen1_prod.wsgi_port }}"
+...

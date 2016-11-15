@@ -1,0 +1,19 @@
+---
+postgres_url: "postgres://{{postgres.username}}:{{postgres.password}}@{{postgres.host}}:{{postgres.port}}/{{postgres.database}}?{{postgres.options}}"
+
+dz_code_dir: "{{ ansible_env.HOME }}/prod/{{ dz_name }}"
+dz_venv_dir: "{{ ansible_env.HOME }}/vens/{{ dz_name }}"
+dz_repo_url: https://github.com/ivandeex/dz.git
+
+settings:
+  dz_skin: grappelli
+  dz_compat: "false"
+  secret_key: "{{ secret.settings.secret_key }}"
+  spider_secret_key: "{{ secret.settings.spider_secret_key }}"
+  database_url: "{{ postgres_url }}"
+  # for django in production mode
+  nginx_sendfile_url: /protected/
+  allowed_hosts: "{{dz_name}}.{{nginx_base_url}}"
+  port: "{{ host_settings.wsgi_port }}"
+  web_port: "{{ host_settings.wsgi_port }}"
+...

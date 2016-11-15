@@ -1,0 +1,8 @@
+---
+# per-group bot settings:
+bot_service: dz1
+bot_run_dir: 'c:\abyss\prod\dz'
+bot_log_dir: 'c:\abyss\logs'
+bot_scheme: http
+bot_extra_args: ""
+...
