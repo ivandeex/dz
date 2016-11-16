@@ -19,6 +19,7 @@ BASE_DIR = root()
 DEBUG = env.bool('DEBUG', False)
 DEBUG_SQL = env.bool('DEBUG_SQL', DEBUG)
 DEBUG_API = env.bool('DEBUG_API', DEBUG)
+DEBUG_EXT = env.bool('DEBUG_EXT', DEBUG)
 
 TESTING = False
 TEST_LIVESERVER = env.bool('TEST_LIVESERVER', False)
@@ -116,7 +117,7 @@ if DZ_SKIN == 'bootstrap':
     }
 
 
-if DEBUG:
+if DEBUG_EXT:
     INSTALLED_APPS.append('django_extensions')
 
 
