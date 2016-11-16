@@ -29,10 +29,15 @@
            dest={{dz_code_dir}} update=yes
       notify: restart service
 
-    - name: virtual environment
+    - name: setup virtual environment (Ubuntu)
+      when: ansible_distribution == 'Ubuntu'
       pip: virtualenv={{dz_venv_dir}}
            requirements={{dz_code_dir}}/requirements/prod.txt
       notify: restart service
+
+    - name: setup virtual environment (CentOS)
+      when: ansible_distribution == 'CentOS'
+      include: _setup-venv-centos.yml
 
     - name: create db user
       tags: db
@@ -67,7 +72,8 @@
       when: _upload_db|changed
       become: true
       become_user: postgres
-      shell: psql {{postgres.database}} -c "ALTER SCHEMA public OWNER TO {{postgres.username}};"
+      shell: psql -p {{postgres.port}} {{postgres.database}}
+                  -c "ALTER SCHEMA public OWNER TO {{postgres.username}};"
       environment:
         PGPASSWORD: "{{postgres.password}}"
 
@@ -90,7 +96,8 @@
       notify: restart service
 
     - name: prepare environment
-      shell: "{{dz_code_dir}}/scripts/make.sh prepare"
+      shell: . {{dz_venv_dir}}/bin/activate &&
+             {{dz_code_dir}}/scripts/make.sh prepare
       changed_when: false
 
     - name: configure service
@@ -103,7 +110,7 @@
 
     - name: reload systemd
       become: true
-      when: _configure_service|changed
+      when: _configure_service|changed or reset|bool
       command: systemctl daemon-reload
 
     - name: enable service

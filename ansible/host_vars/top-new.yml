@@ -1,0 +1,18 @@
+---
+ansible_connection: ssh
+ansible_host: top
+
+#ansible_python_interpreter: /usr/local/pythonz/pythons/CPython-2.7.11/bin/python
+python_exe: /usr/local/pythonz/pythons/CPython-2.7.11/bin/python
+
+dz_name: "{{ secret.hosts.top_new.dz_name }}"
+
+nginx_site_dir: "{{ secret.hosts.top_new.nginx_site_dir }}"
+nginx_base_url: "{{ secret.hosts.top_new.nginx_base_url }}"
+
+postgres: "{{ secret.hosts.top_new.postgres }}"
+postgres_url: "postgres://{{postgres.username}}:{{postgres.password}}@localhost:{{postgres.port}}/{{postgres.database}}?conn_max_age=600"
+
+host_settings:
+  wsgi_port: "{{ secret.hosts.top_new.wsgi_port }}"
+...

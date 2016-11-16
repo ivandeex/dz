@@ -1,0 +1,49 @@
+---
+- name: check that virtual environment already exists
+  stat: path={{dz_venv_dir}}/bin/django-admin
+  register: _venv_dir
+
+- set_fact:
+    _update_venv: "{{ _venv_dir.stat.exists == false or reset|bool }}"
+
+- name: install development packages
+  when: _update_venv
+  become: true
+  # Note: ansible worker on remote machine tries to "import yum" to implement
+  #       the `yum` command. Therefore, packaging fails if I set a custom python
+  #       interpreter with the `ansible_python_interpreter` parameter as per:
+  # https://docs.ansible.com/ansible/intro_inventory.html#list-of-behavioral-inventory-parameters
+  yum: name={{item}} state=present
+  with_items:
+    - postgresql-devel
+
+- name: create virtual environment
+  when: _update_venv
+  # Note: CentOS 7 has rather old Python 2.7.9 by default, so we create
+  #       virtual environment with custom `virtualenv_python`.
+  #       Like it was said above, we cannot set custom python globally.
+  #       We have to use pip from virtual environment, so before installing
+  #       requirements we must install pip first.
+  # See: http://stackoverflow.com/questions/29711514/no-module-named-yum-error-with-python2-7-when-using-ansible-on-fedora/36138921#36138921
+  pip: name=pip virtualenv={{dz_venv_dir}}
+       virtualenv_python={{python_exe}}
+
+- name: upgrade pip
+  when: _update_venv
+  # Note: Parameters `virtualenv` and `executable` are mutually exclusive.
+  pip: name={{item}} state=latest
+       executable="{{dz_venv_dir}}/bin/pip"
+       #virtualenv={{dz_venv_dir}}
+  with_items: [ pip, setuptools, wheel ]
+
+- name: install python requirements
+  # Note: We use the parameter `executable` because the `pip` module does not
+  #       use proper pip executable from virtualenv. See ansible PR:
+  #       https://github.com/ansible/ansible-modules-core/issues/5470
+  # TODO: Revisit this issue when ansible v2.2.1 is out:
+  #       https://github.com/ansible/ansible/releases
+  pip: requirements={{dz_code_dir}}/requirements/prod.txt
+       executable="{{dz_venv_dir}}/bin/pip"
+       #virtualenv={{dz_venv_dir}}
+  notify: restart service
+...
