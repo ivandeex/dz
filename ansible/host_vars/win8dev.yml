@@ -1,0 +1,8 @@
+---
+ansible_host: "{{ secret.hosts.win81new.hostname }}"
+ansible_user: "{{ secret.hosts.win81new.username }}"
+ansible_password: "{{ secret.hosts.win81new.password }}"
+ansible_port: "{{ secret.hosts.win81new.port }}"
+ansible_connection: winrm
+ansible_winrm_server_cert_validation: ignore
+...

@@ -1,9 +1,9 @@
 ---
-ansible_host: "{{ secret.hosts.win8.hostname }}"
-ansible_user: "{{ secret.hosts.win8.username }}"
-ansible_password: "{{ secret.hosts.win8.password }}"
+ansible_host: "{{ secret.hosts.win7hop32.hostname }}"
+ansible_user: "{{ secret.hosts.win7hop32.username }}"
+ansible_password: "{{ secret.hosts.win7hop32.password }}"
+ansible_port: "{{ secret.hosts.win7hop32.port  }}"
 ansible_connection: winrm
-ansible_port: 5986
 ansible_winrm_server_cert_validation: ignore
 
 # per-host bot settings:

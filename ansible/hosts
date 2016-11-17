@@ -1,13 +1,16 @@
 [linux-devel]
-uxen1-devel
-
-[windows-devel]
-win8-devel
-win7
+uxen1dev
 
 [linux-prod]
-uxen1-prod
+uxen1prod
 top-new
 
+[windows-devel]
+win8dev
+win7
+win7x32
+
 [windows-prod]
-win8-prod
+win8prod
+win7
+win7x32
