@@ -29,14 +29,4 @@ settings:
   test_liveserver: 0
   # make gunicorn emit django stdout without delays
   pythonunbuffered: 1
-
-nssm_url: http://nssm.cc/release/nssm-2.24.zip
-nssm_zip_name: "{{ nssm_url | basename | splitext | first }}"
-nssm_zip_path: "{{ local_dist_dir }}/{{ nssm_url|basename }}"
-
-phantomjs_url: https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-windows.zip
-phantomjs_zip_name: "{{ phantomjs_url | basename | splitext | first }}"
-phantomjs_zip_path: "{{ local_dist_dir }}/{{ phantomjs_url|basename }}"
-
-unzip_url: http://www.stahlworks.com/dev/unzip.exe
 ...

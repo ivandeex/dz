@@ -3,6 +3,7 @@ uxen1-devel
 
 [windows-devel]
 win8-devel
+win7
 
 [linux-prod]
 uxen1-prod

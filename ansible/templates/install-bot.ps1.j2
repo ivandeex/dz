@@ -1,36 +1,150 @@
-# dz bot installer
-Set-PSDebug -Trace 1
-$DebugPreference = "Continue"
+# =============================================================
+# This script installs DZ bot.
+# =============================================================
 
-$bot_opts="--service=1 --server={{ bot_scheme }}://{{ bot_server_name }}{{ bot_api_url }} --secret={{ bot_secret_key }} {{ bot_extra_args }}"
+#Set-PSDebug -Trace 1
+#$DebugPreference = "Continue"
 
-$svc="{{ bot_service }}"
-$exe_dir="{{ bot_run_dir }}"
-$log_dir="{{ bot_log_dir }}"
 
-$nssm="$exe_dir\bot\nssm.exe"
-$unzip="{{ win_setup_dir }}\unzip.exe"
-$dist_zip="{{ win_setup_dir }}\dz-bot-dist.zip"
-$bot_exe="$exe_dir\bot\bot.exe"
+$BotOptions = "--service=1 --server={{ bot_scheme }}://{{ bot_server_name }}{{ bot_api_url }} --secret={{ bot_secret_key }} {{ bot_extra_args }}"
 
-sc.exe stop $svc
-sc.exe delete $svc
+$SvcName = "{{ bot_service }}"
+$BinDir = "{{ win_bin_dir }}"
+$BotDir = "{{ bot_run_dir }}"
+$LogDir = "{{ bot_log_dir }}"
+$DistDir = "{{ win_setup_dir }}"
+$DistArchName = "dz-bot-dist-{{win_bitness}}.zip"
 
-if (test-path $exe_dir) { rm -recurse $exe_dir }
-new-item $exe_dir -itemType directory
+$NssmURL = "{{ nssm_url }}"
+$PhantomjsURL = "{{ phantomjs_url }}"
+$UnzipURL = "{{ unzip_url }}"
 
-if (!(test-path $log_dir)) { new-item $log_dir -itemType directory }
+$NssmExe = "$BinDir\nssm.exe"
+$UnzipExe = "$BinDir\unzip.exe"
+$PhantomjsExe = "$BinDir\phantomjs.exe"
 
-& $unzip $dist_zip -d $exe_dir
+$DistArchPath = "$DistDir\$DistArchName"
+$BotExePath = "$BotDir\bot\bot.exe"
+$PhantomjsExePath = "$BotDir\bot\phantomjs.exe"
 
-& $nssm remove $svc confirm
-& $nssm install $svc "$bot_exe"
-& $nssm set $svc AppParameters "$bot_opts"
-& $nssm set $svc AppStdout $log_dir\$svc.out
-& $nssm set $svc AppStderr $log_dir\$svc.out
-& $nssm set $svc AppRotateFiles 0
-& $nssm start $svc
-sc.exe config $svc start= auto
+$BotRule = "Allow DZ Bot"
+$PhantomjsRule = "Allow DZ PhantomJS"
 
-$DebugPreference = "SilentlyContinue"
-write-host "done!"
+
+Set-Location $DistDir
+
+if (! (Test-Path "$DistArchPath")) {
+    Write-Host -foreground Red "Distribution archive not found: $DistArchPath"
+    Exit 1
+}
+
+
+# =============================================================
+# Download all required files
+# =============================================================
+
+$Arch = $ENV:PROCESSOR_ARCHITECTURE
+if ($Arch -eq "AMD64") {
+    $Bitness = "64"
+} else {
+    $Bitness = "32"
+}
+
+$WebClient = New-Object System.Net.WebClient
+$WebClient.Headers.Add("User-Agent", "PowerShell")
+
+if (! (Test-Path $UnzipExe)) {
+    Write-Host "Downloading $UnzipURL ..."
+    $WebClient.DownloadFile($UnzipURL, $UnzipExe)
+}
+
+if (! (Test-Path $NssmExe)) {
+    $FileName = $NssmURL.split("/")[-1]
+    $ArchPath = "$DistDir\$FileName"
+    $PureName = [System.IO.Path]::GetFileNameWithoutExtension($FileName)
+    $ExtractPath = "$DistDir\$PureName"
+    $TempExePath = "${ExtractPath}\win${Bitness}\nssm.exe"
+
+    if (! (Test-Path $ArchPath)) {
+        Write-Host "Downloading $NssmURL ..."
+        $WebClient.DownloadFile($NssmURL, $ArchPath)
+    }
+
+    Write-Host "Installing $ArchPath ..."
+    & $UnzipExe -q -o $ArchPath
+    Copy-Item "$TempExePath" "$NssmExe"
+    Remove-Item -Force -Recurse "$ExtractPath"
+}
+
+if (! (Test-Path $PhantomjsExe)) {
+    $FileName = $PhantomjsURL.split("/")[-1]
+    $ArchPath = "$DistDir\$FileName"
+    $PureName = [System.IO.Path]::GetFileNameWithoutExtension($FileName)
+    $ExtractPath = "$DistDir\$PureName"
+    $TempExePath = "${ExtractPath}\bin\phantomjs.exe"
+
+    if (! (Test-Path $ArchPath)) {
+        Write-Host "Downloading $PhantomjsURL ..."
+        $WebClient.DownloadFile($PhantomjsURL, $ArchPath)
+    }
+
+    Write-Host "Installing $ArchPath ..."
+    & $UnzipExe -q -o $ArchPath
+    Copy-Item "$TempExePath" "$PhantomjsExe"
+    Remove-Item -Force -Recurse "$ExtractPath"
+}
+
+
+# =============================================================
+# Refresh the service
+# =============================================================
+
+Write-Host "Stopping old service ..."
+
+$output = sc.exe stop $SvcName
+$output = & $NssmExe remove $SvcName confirm 2`>`&1
+$output = sc.exe delete $SvcName
+
+
+Write-Host "Installing distribution ..."
+
+if (Test-Path "$BotDir") {
+    Remove-Item -Force -Recurse "$BotDir"
+}
+$output = New-Item "$BotDir" -Type Directory
+
+& $UnzipExe -q -o "$DistDir\$DistArchName" -d "$BotDir"
+
+if (! (Test-Path "$LogDir")) {
+    $output = New-Item "$LogDir" -Type Directory
+}
+
+
+# =============================================================
+# Start updated service
+# =============================================================
+
+Write-Host "Enable bot with windows firewall"
+
+Copy-Item "$PhantomjsExe" "$PhantomjsExePath"
+
+$ignored = netsh advfirewall firewall delete rule name="$BotRule"
+$ignored = netsh advfirewall firewall add rule name="$BotRule" program="$BotExePath" profile=any dir=in action=allow
+
+$ignored = netsh advfirewall firewall delete rule name="$PhantomjsRule"
+$ignored = netsh advfirewall firewall add rule name="$PhantomjsRule" program="$PhantomjsExePath" profile=any dir=in action=allow
+
+
+Write-Host "Starting updated service ..."
+
+& $NssmExe install $SvcName "$BotExePath"
+& $NssmExe set $SvcName AppParameters "$BotOptions"
+& $NssmExe set $SvcName AppStdout "$LogDir\$SvcName.out"
+& $NssmExe set $SvcName AppStderr "$LogDir\$SvcName.out"
+& $NssmExe set $SvcName AppRotateFiles 0
+& $NssmExe start $SvcName
+$output = sc.exe config $svc start= auto
+
+
+#$DebugPreference = "SilentlyContinue"
+Write-Host "All done."

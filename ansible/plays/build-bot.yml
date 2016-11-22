@@ -1,44 +1,54 @@
 ---
-- name: install python 2
-  tags: install
+- name: prepare build environment
+  tags: prepare-env
   hosts: windows-devel
-
   tasks:
+    # Note: PyInstaller requires pywin32 on Windows.
+    #       There are two ways to install pywin32 on Windows:
+    #       - "choco install pywin32", which requires `python` and `7zip.installer`, or
+    #       - "pip install pypiwin32", because it has ready wheels for windows.
+    #       Choco's `python` and `python2` packages differ. The former is sometimes
+    #       Python 3.5, but sometimes (sic!) is Python 2.7.11. The latter (python2) is
+    #       the bleeding edge Python 2.7.12. Since choco's pywin32 package requires
+    #       a little more than it should, I opt for the pip way.
     - name: install o/s packages
       win_chocolatey: name={{item}} upgrade={{reset|bool}}
+      register: _install_pkg
       with_items:
         - upx
         - 7zip.commandline
-
-    - name: install python 2.7
-      win_chocolatey: name=python2 upgrade={{reset|bool}}
-      register: _install_python2
+        - python2
 
     - name: current system path
       raw: "[System.Environment]::GetEnvironmentVariable('PATH', 'machine')"
-      register: _system_path
+      register: _path
       changed_when: false
 
-    - name: put python2 on system path
+    - name: put python on system path
       # Ansible does not support path appending, so we use SetEnvironmentVariable.
       # PR: https://github.com/ansible/ansible-modules-extras/issues/2215
-      when: item not in _system_path.stdout.split(';')
+      when: item not in _path.stdout.split(';')
       raw: "[System.Environment]::SetEnvironmentVariable('PATH', [System.Environment]::GetEnvironmentVariable('PATH', 'machine') + ';{{item}}', 'machine')"
       with_items:
-        - 'C:\tools\python2'
-        - 'C:\tools\python2\Scripts'
+        - 'C:\Python2.7'
+        - 'C:\Python2.7\Scripts'
 
     - name: upgrade pip
-      when: _install_python2|changed or reset|bool
+      when: _install_pkg|changed or reset|bool
       raw: python -m pip install --upgrade pip setuptools wheel
       register: _upgrade_pip
       changed_when: _upgrade_pip.stdout.find('Installing ') >= 0
+
+    - name: install pywin32
+      when: _install_pkg|changed or reset|bool
+      raw: pip install pypiwin32==219
+      register: _pywin32
+      changed_when: _pywin32.stdout.find('Installing ') >= 0
 
 
 - name: upload bot sources
   tags: upload-src
   hosts: windows-devel
-
   tasks:
     - name: create tarball with source code
       command: tar -c -f "{{local_temp}}.dz-src.tgz" -C "{{local_src_dir}}" --exclude "*.pyc" {{bot_sources}}
@@ -51,28 +61,25 @@
 
     - name: clear build directory
       win_file: path="{{win_build_dir}}" state=absent
-      when: reset|bool
 
     - name: create build directory
       win_file: path="{{win_build_dir}}" state=directory
 
     - name: unpack source code
-      win_unzip: src="{{win_temp}}.dz-src.tgz" dest="{{win_build_dir}}"
-                 rm=yes recurse=yes
-
+      win_command: 7z x -y -ttar -r "{{win_temp}}.dz-src.tgz"
+                   chdir="{{win_build_dir}}"
   handlers:
     - name: clear local temp
       shell: rm -rf {{local_temp}}*
       delegate_to: localhost
 
     - name: clear win temp
-      raw: rm -recurse {{win_temp}}*
+      raw: "rm -force -recurse {{win_temp}}*"
 
 
 - name: build the bot
   tags: build-bot
   hosts: windows-devel
-
   tasks:
     - name: install python requirements
       win_command: pip install -r requirements/bot.txt
@@ -95,36 +102,25 @@
 - name: download build files
   tags: fetch-build
   hosts: windows-devel
-
   tasks:
-    - name: create tarball with build results
+    - name: create zip archive with build results
       win_command: 7z a "{{win_temp}}.bot-dist.zip" bot
                    chdir="{{win_build_dir}}/dist"
       notify: clear win temp
 
     - name: fetch build results
       fetch: src="{{win_temp}}.bot-dist.zip"
-             dest="{{local_work_dir}}/_bot-dist.zip"
+             dest="{{local_dist_dir}}/dz-bot-dist-{{win_bitness}}.zip"
              flat=yes
-
   handlers:
     - name: clear win temp
-      raw: rm -recurse {{win_temp}}*
+      raw: "rm -force -recurse {{win_temp}}*"
 
 
-- name: add nssm and phantomjs to the build
-  tags: make-dist
+- name: prefetch installer files (optional step)
+  tags: prefetch-install
   hosts: linux-devel
-
   tasks:
-    - name: verify that build files are ready
-      stat: path="{{local_work_dir}}/_bot-dist.zip"
-      register: _stat_build_files
-
-    - assert:
-        that: _stat_build_files.stat.exists
-        msg: You must build and download build files in advance
-
     - name: create local directory for distribution
       file: path={{local_dist_dir}} state=directory
 
@@ -132,70 +128,34 @@
       get_url: url={{unzip_url}} dest={{local_dist_dir}}/ force=no
 
     - name: download nssm archive, if needed
-      get_url: url={{nssm_url}} dest={{nssm_zip_path}} force=no
+      get_url: url={{nssm_url}} force=no
+               dest="{{ local_dist_dir }}/{{ nssm_url|basename }}"
       register: _download_nssm
-
-    - name: unpack nssm archive
-      unarchive: src={{nssm_zip_path}} dest={{local_work_dir}}
-      when: _download_nssm|changed
 
     - name: check whether phantomjs has been downloaded
       # Bitbucket, the phantomjs distribution server, forbids requesting the
       # Last-Modified date, so we just check whether downloaded file exists.
-      stat: path={{phantomjs_zip_path}}
+      stat: path="{{ local_dist_dir }}/{{ phantomjs_url|basename }}"
       register: _stat_phantomjs
 
     - name: download phantomjs archive, if needed
-      get_url: url={{phantomjs_url}} dest={{phantomjs_zip_path}}
+      get_url: url={{phantomjs_url}}
+               dest="{{ local_dist_dir }}/{{ phantomjs_url|basename }}"
       when: _stat_phantomjs.stat.exists == false
 
-    - name: unpack phantomjs archive
-      unarchive: src={{phantomjs_zip_path}} dest={{local_work_dir}}
-      when: _stat_phantomjs.stat.exists == false
 
-    - name: create folder to unpack build files
-      file: path="{{local_temp}}-dist" state=directory
-      notify: clear local temp
-
-    - name: unpack build files
-      unarchive: src="{{local_work_dir}}/_bot-dist.zip"
-                 dest="{{local_temp}}-dist" copy=false
-      notify: clear local temp
-
-    - name: copy nssm executable
-      command: cp "{{local_work_dir}}/{{nssm_zip_name}}/win64/nssm.exe"
-                  "{{local_temp}}-dist/bot"
-               creates="{{local_temp}}-dist/bot/nssm.exe"
-
-    - name: copy phantomjs executable
-      command: cp "{{local_work_dir}}/{{phantomjs_zip_name}}/bin/phantomjs.exe"
-                  "{{local_temp}}-dist/bot"
-               creates="{{local_temp}}-dist/bot/phantomjs.exe"
-
-    - name: remove old distribution
-      file: path="{{local_dist_dir}}/dz-bot-dist.zip" state=absent
-
-    - name: repack distribution
-      command: zip -r "{{local_dist_dir}}/dz-bot-dist.zip" bot
-               chdir="{{local_temp}}-dist"
-      register: _repack_dist
-
-    - name: remove build files
-      file: path="{{local_work_dir}}/_bot-dist.zip" state=absent
-      when: _repack_dist|success and reset|bool
-
-  handlers:
-    - name: clear local temp
-      shell: rm -rf {{local_temp}}*
-
-
-- name: create installer script
+- name: create preliminary installer script (optional step)
   tags: make-script
   hosts: windows-prod
   vars:
     install_script: dz-bot-install.{{inventory_hostname}}.ps1
   tasks:
-    - template: src=../templates/install-bot.ps1.j2
+    - name: create local directory for distribution
+      file: path={{local_dist_dir}} state=directory
+      delegate_to: localhost
+
+    - name: create installer script
+      template: src=../templates/install-bot.ps1.j2
                 dest={{local_dist_dir}}/{{install_script}}
       delegate_to: localhost
 ...

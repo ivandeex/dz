@@ -4,32 +4,30 @@
   hosts: windows-prod
   vars:
     install_script: dz-bot-install.{{inventory_hostname}}.ps1
-    dist_files:
-      - "{{install_script}}"
-      - dz-bot-dist.zip
-      - unzip.exe
+    dist_archive: dz-bot-dist-{{win_bitness}}.zip
 
   tasks:
+    - name: verify that distribution is ready
+      delegate_to: localhost
+      stat: path="{{local_dist_dir}}/{{dist_archive}}"
+      register: _stat_dist
+
+    - assert:
+        that: _stat_dist.stat.exists
+        msg: "Distribution archive not found: {{local_dist_dir}}/{{dist_archive}}"
     - name: update installer script
       delegate_to: localhost
       template: src=../templates/install-bot.ps1.j2
                 dest={{local_dist_dir}}/{{install_script}}
 
-    - name: verify that distribution is ready
-      delegate_to: localhost
-      stat: path="{{local_dist_dir}}/{{item}}"
-      with_items: "{{ dist_files }}"
-      register: _stat_dist
-
-    - assert:
-        that: _stat_dist.results|selectattr('stat.exists')|list|length == dist_files|length
-        msg: You must prepare bot distribution in advance
-
-    - win_file: path="{{win_setup_dir}}" state=directory
+    - name: create setup directory on windows machine
+      win_file: path="{{win_setup_dir}}" state=directory
 
     - name: upload distribution files
-      win_copy: src="{{local_dist_dir}}/{{item}}" dest="{{win_setup_dir}}"
-      with_items: "{{ dist_files }}"
+      win_copy: src="{{item}}" dest="{{win_setup_dir}}"
+      with_items:
+        - "{{local_dist_dir}}/{{install_script}}"
+        - "{{local_dist_dir}}/{{dist_archive}}"
 
     - name: run install script
       script: "{{local_dist_dir}}/{{install_script}}"

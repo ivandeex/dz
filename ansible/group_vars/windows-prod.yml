@@ -5,4 +5,5 @@ bot_run_dir: 'c:\abyss\prod\dz'
 bot_log_dir: 'c:\abyss\logs'
 bot_scheme: http
 bot_extra_args: ""
+win_bin_dir: 'c:\abyss\bin'
 ...

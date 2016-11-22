@@ -13,4 +13,8 @@ lxml==3.6.0  # rq.filter: !=3.6.*
 requests==2.12.0
 
 # Actually pyinstaller is required only to build bot on Windows.
-pyinstaller==3.2
+# PyInstaller 3.2 returns error "ImportError: DLL load failed pyinstaller"
+# Compiling with debugging reveals the problem with "lxml.etree not found in PYZ"
+# See PR: https://github.com/pyinstaller/pyinstaller/issues/2059
+# My solution: rollback to PyInstaller 3.1.1.
+pyinstaller==3.1.1

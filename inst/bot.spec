@@ -6,15 +6,19 @@ import sys
 debug = False
 
 upx = not debug
+exe_options = [('v', None, 'OPTION')] if debug else []
+
 proj_name = 'bot'
 exe_name = 'bot'
+block_cipher = None
+
 modules = [
     '../bot/__main__.py',
 ]
+
 hidden_imports = [
     'bot.service',  # PyInstaller cannot detect a module imported from within a function.
 ]
-block_cipher = None
 
 a = Analysis(
     modules,
@@ -39,6 +43,7 @@ pyz = PYZ(
 exe = EXE(
     pyz,
     a.scripts,
+    exe_options,
     exclude_binaries=True,
     name=exe_name,
     debug=debug,

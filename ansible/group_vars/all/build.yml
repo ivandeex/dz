@@ -6,11 +6,17 @@ dump_file: dz.{{inventory_hostname}}.pgdump.gz
 backup_dir: "{{ lookup('env', 'HOME') }}/setup/backup"
 
 # Build parameters used by multiple hosts:
+
+win_bitness: "{{ ansible_architecture.partition('-')[0] }}"  # 32 or 64
+
 win_setup_dir: 'C:\abyss\temp'
 
 local_src_dir: "{{ inventory_dir|dirname }}"
-local_work_dir: "{{ local_src_dir }}/temp"
 local_dist_dir: "{{ local_src_dir }}/dist"
 
 local_temp: /tmp/ansible-tmp_{{ inventory_hostname }}_{{ ansible_date_time.iso8601|replace(':','-') }}
+
+nssm_url: http://nssm.cc/release/nssm-2.24.zip
+phantomjs_url: https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-windows.zip
+unzip_url: http://www.stahlworks.com/dev/unzip.exe
 ...
