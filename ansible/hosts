@@ -1,1 +1,11 @@
-localhost  ansible_connection=local
+[linux-build]
+localhost
+
+[windows-build]
+win8
+
+[windows-prod]
+win8
+
+[linux-prod]
+top

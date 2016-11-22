@@ -27,20 +27,20 @@ D.Z. can be installed by cloning this github repository::
 
     $ git clone https://github.com/ivandeex/dz.git
 
-Then create virtual environment and run prepare.sh
+Then create virtual environment and run ``scripts/make.sh``
 to install python requirements and setup database::
 
     $ cd dz
     $ virtualenv venv
     $ source ./venv/bin/activate
-    $ ./prepare.sh all
+    $ ./scripts/make.sh all
 
 Running
 =======
 
 To run a live server with fake data, type::
 
-    $ ./prepare.sh liveserver
+    $ ./scripts/make.sh liveserver
 
 and point your browser to http://localhost:8000/, then click `Enter` when finished.
 
@@ -53,7 +53,7 @@ Testing
 
 DZ has somewhat incomplete test suite powered by Django. To run it, type this::
 
-    $ ./prepare.sh test
+    $ ./scripts/make.sh test
 
 License
 =======

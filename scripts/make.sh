@@ -3,15 +3,16 @@ action="$1"
 shift
 extra_args="$*"
 
-project_dir=$(dirname $(readlink -f $0))
+project_dir=$(dirname $(dirname $(readlink -f $0)))
 cd $project_dir
 [ -e .env ] && . .env
 
-ansible_tasks()
+run_ansible()
 {
+  playbook="$1"
   cd ansible
   [ ./secret.yml -nt ./group_vars/all/vault.yml ] && ./update-secret.sh
-  ansible-playbook -i hosts task-prepare.yml
+  ansible-playbook $playbook.yml $extra_args
   cd ..
 }
 
@@ -31,7 +32,7 @@ make_messages()
 compile_messages()
 {
   cd dz
-  python manage.py compilemessages
+  python ../manage.py compilemessages
   cd ..
 }
 
@@ -63,18 +64,20 @@ liveserver_test()
   TEST_LIVESERVER=1 python manage.py test --keep --liveserver=0.0.0.0:8000 --tag liveserver $extra_args
 }
 
-run_lint()
+run_linters()
 {
   flake8 && \
   sass-lint -v -q && \
   eslint dz/assets webpack.config.babel.js
 }
 
+set -x
 case "$action" in
   lang)
     make_messages
     ;;
   devel)
+    pip -q install -r requirements/devel.txt
     migrate_db
     compile_messages
     npm run makedevel
@@ -86,7 +89,7 @@ case "$action" in
     run_coverage
     ;;
   lint)
-    run_lint
+    run_linters
     ;;
   liveserver)
     liveserver_test
@@ -94,12 +97,15 @@ case "$action" in
   prod)
     prepare_prod
     ;;
+  build-bot)
+    run_ansible task-build-bot
+    ;;
   all)
-    ansible_tasks
+    run_ansible task-prepare
     migrate_db
     compile_messages
     prepare_prod
     ;;
   *)
-    echo "usage: $0 all|prod|devel|lang|test|lint|coverage|liveserver"
+    echo "usage: $0 {all prod devel lang build-bot test lint coverage liveserver}"
 esac

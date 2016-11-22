@@ -1,0 +1,22 @@
+django==1.10.3
+django-environ==0.4.1
+django-import-export==0.5.1
+django-constance[database]==1.3.3
+django-webpack-loader==0.4.1
+
+django-grappelli==2.9.1
+django-bootstrap3==7.1.0
+django-tables2==1.2.6
+django-filter==0.15.3
+django-bootstrap-form==3.2.1
+
+# Official django-admin-bootstrapped is incompatible with Django 1.10+, so we use a github fork.
+git+https://github.com/hellpanderrr/django-admin-bootstrapped-1.9-compatible.git@master#egg=django_admin_bootstrapped
+
+XlsxWriter==0.9.3
+whitenoise==3.2.2
+jinja2==2.8
+pytz==2016.7
+psycopg2==2.6.2
+
+-r bot.txt

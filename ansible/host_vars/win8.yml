@@ -1,0 +1,7 @@
+---
+ansible_host: "{{ hosts.win8.hostname }}"
+ansible_user: "{{ hosts.win8.username }}"
+ansible_password: "{{ hosts.win8.password }}"
+ansible_connection: winrm
+ansible_port: 5985  # prefer plaintext winrm because, e.g. dism fails on ssl
+...

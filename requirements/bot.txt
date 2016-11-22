@@ -1,0 +1,16 @@
+parsel==1.0.3
+selenium==3.0.1
+python-dateutil==2.6.0
+
+# Stick with non-recent lxml, for it has a wheel for Python 2.7 on Windows x64.
+# The comment suspends reports until 3.7; see https://requires.io/features/#Filter
+lxml==3.6.0  # rq.filter: !=3.6.*
+
+# Latest requests cause problems with PyInstaller: urllib3 and Queue aren't found.
+# See: http://stackoverflow.com/a/28793874
+# Solution #1: https://github.com/kennethreitz/requests/issues/2465#issuecomment-252934005
+# Solution #2 (for Queue): https://github.com/pyinstaller/pyinstaller/issues/1939#issuecomment-213165667
+requests==2.11.1
+
+# Actually pyinstaller is required only to build bot on Windows.
+pyinstaller==3.2
