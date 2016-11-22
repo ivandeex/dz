@@ -18,3 +18,5 @@
 /stats-devel.json
 /public/dev*/
 /temp/
+/build/
+/dist/

@@ -1,8 +1,9 @@
 ---
-- hosts: localhost
+- name: setup honcho environment
+  hosts: linux-build
+  tags: env
   become: false
   gather_facts: false
-  tags: env
   tasks:
     - name: add public settings to .env
       lineinfile: dest=../.env create=yes mode=0600
@@ -16,12 +17,14 @@
                   line='{{ item|upper }}="{{ secret[item] }}"'
       with_items: '{{ secret.keys() | sort }}'
 
-- hosts: localhost
+
+- name: o/s packages
+  hosts: linux-build
+  tags: install
   become: true
   gather_facts: false
-  tags: install
   tasks:
-    - name: install required os packages
+    - name: install required o/s packages
       apt: pkg={{item}}
       with_items:
         - gettext  # for translations
@@ -33,11 +36,13 @@
         - libxml2-dev
         - libxslt1-dev
 
-- hosts: localhost
+
+- name: setup database
+  hosts: linux-build
+  tags: db
   become: true
   become_user: postgres
   gather_facts: false
-  tags: db
   tasks:
     - name: create django database
       postgresql_db: port={{postgres.port}} name={{postgres.database}}
@@ -56,9 +61,11 @@
                      template='template0' encoding='UTF-8'
                      lc_collate='en_US.UTF-8' lc_ctype='en_US.UTF-8'
 
-- hosts: localhost
-  gather_facts: false
+
+- name: node.js packages
+  hosts: linux-build
   tags: npm
+  gather_facts: false
   tasks:
     - name: install npm binary
       apt: name=npm
@@ -78,10 +85,12 @@
       npm: path={{inventory_dir|dirname}}
       become: false
 
-- hosts: localhost
+
+- name: install phantomjs
+  hosts: linux-build
+  tags: phantomjs
   become: true
   gather_facts: false
-  tags: phantomjs
   vars:
     phantomjs_version: 'phantomjs-2.1.1-linux-x86_64'
   tasks:
@@ -102,10 +111,12 @@
         src: ../{{phantomjs_version}}/bin/phantomjs
         dest: /usr/local/bin/phantomjs
 
-- hosts: localhost
+
+- name: install travis client
+  hosts: linux-build
+  tags: travis
   become: true
   gather_facts: false
-  tags: travis
   tasks:
     - name: install ruby
       apt: name={{item}}

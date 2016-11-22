@@ -6,13 +6,16 @@ import sys
 _parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _parent_dir not in sys.path:
     sys.path.append(_parent_dir)
+
 if not __package__:
     __package__ = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
+    if getattr(sys, 'frozen', False):
+        __package__ = 'bot'  # Workaround for incorrect package name in frozen exe.
     __import__(__package__)
 
 
 def main():
-    # Imports are postponed here due to late package setup above.
+    # Imports are postponed up here due to late package setup above.
     from .service import Service
     from .utils import getopt, setup_logging
 
@@ -32,7 +35,10 @@ def main():
     getopt('maxnews', 'LIMIT_NEWS')
 
     if service:
-        Service().run()
+        try:
+            Service().run()
+        except KeyboardInterrupt:
+            print '^C'
     elif target:
         Service.action(target)
 

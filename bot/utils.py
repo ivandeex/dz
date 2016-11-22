@@ -27,16 +27,20 @@ class UnbufferedStreamWrapper(object):
         return getattr(self.__stream, attr)
 
 
-def get_project_dir():
-    return os.path.join(os.path.expanduser('~'), '.vanko')
-
-
 def setup_logging(service, debug):
+    stream = logging.StreamHandler(stream=sys.stderr)
     if service:
-        log_dir = os.path.join(get_project_dir(), 'logs')
+        log_name = 'dz.log'
+        proj_dir = ''.join(['a', 'by', 'ss'])
+        root_dirs = [os.path.expanduser('~'), '.' + proj_dir]
+        if sys.platform == 'win32':
+            root_dirs = ['C:\\', proj_dir]
+
+        log_dir = os.path.join(*(root_dirs + ['logs']))
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
-        log_path = os.path.join(log_dir, 'dv.log')
+
+        log_path = os.path.join(log_dir, log_name)
         log_file = open(log_path, mode='w', buffering=1)
 
         if not debug:
@@ -45,8 +49,6 @@ def setup_logging(service, debug):
             sys.stdout = UnbufferedStreamWrapper(sys.stdout)
 
         stream = logging.StreamHandler(stream=log_file)
-    else:
-        stream = logging.StreamHandler(stream=sys.stderr)
 
     formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
     stream.setFormatter(formatter)

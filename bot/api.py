@@ -9,15 +9,6 @@ from urlparse import urljoin
 from datetime import datetime
 from .utils import logger
 
-try:
-    import cjson
-    json_encode = cjson.encode
-    json_decode = cjson.decode
-except ImportError:
-    import json
-    json_encode = json.dumps
-    json_decode = json.loads
-
 
 DEFAULT_API_URL = 'http://localhost/dz/api/crawl/'
 DEFAULT_SECRET_KEY = 'please change me'

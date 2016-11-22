@@ -3,6 +3,7 @@ import random
 import hashlib
 import logging
 import pytz
+import json
 from datetime import datetime
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -13,15 +14,6 @@ from django.conf import settings
 from .config import spider_config
 from .ranges import merge_ranges, split_ranges
 from . import models
-
-try:
-    import cjson
-    json_encode = cjson.encode
-    json_decode = cjson.decode
-except ImportError:
-    import json
-    json_encode = json.dumps
-    json_decode = json.loads
 
 
 MAX_TIME_DIFF = 900
@@ -52,7 +44,7 @@ def parse_request(request, command):
     assert request.META['CONTENT_TYPE'] == 'application/json', 'Invalid content type'
 
     unicode_body = request.body.decode(request.encoding or settings.DEFAULT_CHARSET)
-    req = json_decode(unicode_body)
+    req = json.loads(unicode_body)
 
     if settings.DEBUG_API:
         req_cut = req
@@ -95,7 +87,7 @@ def make_response(**resp):
 
     if settings.DEBUG_API:
         logger.debug('API response: %s', resp)
-    return HttpResponse(json_encode(resp), content_type='application/json')
+    return HttpResponse(json.dumps(resp), content_type='application/json')
 
 
 def get_model(target):
