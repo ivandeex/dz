@@ -10,8 +10,8 @@ cd $project_dir
 run_ansible()
 {
   playbook="$1"
+  ./scripts/update-secrets.sh
   cd ansible
-  [ ./secret.yml -nt ./group_vars/all/vault.yml ] && ./update-secret.sh
   ansible-playbook $playbook.yml $extra_args
   cd ..
 }

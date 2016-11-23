@@ -12,7 +12,7 @@
 /.coverage
 /htmlcov/
 /static/
-/ansible/secret.yml
+/secrets.yml
 /node_modules/
 /pip_modules/
 /stats-devel.json
