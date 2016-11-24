@@ -40,9 +40,11 @@
         <div class="collapse navbar-collapse" id="dz-navbar-collapse">
           {% block top-navigation %}
             <ul class="nav navbar-nav dz-top-nav">
-              <li class="dz-top-nav__home">
-                <a href="{% url 'dz:index' %}">{% trans 'Home' %}</a>
-              </li>
+              {% if debug or dz_compat %}
+                <li class="dz-top-nav__home">
+                  <a href="{% url 'dz:index' %}">{% trans 'Home' %}</a>
+                </li>
+              {% endif %}
 
               {% for item in top_nav_links %}
                 <li class="dz-top-nav__link dz-top-nav__link-{{item.name}}{% if item.link == request.path %} active{% endif %}">

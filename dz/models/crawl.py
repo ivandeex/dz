@@ -96,7 +96,7 @@ class Crawl(models.Model):
         if not utc:
             return
         if cls.objects.filter(target=target, started=utc, manual=False).exists():
-            logger.info('Auto-skip %s crawl at %02d:%02d (UTC)', target, utc.hour, utc.minute)
+            logger.info('De-dupe, %s crawl at %02d:%02d (UTC)', target, utc.hour, utc.minute)
             return
         logger.info('Schedule %s crawl at %02d:%02d (UTC)', target, utc.hour, utc.minute)
         return cls.objects.create(target=target, status='waiting', started=utc, manual=False)

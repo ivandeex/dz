@@ -1,5 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.conf import settings
 
 
 def index(request):
-    return render(request, 'dz/welcome.html')
+    if settings.DEBUG:
+        return render(request, 'dz/welcome.html')
+    else:
+        return redirect('dz:news-list')

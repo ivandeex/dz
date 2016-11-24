@@ -1,8 +1,9 @@
 import os
 import logging
 from time import sleep
+import bot
 from .utils import logger
-from .api import api_check_job
+from .api import api_check_job, naive2api
 from .news import NewsSpider
 from .tips import TipsSpider
 
@@ -16,7 +17,7 @@ class Service(object):
         self.debug = bool(int(os.environ.get('DEBUG', False)))
 
     def run(self):
-        logger.info('Service running')
+        logger.info('Service running, v%s', bot.version)
         while True:
             sleep(self.poll_seconds)
             try:
@@ -43,6 +44,8 @@ class Service(object):
         Spider = dict(news=NewsSpider, tips=TipsSpider)[target]
         final_env = os.environ.copy()
         final_env.update(env)
+        start_utc = final_env.setdefault('START_UTC', naive2api())
+        logger.info('Commence %s crawl from %s (UTC)', target, start_utc)
         spider = Spider(final_env)
         try:
             spider.run()
